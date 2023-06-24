@@ -3,5 +3,41 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
+    "@daxur-studios/engine": {
+      "projectType": "library",
+      "root": "projects/daxur-studios/engine",
+      "sourceRoot": "projects/daxur-studios/engine/src",
+      "prefix": "daxur",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/daxur-studios/engine/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/daxur-studios/engine/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/daxur-studios/engine/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/daxur-studios/engine/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "analytics": "70db835d-65b8-464e-9d02-03b023073cb4"
   }
 }
