@@ -1,0 +1,12 @@
+<div #wrapper class="flex-wrapper" tabindex="0">
+  <canvas
+    #canvas
+    [attr.width]="sizes.width()"
+    [attr.height]="sizes.height()"
+    [ngStyle]="{
+      flex: '1 1 0',
+      height: sizes.height() + 'px',
+      width: sizes.width() + 'px'
+    }"
+  ></canvas>
+</div>
