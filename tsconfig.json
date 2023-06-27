@@ -3,9 +3,8 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@daxur-studios/engine": [
-        "dist/daxur-studios/engine"
-      ]
+      // "@angular/*": ["./node_modules/@angular/*"],
+      "@daxur-studios/engine": ["dist/daxur-studios/engine"]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
@@ -24,10 +23,7 @@
     "target": "ES2022",
     "module": "ES2022",
     "useDefineForClassFields": false,
-    "lib": [
-      "ES2022",
-      "dom"
-    ]
+    "lib": ["ES2022", "dom"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

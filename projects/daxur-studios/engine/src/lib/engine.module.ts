@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { EngineComponent } from './engine.component';
+import { EngineComponent } from './components/engine/engine.component';
 
 @NgModule({
   imports: [EngineComponent],

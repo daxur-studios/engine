@@ -7,54 +7,68 @@ import {
   ViewChild,
   signal,
   ChangeDetectorRef,
+  Output,
+  EventEmitter,
+  Input,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { Scene } from 'three';
+import { Scene, WebGLRenderer } from 'three';
+import { EngineConfig } from '../../models';
 
 @Component({
-  selector: 'daxur-scene',
+  selector: 'daxur-canvas',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './scene.component.html',
-  styleUrls: ['./scene.component.css'],
+  templateUrl: './canvas.component.html',
+  styleUrls: ['./canvas.component.css'],
   host: {
     class: 'flex-page',
   },
   // changeDetection: ChangeDetectionStrategy.Default,
 })
-export class SceneComponent implements OnInit, OnDestroy {
+export class CanvasComponent implements OnInit, OnDestroy {
+  @Output() resize = new EventEmitter<{
+    width: number;
+    height: number;
+  }>();
+
+  @Input({ required: true }) config!: EngineConfig;
+
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
   @ViewChild('canvas', { static: true })
   gameCanvas?: ElementRef<HTMLCanvasElement>;
 
-  public readonly scene = new Scene();
-
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
 
-    this.sizes.width.set(width);
-    this.sizes.height.set(height);
+    this.width.set(width);
+    this.height.set(height);
 
     this.onResize();
 
     this.changeDetectorRef.detectChanges();
   });
 
-  public readonly sizes = {
-    width: signal(1),
-    height: signal(1),
-  };
+  width = signal(1);
+  height = signal(1);
 
   constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.resizeObserver.observe(this.wrapper!.nativeElement);
+
+    //   this.ready.emit(this);
   }
 
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
   }
 
-  onResize(): void {}
+  onResize(): void {
+    this.resize.emit({
+      width: this.width(),
+      height: this.height(),
+    });
+  }
 }

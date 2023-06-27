@@ -4,6 +4,7 @@
   "peerDependencies": {
     "@angular/common": "^16.1.0",
     "@angular/core": "^16.1.0",
+    "@angular/material": "^16.1.2",
     "three": "^0.153.0"
   },
   "dependencies": {

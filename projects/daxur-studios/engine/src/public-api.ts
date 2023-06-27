@@ -4,8 +4,11 @@
 
 //#region Main
 export * from './lib/engine.service';
-export * from './lib/engine.component';
+
 export * from './lib/engine.module';
 //#endregion
 
-export * from './lib/scene/scene.component';
+export * from './lib/components/index';
+export * from './lib/models/index';
+
+export * from './lib/✨actors/index';
