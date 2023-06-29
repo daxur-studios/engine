@@ -7,11 +7,6 @@ export interface IEngineConfig {
   canvas: HTMLCanvasElement | undefined;
 }
 
-// Add $ to each key
-type UpdateKey<T> = {
-  [K in keyof T as `$${string & K}`]: T[K];
-};
-
 // Wrap Each key + $ in a BehaviorSubject
 type RequiredBehaviorSubject<T> = {
   [K in keyof T as `${string & K}$`]-?: BehaviorSubject<T[K]>;
