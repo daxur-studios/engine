@@ -1,0 +1,10 @@
+.toolbar-section {
+  display: flex;
+  flex: 1 1;
+}
+.toolbar-center {
+  justify-content: center;
+}
+.toolbar-right {
+  justify-content: flex-end;
+}

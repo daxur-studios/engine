@@ -10,11 +10,15 @@ import {
   Output,
   EventEmitter,
   Input,
+  Renderer2,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Scene, WebGLRenderer } from 'three';
-import { EngineConfig } from '../../models';
+
+import { BehaviorSubject } from 'rxjs';
+
+import { EngineService, InputService } from '../../services';
 
 @Component({
   selector: 'daxur-canvas',
@@ -25,50 +29,46 @@ import { EngineConfig } from '../../models';
   host: {
     class: 'flex-page',
   },
-  // changeDetection: ChangeDetectionStrategy.Default,
 })
 export class CanvasComponent implements OnInit, OnDestroy {
-  @Output() resize = new EventEmitter<{
-    width: number;
-    height: number;
-  }>();
+  @Output() resize = this.engineService.resize;
 
-  @Input({ required: true }) config!: EngineConfig;
+  @Input({ required: true }) canvas?: HTMLCanvasElement;
 
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
-  @ViewChild('canvas', { static: true })
-  gameCanvas?: ElementRef<HTMLCanvasElement>;
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;
-
-    this.width.set(width);
-    this.height.set(height);
-
-    this.onResize();
-
-    this.changeDetectorRef.detectChanges();
+    this.onResize(width, height);
   });
 
-  width = signal(1);
-  height = signal(1);
+  constructor(
+    private renderer: Renderer2,
+    public input: InputService,
+    public readonly engineService: EngineService
+  ) {}
 
-  constructor(private readonly changeDetectorRef: ChangeDetectorRef) {}
+  ngAfterViewInit() {
+    const canvas = this.canvas;
+    // append canvas to the wrapper
+    this.renderer.appendChild(this.wrapper!.nativeElement, canvas);
+  }
 
   ngOnInit(): void {
     this.resizeObserver.observe(this.wrapper!.nativeElement);
-
-    //   this.ready.emit(this);
   }
 
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
   }
 
-  onResize(): void {
+  onResize(width: number, height: number): void {
+    this.engineService.width$.next(width);
+    this.engineService.height$.next(height);
+
     this.resize.emit({
-      width: this.width(),
-      height: this.height(),
+      width: width,
+      height: height,
     });
   }
 }

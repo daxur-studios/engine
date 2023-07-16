@@ -1,7 +1,18 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { EngineComponent } from '../engine/engine.component';
 import { EngineConfig } from '../../models';
 import { LevelEditorToolbarComponent } from '../level-editor-toolbar/level-editor-toolbar.component';
+import { ILevelEditorReady } from '../../models/level-editor.model';
+import { SceneTreeComponent } from '../scene-tree/scene-tree.component';
+
+import { LevelEditorService } from '../../services/level-editor.service';
 
 @Component({
   selector: 'daxur-level-editor',
@@ -11,8 +22,25 @@ import { LevelEditorToolbarComponent } from '../level-editor-toolbar/level-edito
   host: {
     class: 'flex-page',
   },
-  imports: [EngineComponent, LevelEditorToolbarComponent],
+  imports: [EngineComponent, LevelEditorToolbarComponent, SceneTreeComponent],
+  providers: [LevelEditorService],
 })
-export class LevelEditorComponent {
+export class LevelEditorComponent implements OnInit {
   @Input({ required: true }) config!: EngineConfig;
+  @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
+  @ViewChild(LevelEditorToolbarComponent, { static: true })
+  toolbar?: LevelEditorToolbarComponent;
+
+  @Output() ready: EventEmitter<ILevelEditorReady> = new EventEmitter();
+
+  constructor(public readonly levelEditorService: LevelEditorService) {}
+
+  ngOnInit(): void {}
+
+  public onEngineReady(engine: EngineComponent) {
+    this.ready.emit({
+      editor: this,
+      engine: engine,
+    });
+  }
 }

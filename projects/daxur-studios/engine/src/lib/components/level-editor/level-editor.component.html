@@ -1,4 +1,5 @@
-<daxur-level-editor-toolbar />
-
-<daxur-engine [config]="config"></daxur-engine>
-<div>b</div>
+<daxur-level-editor-toolbar [engine]="engine" #toolbar />
+<daxur-engine [config]="config" (ready)="onEngineReady($event)">
+  <daxur-scene-tree [scene]="engine?.scene!"></daxur-scene-tree>
+</daxur-engine>
+<div>FILES</div>

@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "ai": "tsc ./scripts/merge-files-for-ai.ts && node ./scripts/merge-files-for-ai.js"
   },
   "private": true,
   "dependencies": {

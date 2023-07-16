@@ -1,0 +1,19 @@
+<p>generic-dialog works!</p>
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content>
+  <!--Component Portal-->
+  <ng-container *ngIf="componentPortal">
+    <ng-template [cdkPortalOutlet]="componentPortal"></ng-template>
+  </ng-container>
+  <!--Template Portal-->
+  <ng-container *ngIf="templatePortal">
+    <ng-template [cdkPortalOutlet]="templatePortal"></ng-template>
+  </ng-container>
+  <!--Dom Portal-->
+  <ng-container *ngIf="domPortal">
+    <ng-template [cdkPortalOutlet]="domPortal"></ng-template>
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="close()">Close</button>
+</mat-dialog-actions>

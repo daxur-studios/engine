@@ -9,4 +9,5 @@ canvas {
   box-sizing: border-box;
   min-width: 1px;
   min-height: 1px;
+  pointer-events: none;
 }

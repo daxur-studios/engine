@@ -10,3 +10,10 @@ export interface IProject {
    */
   lastPath?: string;
 }
+
+/** A group of projects*/
+export interface IProjectGroup {
+  /**Name of the Project Group */
+  name: string;
+  projects: IProject[];
+}

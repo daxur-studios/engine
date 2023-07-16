@@ -3,7 +3,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      // "@angular/*": ["./node_modules/@angular/*"],
       "@daxur-studios/engine": ["dist/daxur-studios/engine"]
     },
     "baseUrl": "./",
@@ -25,6 +24,7 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"]
   },
+  "exclude": ["dist"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

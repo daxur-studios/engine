@@ -1,12 +1,12 @@
-<div #wrapper class="canvas-size-observer flex-wrapper" tabindex="0">
-  <canvas
-    #canvas
-    [attr.width]="width()"
-    [attr.height]="height()"
-    [ngStyle]="{
-      flex: '1 1 0',
-      height: height() + 'px',
-      width: width() + 'px'
-    }"
-  ></canvas>
-</div>
+<div
+  #wrapper
+  class="canvas-size-observer flex-wrapper"
+  tabindex="0"
+  (keyup)="input.keyup$.next($event)"
+  (keydown)="input.keydown$.next($event)"
+  (mousedown)="input.mousedown$.next($event)"
+  (mouseup)="input.mouseup$.next($event)"
+  (mousemove)="input.mousemove$.next($event)"
+  (mousewheel)="input.mousewheel$.next($event)"
+  (contextmenu)="input.contextmenu$.next($event); $event.preventDefault()"
+></div>
