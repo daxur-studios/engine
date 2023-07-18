@@ -1,20 +1,22 @@
-import { BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera } from 'three';
-import { takeUntil } from 'rxjs/operators';
-import { SaveableData } from '../models';
-import { KeyBinding, MouseBinding, MouseButtonEnum } from '../utilities';
-import { Actor } from './actor';
-import { GameMesh } from '../game';
-import { PlayerController } from './player';
-import { Injector } from '@angular/core';
-import { MouseWheelBinding } from '../utilities/mouse-wheel-binding';
-import { MouseMovementBinding } from '../utilities/mouse-movement-binding';
+import { BoxGeometry, MeshNormalMaterial, PerspectiveCamera } from 'three';
+import { SaveableData } from '../../../models';
+import {
+  KeyBinding,
+  MouseBinding,
+  MouseButtonEnum,
+  MouseWheelBinding,
+  MouseMovementBinding,
+} from '../../utilities';
 
-export class DefaultPawn extends Actor {
-  override childActors = {
-    playerController: <PlayerController | null>null,
-  };
+import { PlayerController } from './features';
 
-  // public playerController: PlayerController;
+import { GameMesh, GameActor } from '..';
+
+export class DefaultPawn extends GameActor {
+  static override emoji = '🎥';
+
+  public playerController?: PlayerController;
+
   public camera: PerspectiveCamera = new PerspectiveCamera(
     75,
     undefined,
@@ -49,22 +51,25 @@ export class DefaultPawn extends Actor {
 
   constructor() {
     super();
-    this.childActors.playerController = new PlayerController({
-      camera: this.camera,
-      autoPossessPlayer: true,
-    });
   }
 
   override load(saveObject: SaveableData) {
-    this.group.clear();
+    this.clear();
 
     const mesh = new GameMesh(
       new BoxGeometry(1, 1, 1),
-      new MeshBasicMaterial({ color: 0x00ff00 })
+      new MeshNormalMaterial()
     );
-    this.group.add(mesh);
-
+    this.add(mesh);
     mesh.position.set(2, 1, 3);
+
+    this.playerController = new PlayerController({
+      key: 'playerController',
+      camera: this.camera,
+      autoPossessPlayer: true,
+      actor: this,
+    });
+    this.add(this.playerController.rod.group);
   }
 
   override onBeginPlay() {
@@ -106,21 +111,25 @@ export class DefaultPawn extends Actor {
       this.movementVelocities.up = 0;
     }
 
-    this.group.translateX(this.movementVelocities.right * delta);
-    this.group.translateY(this.movementVelocities.forward * delta);
-    this.group.translateZ(this.movementVelocities.up * delta);
+    this.translateX(this.movementVelocities.right * delta);
+    this.translateY(this.movementVelocities.forward * delta);
+    this.translateZ(this.movementVelocities.up * delta);
 
     //#region Mouse Look
     if (this.mouseBindings.look.isPressed) {
-      this.group.rotateY(this.mouseBindings.mouseMove.x * delta);
-      //this.group.rotateX(this.mouseBindings.look.axisY * delta);
+      this.rotateY(this.mouseBindings.mouseMove.x * delta * -1);
+      if (this.playerController?.rod?.group) {
+        this.playerController.rod.group.rotateX(
+          this.mouseBindings.mouseMove.y * delta * -1
+        );
+      }
     }
     //#endregion
 
     //#region Mouse Zoom
     if (this.mouseBindings.zoom.deltaY) {
-      this.childActors.playerController?.childActors.rod?.setTargetRodLength(
-        this.childActors.playerController?.childActors.rod?.targetRodLength! +
+      this.playerController?.rod?.setTargetRodLength(
+        this.playerController.rod?.targetRodLength! +
           this.mouseBindings.zoom.deltaY * delta
       );
     }

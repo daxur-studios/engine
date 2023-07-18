@@ -1,13 +1,15 @@
 import { takeUntil } from 'rxjs';
-import { Actor } from '../actors';
-import { GameScene } from '../game';
+import type { EngineComponent } from '../../components';
+import { GameActor } from '../game';
 
 export class MouseWheelBinding {
   public deltaY: number = 0;
 
-  private actor: Actor;
+  private actor: GameActor;
 
-  constructor(actor: Actor) {
+  private _timeoutCheck: any = null;
+
+  constructor(actor: GameActor) {
     this.actor = actor;
 
     actor.onSpawn$
@@ -15,9 +17,7 @@ export class MouseWheelBinding {
       .subscribe((scene) => this.spawn(scene));
   }
 
-  private spawn(scene: GameScene) {
-    const engine = scene.engine;
-
+  private spawn(engine: EngineComponent) {
     engine.input.mousewheel$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onWheel(event));
@@ -29,5 +29,13 @@ export class MouseWheelBinding {
     } else {
       this.deltaY = 0;
     }
+
+    if (this._timeoutCheck) {
+      clearTimeout(this._timeoutCheck);
+    }
+
+    this._timeoutCheck = setTimeout(() => {
+      this.deltaY = 0;
+    }, 50);
   }
 }

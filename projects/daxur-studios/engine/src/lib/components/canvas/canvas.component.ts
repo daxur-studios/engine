@@ -66,6 +66,11 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.engineService.width$.next(width);
     this.engineService.height$.next(height);
 
+    this.engineService.resolution$.next({
+      width: width,
+      height: height,
+    });
+
     this.resize.emit({
       width: width,
       height: height,

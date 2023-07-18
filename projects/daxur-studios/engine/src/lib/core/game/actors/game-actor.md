@@ -1,12 +1,12 @@
 Here is some suggested markup documentation for the actor.ts file:
 
-# Actor Class
+# GameActor Class
 
-The Actor class is the base class for all actors (game objects) in the game engine.
+The GameActor class is the base class for all actors (game objects) in the game engine.
 
 ## Overview
 
-The Actor class handles:
+The GameActor class handles:
 
 - Tracking instance counts of itself and subclasses using a static `InstanceCounts` Map
 - Creating a `GameGroup` to parent all an actor's visual components
@@ -15,10 +15,10 @@ The Actor class handles:
 
 ## Usage
 
-To create a new Actor subclass:
+To create a new GameActor subclass:
 
 ```ts
-class MyActor extends Actor {
+class MyGameActor extends GameActor {
   onBeginPlay() {
     // initialization code
   }
@@ -32,11 +32,11 @@ class MyActor extends Actor {
 Then spawn instances into the game scene:
 
 ```ts
-const actor = new MyActor();
+const actor = new MyGameActor();
 scene.spawn(actor);
 ```
 
-The Actor will automatically hook into the engine events.
+The GameActor will automatically hook into the engine events.
 
 ## Properties
 
@@ -58,4 +58,4 @@ The Actor will automatically hook into the engine events.
 - `deSpawn()` - Remove actor from scene.
 - `destroy()` - Handle cleanup when removing from scene.
 
-This covers the key pieces of the Actor class that should be documented! Let me know if you would like me to expand or clarify any part of the documentation.
+This covers the key pieces of the GameActor class that should be documented! Let me know if you would like me to expand or clarify any part of the documentation.

@@ -1,35 +1,71 @@
 import * as fs from 'fs';
 
-const folderPath = './dist/ai';
+const base = './projects/daxur-studios/engine/src/lib';
+// projects\daxur-studios\engine\src\lib\models
+mergeFiles(`${base}/models`, 'models.ts');
+// projects\daxur-studios\engine\src\lib\services
+mergeFiles(`${base}/services`, 'services.ts');
+// projects\daxur-studios\engine\src\lib\core
+mergeFiles(`${base}/core`, 'core.ts');
+// projects\daxur-studios\engine\src\lib\components
+mergeFiles(`${base}/components`, 'components.ts');
 
-// Create empty folder at `dist\ai`, if already exists, delete it and recreate it
-if (fs.existsSync(folderPath)) {
-  fs.rmdirSync(folderPath, { recursive: true });
+// base
+mergeFiles(base, 'engine.ts');
+
+function mergeFiles(baseFolder: string, mergedFileName: string) {
+  console.log(`🐲 STARING FILE MERGE 🐲`);
+  let stringCount = 0;
+
+  // Create empty folder at `dist/ai`, if already exists, delete it and recreate it
+  const folderPath = './dist/ai';
+  if (fs.existsSync(folderPath)) {
+    fs.rmSync(folderPath, { recursive: true });
+  }
+  fs.mkdirSync(folderPath);
+
+  // Get all files in base folder recursively
+  const files = getFiles(baseFolder);
+
+  // Create a merged file
+  const mergedFilePath = `./dist/ai/${mergedFileName}`;
+  const mergedFile = fs.createWriteStream(mergedFilePath);
+
+  // Write the content of each file
+  files.forEach((file) => {
+    // Skip files that are not .ts
+    if (!file.endsWith('.ts')) {
+      return;
+    }
+
+    const content = fs.readFileSync(file, 'utf8');
+    mergedFile.write(`//#region ${file}\n`);
+    mergedFile.write(content);
+    mergedFile.write('\n');
+    mergedFile.write(`//#endregion ${file}\n\n`);
+  });
+
+  // Close file
+  mergedFile.end();
+
+  // Log stats
+  console.log(`🐲 ${files.length} files merged into ${mergedFilePath}`);
 }
-fs.mkdirSync(folderPath);
 
-// Get all files in `dist\ai` folder
-const files = fs.readdirSync('./dist/ai');
+function getFiles(dir: string) {
+  const results: string[] = [];
+  const files = fs.readdirSync(dir);
 
-// Get all files in `projects\daxur-studios\engine\src\lib\models`
-const models = fs.readdirSync('./projects/daxur-studios/engine/src/lib/models');
+  files.forEach((file) => {
+    const filePath = `${dir}/${file}`;
+    const stat = fs.statSync(filePath);
 
-// Create a new file in `dist\ai` that will contain the merged content from each file in `projects\daxur-studios\engine\src\lib\models`
-const mergedFile = fs.createWriteStream('./dist/ai/merged.ts');
+    if (stat.isDirectory()) {
+      results.push(...getFiles(filePath));
+    } else {
+      results.push(filePath);
+    }
+  });
 
-// Write the import statement for each file in `projects\daxur-studios\engine\src\lib\models`
-models.forEach((model) => {
-  mergedFile.write(
-    `import * as ${model.replace('.ts', '')} from './${model}';\n`
-  );
-});
-
-// Write the export statement for each file in `projects\daxur-studios\engine\src\lib\models`
-models.forEach((model) => {
-  mergedFile.write(
-    `export { ${model.replace('.ts', '')} } from './${model}';\n`
-  );
-});
-
-// Close the file
-mergedFile.end();
+  return results;
+}

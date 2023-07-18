@@ -16,27 +16,25 @@ export enum MouseButtonEnum {
   MouseWheel = -2,
 }
 import { takeUntil } from 'rxjs';
-import { Actor } from '../actors';
-import { GameScene } from '../game';
+import type { EngineComponent } from '../../components';
+import { GameActor } from '../game';
 
 export class MouseBinding {
   public button: MouseButtonEnum;
   public isPressed: boolean = false;
 
-  private actor: Actor;
+  private actor: GameActor;
 
-  constructor(button: MouseButtonEnum, actor: Actor) {
+  constructor(button: MouseButtonEnum, actor: GameActor) {
     this.actor = actor;
     this.button = button;
 
     actor.onSpawn$
       .pipe(takeUntil(actor.onDestroy$))
-      .subscribe((scene) => this.spawn(scene));
+      .subscribe((engine) => this.spawn(engine));
   }
 
-  private spawn(scene: GameScene) {
-    const engine = scene.engine;
-
+  private spawn(engine: EngineComponent) {
     engine.input.mousedown$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onMouseDown(event));

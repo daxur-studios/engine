@@ -10,11 +10,12 @@ import { Input } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { EngineComponent } from '../engine/engine.component';
-import { FPS_LIMIT_OPTIONS } from '../../constants/fps-limit-options';
+
 import { ProjectService, LevelService } from '../../services';
 import { ILevel, IProject } from '../../models';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Portal, PortalModule } from '@angular/cdk/portal';
+import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
 
 @Component({
   selector: 'daxur-level-editor-toolbar',

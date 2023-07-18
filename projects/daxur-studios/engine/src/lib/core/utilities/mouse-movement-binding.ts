@@ -1,18 +1,16 @@
 import { takeUntil } from 'rxjs';
-import { GameScene } from '../game';
-import { inject } from '@angular/core';
-import { InputService } from '../services';
-import { Actor } from '../actors';
+import type { EngineComponent } from '../../components';
+import { GameActor } from '../game';
 
 export class MouseMovementBinding {
   public x: number = 0;
   public y: number = 0;
 
-  private actor: Actor;
+  private actor: GameActor;
 
   private _timeoutCheck: any = null;
 
-  constructor(actor: Actor) {
+  constructor(actor: GameActor) {
     this.actor = actor;
 
     actor.onSpawn$
@@ -20,9 +18,7 @@ export class MouseMovementBinding {
       .subscribe((scene) => this.spawn(scene));
   }
 
-  private spawn(scene: GameScene) {
-    const engine = scene.engine;
-
+  private spawn(engine: EngineComponent) {
     engine.input.mousemove$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onMouseMove(event));

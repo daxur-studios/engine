@@ -1,18 +1,21 @@
 import {
   BackSide,
   HemisphereLight,
-  Mesh,
   ShaderMaterial,
   SphereGeometry,
   UniformsUtils,
   Vector3,
 } from 'three';
 
-import { Actor } from './actor';
-import { GameMesh, GameScene } from '../game';
-import { Injector } from '@angular/core';
+import type { EngineComponent } from '../../../../components';
+import { SaveableData } from '../../../../models';
+import { GameMesh } from '../..';
+import { Field } from '../../../utilities';
+import { GameActor } from '../game-actor';
 
-export class SkyDome extends Actor {
+export class SkyDome extends GameActor {
+  static override emoji = '☀️';
+
   public updateOrder: number = 5;
 
   public sunPosition: Vector3 = new Vector3();
@@ -21,25 +24,57 @@ export class SkyDome extends Actor {
     this._theta = value;
     this.refreshSunPosition();
   }
+  get theta() {
+    return this._theta;
+  }
+
+  public tethaField = new Field(this, 'theta', (value) => {
+    this.theta = value;
+  });
 
   set phi(value: number) {
     this._phi = value;
     this.refreshSunPosition();
     this.refreshHemiIntensity();
   }
+  get phi() {
+    return this._phi;
+  }
+
+  public phiField = new Field(this, 'phi', (value) => {
+    this.phi = value;
+  });
 
   private _phi: number = 50;
   private _theta: number = 145;
 
-  private hemiLight: HemisphereLight;
+  private hemiLight?: HemisphereLight;
   private maxHemiIntensity: number = 0.9;
   private minHemiIntensity: number = 0.3;
 
-  private skyMesh: GameMesh;
-  private skyMaterial: ShaderMaterial;
+  private skyMesh?: GameMesh;
+  private skyMaterial?: ShaderMaterial;
 
   constructor() {
     super();
+
+    // CSM
+    // New version
+    // let splitsCallback = (amount, near, far, target) =>
+    // {
+    // 	for (let i = amount - 1; i >= 0; i--)
+    // 	{
+    // 		target.push(Math.pow(1 / 3, i));
+    // 	}
+    // };
+  }
+
+  override load(saveObject: SaveableData) {
+    super.load(saveObject);
+
+    this.skyMaterial?.dispose();
+    this.skyMesh?.geometry.dispose();
+    this.hemiLight?.dispose();
 
     // Sky material
     this.skyMaterial = new ShaderMaterial({
@@ -54,7 +89,7 @@ export class SkyDome extends Actor {
       new SphereGeometry(1000, 24, 12),
       this.skyMaterial
     );
-    this.group.add(this.skyMesh);
+    this.add(this.skyMesh);
 
     // Ambient light
     this.hemiLight = new HemisphereLight(0xffffff, 0xffffff, 1.0);
@@ -63,23 +98,11 @@ export class SkyDome extends Actor {
     this.hemiLight.groundColor.setHSL(0.095, 0.2, 0.75);
     this.hemiLight.position.set(0, 50, 0);
 
-    this.group.add(this.hemiLight);
-
-    // CSM
-    // New version
-    // let splitsCallback = (amount, near, far, target) =>
-    // {
-    // 	for (let i = amount - 1; i >= 0; i--)
-    // 	{
-    // 		target.push(Math.pow(1 / 3, i));
-    // 	}
-    // };
+    this.add(this.hemiLight);
   }
 
-  override spawn(scene: GameScene): void {
-    super.spawn(scene);
-
-    const engine = scene.engine;
+  override spawn(engine: EngineComponent): void {
+    super.spawn(engine);
 
     this.refreshSunPosition();
   }
@@ -88,7 +111,7 @@ export class SkyDome extends Actor {
     const camera = this.engine?.camera;
     if (!camera) return;
 
-    this.group.position.copy(camera.position);
+    this.position.copy(camera.position);
     this.refreshSunPosition();
   }
 
@@ -105,15 +128,17 @@ export class SkyDome extends Actor {
       Math.cos((this._theta * Math.PI) / 180) *
       Math.cos((this._phi * Math.PI) / 180);
 
-    this.skyMaterial.uniforms['sunPosition'].value.copy(this.sunPosition);
+    this.skyMaterial?.uniforms['sunPosition'].value.copy(this.sunPosition);
     if (this.engine?.camera) {
-      this.skyMaterial.uniforms['cameraPos'].value.copy(
+      this.skyMaterial?.uniforms['cameraPos'].value.copy(
         this.engine.camera.position
       );
     }
   }
 
   public refreshHemiIntensity(): void {
+    if (!this.hemiLight) return;
+
     this.hemiLight.intensity =
       this.minHemiIntensity +
       Math.pow(1 - Math.abs(this._phi - 90) / 90, 0.25) *

@@ -1,44 +1,37 @@
-import { Group, Object3D, Vector3 } from 'three';
+import { Object3D, Vector3 } from 'three';
 import { clamp, degToRad } from 'three/src/math/MathUtils';
 
-import { Actor } from './../actor';
-
 import { takeUntil } from 'rxjs/operators';
-import { Meth, Utilities3D } from '../../utilities';
-import { SaveableData } from '../../models';
+import { Feature, IFeatureOptions } from '.';
+import { Meth, Utilities3D } from '../../../utilities';
+import type { GameActor } from '../../actors/game-actor';
+import { GameGroup } from '../../game-group';
 
 /** A RodComponent is a component that can be attached to an {@link Actor}.
  * It has a parent and a socket, and the socket is attached to the parent.
  *
  * Useful for attaching a camera to a player. */
-export class Rod extends Actor implements IRodComponent {
-  actor: Actor;
-
+export class Rod extends Feature implements IRod {
   showDebugLine: boolean = false;
 
   currentRodLength: number = 5;
   targetRodLength: number = this.currentRodLength;
 
-  rodEndGroup: Group = new Group();
+  rodEndGroup: GameGroup = new GameGroup();
   rodEndAttachmentObject: Object3D = new Object3D();
 
   private line = Utilities3D.line('#9c27b0', [
     new Vector3(0, 0, 0),
+
     new Vector3(0, 0, this.currentRodLength),
   ]);
 
-  constructor(options: IRodComponentOptions) {
-    super();
+  constructor(options: IRodOptions) {
+    super(options);
 
     this.rodEndAttachmentObject = options.rodEndAttachmentObject;
     this.currentRodLength = options.currentRodLength;
     this.actor = options.actor;
-
-    //   this.actor.attachActorComponent(this);
-  }
-
-  override load(saveObject: SaveableData): void {
-    super.load(saveObject);
 
     this.rodEndGroup.name = 'Rod End Group';
     this.group.add(this.rodEndGroup);
@@ -50,9 +43,13 @@ export class Rod extends Actor implements IRodComponent {
 
     this.setTargetRodLength(this.targetRodLength);
     this.setCurrentRodLength(this.currentRodLength);
+
+    this.actor.tick$
+      .pipe(takeUntil(this.actor.onDestroy$))
+      .subscribe((delta) => this.tick(delta));
   }
 
-  override tick(delta: number) {
+  tick(delta: number) {
     this.update(delta);
   }
 
@@ -100,12 +97,12 @@ export class Rod extends Actor implements IRodComponent {
     this.rodEndGroup.add(object);
   }
 }
-interface IRodComponent {
+interface IRod {
   showDebugLine: boolean;
 
   currentRodLength: number;
-  actor: Actor;
-  rodEndGroup: Group;
+  actor: GameActor;
+  rodEndGroup: GameGroup;
 
   /** How far you can scroll in ( PerspectiveCamera only ).
    * @default 0
@@ -121,8 +118,9 @@ interface IRodComponent {
   setCurrentRodLength(length: number): void;
   rotatePitch(amount: number): void;
 }
-interface IRodComponentOptions {
-  actor: Actor;
+
+interface IRodOptions extends IFeatureOptions {
+  actor: GameActor;
   /** Whether to show the debug line of the rod. */
   showDebugLine: boolean;
   /** The length of the rod. */

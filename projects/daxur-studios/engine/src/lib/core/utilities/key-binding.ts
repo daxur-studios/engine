@@ -1,8 +1,6 @@
-import type { Actor } from '../actors';
 import { takeUntil } from 'rxjs';
-import { GameScene } from '../game';
-import { inject } from '@angular/core';
-import { InputService } from '../services';
+import type { EngineComponent } from '../../components';
+import { GameActor } from '../game';
 
 export class KeyBinding {
   public eventCodes: string[];
@@ -12,11 +10,11 @@ export class KeyBinding {
   public allowCtrl: boolean = false;
   public allowAlt: boolean = false;
 
-  private actor: Actor;
+  private actor: GameActor;
 
   constructor(
     code: string | string[],
-    actor: Actor,
+    actor: GameActor,
     options?: IKeyBindingOptions
   ) {
     this.actor = actor;
@@ -34,12 +32,10 @@ export class KeyBinding {
 
     actor.onSpawn$
       .pipe(takeUntil(actor.onDestroy$))
-      .subscribe((scene) => this.spawn(scene));
+      .subscribe((engine) => this.spawn(engine));
   }
 
-  private spawn(scene: GameScene) {
-    const engine = scene.engine;
-
+  private spawn(engine: EngineComponent) {
     engine.input.keyup$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onKeyUp(event));

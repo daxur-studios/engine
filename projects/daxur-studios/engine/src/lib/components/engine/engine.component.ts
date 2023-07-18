@@ -23,10 +23,11 @@ import {
 } from 'three';
 
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 
-import { BehaviorSubject, Subject, takeUntil, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil, ReplaySubject, skip } from 'rxjs';
 import { EngineConfig, IInputEvents } from '../../models';
-import { GameScene } from '../../game/game-scene';
+import { GameScene } from '../../core/game/game-scene';
 import { InputService, EngineService } from '../../services';
 
 @Component({
@@ -68,7 +69,8 @@ export class EngineComponent implements OnInit, OnDestroy {
 
   public renderer: WebGLRenderer;
   /** If set, will render based on this, otherwise uses the base `renderer` */
-  public composer?: EffectComposer;
+  public composer: EffectComposer;
+  public renderPass!: RenderPass;
 
   public timeSpeed: number = 1;
   public frames: FPS;
@@ -89,6 +91,7 @@ export class EngineComponent implements OnInit, OnDestroy {
   public get height() {
     return this.height$.value;
   }
+  public resolution$ = this.engineService.resolution$;
   public resize = this.engineService.resize;
   //#endregion
 
@@ -101,6 +104,7 @@ export class EngineComponent implements OnInit, OnDestroy {
 
     this.canvas = document.createElement('canvas');
     this.renderer = this.createRenderer();
+    this.composer = this.createComposer();
   }
 
   onBeginPlay() {
@@ -120,13 +124,35 @@ export class EngineComponent implements OnInit, OnDestroy {
     const webGLParams$ = this.config?.webGLRendererParameters$;
     if (webGLParams$) {
       webGLParams$.pipe(takeUntil(this.onDestroy$)).subscribe((params) => {
-        this.createRenderer(params);
+        this.renderer = this.createRenderer(params);
+        // this.composer = this.createComposer();
       });
     }
+  }
+  private createComposer(): EffectComposer {
+    if (this.renderPass) {
+      this.renderPass.dispose();
+    }
+    if (this.composer) {
+      this.composer.dispose();
+    }
+
+    const composer = new EffectComposer(this.renderer);
+
+    const renderPass = new RenderPass(this.scene, this.camera);
+    this.renderPass = renderPass;
+
+    composer.addPass(renderPass);
+
+    return composer;
   }
   public createRenderer(
     webGLRendererParameters?: WebGLRendererParameters
   ): WebGLRenderer {
+    if (this.renderer) {
+      this.renderer.dispose();
+    }
+
     const canvas = this.canvas;
 
     this.renderer = new WebGLRenderer({
@@ -145,6 +171,10 @@ export class EngineComponent implements OnInit, OnDestroy {
 
     this.resize.subscribe(({ width, height }) => this.onResize(width, height));
 
+    if (this.composer) {
+      this.composer.renderer = this.renderer;
+    }
+
     return this.renderer;
   }
 
@@ -152,16 +182,15 @@ export class EngineComponent implements OnInit, OnDestroy {
     this.stopLoop();
     this.renderer.dispose();
 
+    this.scene.destroy();
+
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
   public switchCamera(newCamera: Camera) {
-    if (this.camera$) {
-      this.camera$.next(newCamera);
-    } else {
-      console.warn('camera$ is not set EngineComponent');
-    }
+    this.camera$.next(newCamera);
+
     if (newCamera instanceof PerspectiveCamera && this.canvas) {
       newCamera.aspect = this.width / this.height;
       newCamera.updateProjectionMatrix();
@@ -169,11 +198,15 @@ export class EngineComponent implements OnInit, OnDestroy {
 
     this.onCameraChange$.next(newCamera);
 
-    this.renderer!.render(this.scene!, newCamera!);
+    this.renderPass.camera = newCamera;
+
+    // Render the scene with the composer instead of the renderer
+    this.composer.render();
   }
 
   private onResize(width: number, height: number) {
     this.renderer.setSize(width, height, true);
+    this.composer.setSize(width, height);
 
     if (this.camera instanceof PerspectiveCamera) {
       this.camera.aspect = width / height;
@@ -181,6 +214,8 @@ export class EngineComponent implements OnInit, OnDestroy {
     }
 
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
     this.render(this.frames.lastRenderTime);
   }
 
@@ -189,11 +224,13 @@ export class EngineComponent implements OnInit, OnDestroy {
 
     // Only render if enough time has passed since the last frame
     if (time - this.frames.lastRenderTime >= this.frames.fpsLimitInterval) {
-      if (this.composer) {
-        this.composer.render();
-      } else {
-        this.renderer.render(this.scene, this.camera);
-      }
+      this.composer.render();
+
+      // if (this.composer) {
+      //   this.composer.render();
+      // } else {
+      //   this.renderer.render(this.scene, this.camera);
+      // }
 
       this.frames.lastRenderTime = time;
     }

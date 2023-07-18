@@ -72,7 +72,12 @@
     <span
       id="fps-display"
       *ngIf="engine"
-      style="padding-left: 1em; padding-right: 1em; opacity: 0.8"
+      style="
+        padding-left: 1em;
+        padding-right: 1em;
+        opacity: 0.8;
+        white-space: nowrap;
+      "
       >FPS {{ engine.frames.displayCount() }}</span
     >
 

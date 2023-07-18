@@ -1,5 +1,21 @@
-<p>scene-tree works!</p>
+<p>
+  scene-tree
+  <button mat-icon-button (click)="refresh()">
+    <mat-icon>refresh</mat-icon>
+  </button>
+</p>
 
-<div *ngFor="let node of scene?.children">
-  {{ node.name }}
+<div
+  *ngFor="let node of scene?.children"
+  (click)="selectObject3D(node)"
+  [class.selected]="node === selectedObject3D"
+>
+  <div class="label">
+    {{ node.name }} <small style="opacity: 0.5">{{ node.type }}</small>
+  </div>
 </div>
+
+<daxur-field-panel
+  *ngIf="selectedObject3D"
+  [object3D]="selectedObject3D"
+></daxur-field-panel>
