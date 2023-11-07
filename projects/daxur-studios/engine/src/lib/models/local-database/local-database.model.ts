@@ -1,12 +1,12 @@
 import Dexie from 'dexie';
-import { Table } from 'dexie';
+import type { Table } from 'dexie';
 
-import { ILevel } from './level.model';
-import { IProject } from './project.model';
-import { IFolder } from './folder.model';
-import { ISaveGame } from './save-game.model';
-import { IAsset, IAssetPreview } from './asset.model';
-import { IWidget } from './widget.model';
+import type { ILevel } from './level.model';
+import type { IProject } from './project.model';
+import type { IFolder } from './folder.model';
+import type { ISaveGame } from './save-game.model';
+import type { IAsset, IAssetPreview } from './asset.model';
+import type { IWidget } from './widget.model';
 
 const databaseVersion = 1;
 

@@ -7,12 +7,13 @@ import {
   ViewChild,
 } from '@angular/core';
 import { EngineComponent } from '../engine/engine.component';
-import { EngineConfig } from '../../models';
+
 import { LevelEditorToolbarComponent } from '../level-editor-toolbar/level-editor-toolbar.component';
 import { ILevelEditorReady } from '../../models/level-editor.model';
 import { SceneTreeComponent } from '../scene-tree/scene-tree.component';
 
 import { LevelEditorService } from '../../services/level-editor.service';
+import { IEngineOptions } from '../../models/engine.model';
 
 @Component({
   selector: 'daxur-level-editor',
@@ -26,7 +27,7 @@ import { LevelEditorService } from '../../services/level-editor.service';
   providers: [LevelEditorService],
 })
 export class LevelEditorComponent implements OnInit {
-  @Input({ required: true }) config!: EngineConfig;
+  @Input({ required: true }) options?: IEngineOptions;
   @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
   @ViewChild(LevelEditorToolbarComponent, { static: true })
   toolbar?: LevelEditorToolbarComponent;

@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { LoaderService } from './loader.service';
 
 @Injectable()
 /** New Instance Per EngineComponent */
@@ -21,5 +22,5 @@ export class EngineService {
   public resize = new EventEmitter<{ width: number; height: number }>();
   //#endregion
 
-  constructor() {}
+  constructor(private loaderService: LoaderService) {}
 }

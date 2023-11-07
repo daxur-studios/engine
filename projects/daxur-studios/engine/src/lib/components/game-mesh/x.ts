@@ -21,12 +21,41 @@
 //     )
 //   }
 
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'renderer',
+  template: ``,
+  styles: [``],
+  standalone: true,
+  imports: [CommonModule],
+})
+export class RendererComponent implements OnInit {
+  constructor() {}
+
+  ngOnInit(): void {}
+}
+
+@Component({
+  selector: 'scene',
+  template: ``,
+  styles: [``],
+  standalone: true,
+  imports: [CommonModule],
+})
+export class SceneComponent implements OnInit {
+  constructor() {}
+
+  ngOnInit(): void {}
+}
 
 @Component({
   selector: 'mesh',
   template: ``,
   styles: [``],
+  standalone: true,
+  imports: [CommonModule],
 })
 export class MeshComponent implements OnInit {
   constructor() {}

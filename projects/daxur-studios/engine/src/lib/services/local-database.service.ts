@@ -1,6 +1,16 @@
 import { Injectable } from '@angular/core';
 
 import { DaxurEngineLocalDatabase } from '../models/local-database/local-database.model';
+import {
+  IAsset,
+  IAssetPreview,
+  IFolder,
+  ILevel,
+  IProject,
+  ISaveGame,
+  IWidget,
+} from '../models';
+import { Table } from 'dexie';
 
 @Injectable({
   providedIn: 'root',
@@ -9,25 +19,25 @@ export class LocalDatabaseService {
   database = new DaxurEngineLocalDatabase();
 
   //#region Table Getters
-  get projects() {
+  get projects(): Table<IProject, string> {
     return this.database.projects;
   }
-  get levels() {
+  get levels(): Table<ILevel, string> {
     return this.database.levels;
   }
-  get folders() {
+  get folders(): Table<IFolder, string> {
     return this.database.folders;
   }
-  get saveGames() {
+  get saveGames(): Table<ISaveGame, string> {
     return this.database.saveGames;
   }
-  get assets() {
+  get assets(): Table<IAsset, string> {
     return this.database.assets;
   }
-  get assetsPreview() {
+  get assetsPreview(): Table<IAssetPreview, string> {
     return this.database.assetsPreview;
   }
-  get widgets() {
+  get widgets(): Table<IWidget, string> {
     return this.database.widgets;
   }
   //#endregion
@@ -47,6 +57,10 @@ export class LocalDatabaseService {
     }
     const url = URL.createObjectURL(data);
     return url;
+  }
+
+  static revokeObjectURL(url: string) {
+    URL.revokeObjectURL(url);
   }
 
   //#region Storage Persistance

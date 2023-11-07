@@ -26,9 +26,10 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 
 import { BehaviorSubject, Subject, takeUntil, ReplaySubject, skip } from 'rxjs';
-import { EngineConfig, IInputEvents } from '../../models';
+import { IInputEvents } from '../../models';
 import { GameScene } from '../../core/game/game-scene';
 import { InputService, EngineService } from '../../services';
+import { IEngineOptions } from '../../models/engine.model';
 
 @Component({
   selector: 'daxur-engine',
@@ -49,11 +50,23 @@ import { InputService, EngineService } from '../../services';
   imports: [CanvasComponent],
 })
 export class EngineComponent implements OnInit, OnDestroy {
-  @Input() config?: EngineConfig;
+  @Input({ required: true }) options?: IEngineOptions;
+
   @Output() ready: EventEmitter<EngineComponent> = new EventEmitter();
 
-  // @ViewChild(CanvasComponent, { static: true })
-  // canvasComponent?: CanvasComponent;
+  private _mode: 'VR' | 'Desktop' = 'Desktop';
+  @Input() set mode(value: 'VR' | 'Desktop') {
+    this._mode = value;
+    this.onModeChange(value);
+  }
+  get mode() {
+    return this._mode;
+  }
+  private onModeChange(value: 'VR' | 'Desktop') {
+    if (value === 'VR') {
+      this.composer?.dispose();
+    }
+  }
 
   readonly camera$: BehaviorSubject<Camera> = new BehaviorSubject<Camera>(
     new PerspectiveCamera()
@@ -69,7 +82,7 @@ export class EngineComponent implements OnInit, OnDestroy {
 
   public renderer: WebGLRenderer;
   /** If set, will render based on this, otherwise uses the base `renderer` */
-  public composer: EffectComposer;
+  public composer?: EffectComposer;
   public renderPass!: RenderPass;
 
   public timeSpeed: number = 1;
@@ -104,6 +117,7 @@ export class EngineComponent implements OnInit, OnDestroy {
 
     this.canvas = document.createElement('canvas');
     this.renderer = this.createRenderer();
+
     this.composer = this.createComposer();
   }
 
@@ -121,13 +135,13 @@ export class EngineComponent implements OnInit, OnDestroy {
   }
 
   private initRenderer() {
-    const webGLParams$ = this.config?.webGLRendererParameters$;
-    if (webGLParams$) {
-      webGLParams$.pipe(takeUntil(this.onDestroy$)).subscribe((params) => {
-        this.renderer = this.createRenderer(params);
-        // this.composer = this.createComposer();
-      });
+    const webGLParams = this.options?.webGLRendererParameters || {};
+
+    if (this.options?.transparent) {
+      webGLParams.alpha = true;
     }
+
+    this.renderer = this.createRenderer(webGLParams);
   }
   private createComposer(): EffectComposer {
     if (this.renderPass) {
@@ -201,12 +215,12 @@ export class EngineComponent implements OnInit, OnDestroy {
     this.renderPass.camera = newCamera;
 
     // Render the scene with the composer instead of the renderer
-    this.composer.render();
+    this.render(this.frames.lastRenderTime, true);
   }
 
   private onResize(width: number, height: number) {
     this.renderer.setSize(width, height, true);
-    this.composer.setSize(width, height);
+    this.composer?.setSize(width, height);
 
     if (this.camera instanceof PerspectiveCamera) {
       this.camera.aspect = width / height;
@@ -214,23 +228,24 @@ export class EngineComponent implements OnInit, OnDestroy {
     }
 
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.composer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.composer?.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
     this.render(this.frames.lastRenderTime);
   }
 
-  public render(time: number) {
+  public render(time: number, force?: boolean) {
     if (!this.renderer || !this.camera) return;
 
     // Only render if enough time has passed since the last frame
-    if (time - this.frames.lastRenderTime >= this.frames.fpsLimitInterval) {
-      this.composer.render();
-
-      // if (this.composer) {
-      //   this.composer.render();
-      // } else {
-      //   this.renderer.render(this.scene, this.camera);
-      // }
+    if (
+      force ||
+      time - this.frames.lastRenderTime >= this.frames.fpsLimitInterval
+    ) {
+      if (this.composer) {
+        this.composer.render();
+      } else {
+        this.renderer.render(this.scene, this.camera);
+      }
 
       this.frames.lastRenderTime = time;
     }
