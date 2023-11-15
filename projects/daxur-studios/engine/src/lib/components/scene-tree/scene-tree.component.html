@@ -5,8 +5,9 @@
   </button>
 </p>
 
-<div
-  *ngFor="let node of scene?.children"
+@for (node of scene?.children; track node) {
+  <div
+ 
   (click)="selectObject3D(node)"
   [class.selected]="node === selectedObject3D"
 >
@@ -14,8 +15,11 @@
     {{ node.name }} <small style="opacity: 0.5">{{ node.type }}</small>
   </div>
 </div>
+}
 
+@if (selectedObject3D) {
 <daxur-field-panel
-  *ngIf="selectedObject3D"
+ 
   [object3D]="selectedObject3D"
 ></daxur-field-panel>
+}
