@@ -6,6 +6,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "build:ng-add": "cd projects/daxur-studios/engine/schematics/ng-add && npm run build && cd ../..",
     "aiv1": "tsc ./scripts/merge-files-for-ai.ts && node ./scripts/merge-files-for-ai.js",
     "ai": "tsc ./scripts/ai.ts && node ./scripts/ai.js",
     "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch"
@@ -24,7 +25,7 @@
     "@angular/router": "^17.0.2",
     "dexie": "^3.2.4",
     "rxjs": "~7.8.0",
-    "three": "^0.153.0",
+    "three": "^0.158.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.2"
   },
@@ -33,7 +34,7 @@
     "@angular/cli": "~17.0.0",
     "@angular/compiler-cli": "^17.0.2",
     "@types/jasmine": "~4.3.0",
-    "@types/three": "^0.152.1",
+    "@types/three": "^0.158.0",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

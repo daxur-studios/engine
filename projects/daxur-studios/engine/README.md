@@ -29,7 +29,13 @@ Update assets in angular.json
 Install Peer Dependencies
 
 ```
-    "rxjs": "~7.8.0",
-    "three": "^0.153.0",
-    "dexie": "^3.2.4"
+    "rxjs": "?",
+    "three": "?",
+    "dexie": "?"
+```
+
+Install Types (IMPORTANT)
+
+```
+"@types/three"
 ```
