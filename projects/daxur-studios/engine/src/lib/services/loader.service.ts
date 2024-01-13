@@ -10,6 +10,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
 
 @Injectable({
   providedIn: 'root',
@@ -25,6 +26,7 @@ export class LoaderService {
   gltfLoader = new GLTFLoader();
   dracoLoader: DRACOLoader = new DRACOLoader();
   stlLoader = new STLLoader();
+  fbxLoader = new FBXLoader();
 
   constructor() {
     this.dracoLoader.setDecoderPath('/assets/daxur-engine/draco/'); // use Web Assembly version

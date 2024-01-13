@@ -1,0 +1,20 @@
+<div
+  style="
+    display: flex;
+    flex-wrap: wrap;
+    padding: 0rem 0.5rem;
+    background: #4caf50;
+    height: 45px;
+    align-items: center;
+    gap: 0.5rem;
+  "
+>
+  <div>Daxur Studios Libraries - Demo</div>
+  @for (link of [['engine-demo','Engine'],['graph-demo','Graph']]; track link) {
+  <div>
+    <a [routerLink]="link[0]">{{ link[1] }}</a>
+  </div>
+  }
+</div>
+
+<router-outlet></router-outlet>

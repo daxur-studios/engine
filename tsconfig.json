@@ -3,7 +3,12 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@daxur-studios/engine": ["dist/daxur-studios/engine"]
+      "@daxur-studios/engine": [
+        "dist/daxur-studios/engine"
+      ],
+      "@daxur-studios/graph": [
+        "./dist/daxur-studios/graph"
+      ]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
