@@ -1,0 +1,24 @@
+<div class="graph-toolbar">
+  <div class="scale-box">
+    Scale: {{ scale() | percent }}
+    <button (click)="scale.set(1)">🔙</button>
+  </div>
+  <div class="position-box">
+    Position: {{ originX() }} {{ originY() }}
+    <button (click)="originX.set(0); originY.set(0)">🔙</button>
+  </div>
+</div>
+<div class="graph-wrapper">
+  @for (node of options?.()?.nodes; track $index) {
+  <div
+    cdkDrag
+    class="node"
+    [style.left]="node.position.x + 'px'"
+    [style.top]="node.position.y + 'px'"
+    tabindex="0"
+  >
+    <div class="node-title">{{ node.id }}</div>
+    <div class="node-content">{{ node.data | json }}</div>
+  </div>
+  }
+</div>

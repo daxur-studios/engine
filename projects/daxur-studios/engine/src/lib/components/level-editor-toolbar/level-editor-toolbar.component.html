@@ -63,15 +63,18 @@
       [formControl]="toolbarForm.controls.fpsLimit"
       id="frame-limit-selector"
     >
-      <option *ngFor="let option of FPS_LIMIT_OPTIONS" [value]="option">
+      @for (option of FPS_LIMIT_OPTIONS; track option) {
+  <option [value]="option">
         {{ option ? option : "No " }} FPS Limit
       </option>
+}
     </select>
 
     <!--FPS-->
-    <span
+    @if (engine) {
+<span
       id="fps-display"
-      *ngIf="engine"
+     
       style="
         padding-left: 1em;
         padding-right: 1em;
@@ -80,18 +83,21 @@
       "
       >FPS {{ engine.frames.displayCount() }}</span
     >
+}
 
     <!--Time Dilation-->
     <select
       [formControl]="toolbarForm.controls.timeSpeed"
       id="time-dilation-selector"
     >
-      <option
-        *ngFor="let speed of [0, 0.25, 0.5, 1, 2, 4, 8, 16]"
+      @for (speed of [0, 0.25, 0.5, 1, 2, 4, 8, 16]; track speed) {
+  <option
+       
         [value]="speed"
       >
         {{ speed }}X Time Speed
       </option>
+}
     </select>
 
     <!--Left Portal-->

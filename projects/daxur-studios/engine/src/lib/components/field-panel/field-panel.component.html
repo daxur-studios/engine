@@ -3,49 +3,61 @@
 <h3>{{ object3D?.name }}</h3>
 
 <div class="fields">
-  <div class="field" *ngFor="let field of fields">
+  @for (field of fields; track field) {
+  <div class="field">
     {{ field.key }} <small style="opacity: 0.5">{{ field.type }}</small>
 
     <!--Number-->
-    <ng-container *ngIf="field.type === 'number'">
+    @if (field.type === 'number') {
+
       <input
         type="number"
         [value]="field.value"
         (blur)="setField(numberField.value, field)"
         #numberField
       />
-    </ng-container>
+    
+}
     <!--String-->
-    <ng-container *ngIf="field.type === 'string'">
+    @if (field.type === 'string') {
+
       <input
         type="text"
         [value]="field.value"
         (blur)="setField(stringField.value, field)"
         #stringField
       />
-    </ng-container>
+    
+}
     <!--Boolean-->
-    <ng-container *ngIf="field.type === 'boolean'">
+    @if (field.type === 'boolean') {
+
       <input
         type="checkbox"
         [checked]="field.value"
         (change)="setField(booleanField.checked, field)"
         #booleanField
       />
-    </ng-container>
+    
+}
     <!--Vector3-->
-    <ng-container *ngIf="field.type === 'Vector3'">
+    @if (field.type === 'Vector3') {
+
       <ng-container
         *ngTemplateOutlet="vector3Field; context: { $implicit: field }"
       ></ng-container>
-    </ng-container>
+    
+}
     <!--Euler-->
-    <ng-container *ngIf="field.type === 'Euler'">
+    @if (field.type === 'Euler') {
+
       <ng-container
         *ngTemplateOutlet="eulerField; context: { $implicit: field }"
       ></ng-container>
-    </ng-container>
+    
+}
   </div>
+}
 </div>
 
 <ng-template #vector3Field let-field>

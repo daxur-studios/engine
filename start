@@ -1,1 +1,3 @@
+npm run start
+
 ng build @daxur-studios/engine --configuration development --watch
