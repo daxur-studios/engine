@@ -1,20 +1,53 @@
 :host {
   //#region HostBinding variables
   --backgroundSize: 0px;
-  --transform: translate(0px, 0px) scale(1);
+  --originX: 0px;
+  --originY: 0px;
+  --zoom: 1;
   //#endregion
 
-  background-image: linear-gradient(to right, #81818166 1px, transparent 1px),
-    linear-gradient(to bottom, #81818166 1px, transparent 1px);
-  background-size: var(--backgroundSize) var(--backgroundSize);
+  --gridColor: #81818166;
+
   overflow: hidden;
+  position: relative;
 }
 
 .graph-wrapper {
-  transform: var(--transform);
+  overflow: hidden;
+
+  zoom: var(--zoom);
+
+  /* Small grid with 1px lines */
+  background-image: linear-gradient(
+      to right,
+      var(--gridColor) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--gridColor) 1px, transparent 1px),
+    /* Large grid with 3px lines */
+      linear-gradient(to right, var(--gridColor) 3px, transparent 3px),
+    linear-gradient(to bottom, var(--gridColor) 3px, transparent 3px);
+
+  /* Size of small and large grid */
+  background-size: var(--backgroundSize) var(--backgroundSize),
+    var(--backgroundSize) var(--backgroundSize),
+    calc(var(--backgroundSize) * 3) calc(var(--backgroundSize) * 3),
+    calc(var(--backgroundSize) * 3) calc(var(--backgroundSize) * 3);
+
+  background-position-x: var(--originX);
+  background-position-y: var(--originY);
+  transform: translate3d(0px, 0px, 0px);
+
+  border: dashed 2px indianred;
+
   .node {
     position: absolute;
     background: red;
     padding: 1rem;
   }
+}
+
+.graph-toolbar {
+  display: flex;
+  gap: 0.5rem;
 }

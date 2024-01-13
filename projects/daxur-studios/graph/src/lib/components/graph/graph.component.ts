@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
 })
 export class GraphComponent {
   //#region Signals
-  readonly scale = signal(1);
+  readonly zoom = signal(1);
 
   readonly originX = signal(0);
   readonly originY = signal(0);
@@ -29,41 +29,62 @@ export class GraphComponent {
   readonly startDragY = signal(0);
   //#endregion
 
+  @HostBinding('class') cssClass = 'flex-page';
   //#region CSS variables
-  @HostBinding('class') class = 'flex-page';
-  @HostBinding('style.--backgroundSize') backgroundSize = '100px';
-  @HostBinding('style.--transform') transform = ``;
+  @HostBinding('style.--backgroundSize') cssBackgroundSize = '100px';
+  @HostBinding('style.--zoom') cssZoom = '1';
+  @HostBinding('style.--originX') cssOriginX = '0px';
+  @HostBinding('style.--originY') cssOriginY = '0px';
   //#endregion
 
-  //#region Mousewheel zoom
-  @HostListener('wheel', ['$event']) onMouseWheel(event: WheelEvent) {
-    event.preventDefault();
-    const delta = event.deltaY / 1000;
-    const newScale = this.scale() + -delta;
-    this.scale.set(Math.min(Math.max(newScale, 0.1), 2));
-  }
-  //#endregion
+  //#region Input events
+  public keyup(event: KeyboardEvent) {}
+  public keydown(event: KeyboardEvent) {}
+  public mousedown(event: MouseEvent) {
+    // Check if we are clicking on a node
+    if (event.target instanceof Element) {
+      const element = event.target as Element;
+      if (element.classList.contains('node') || element.closest('.node')) {
+        this.isDragging.set(false);
+        return;
+      }
+    }
 
-  //#region Dragging the graph
-  @HostListener('mousedown', ['$event']) onMouseDown(event: MouseEvent) {
     this.isDragging.set(true);
     this.startDragX.set(event.clientX);
     this.startDragY.set(event.clientY);
   }
-
-  @HostListener('mousemove', ['$event']) onMouseMove(event: MouseEvent) {
+  public mouseup(event: MouseEvent) {
+    this.isDragging.set(false);
+  }
+  public mousemove(event: MouseEvent) {
     if (this.isDragging()) {
-      const dx = event.clientX - this.startDragX();
-      const dy = event.clientY - this.startDragY();
+      const currentZoom = this.zoom();
+
+      // Adjust the deltas based on the current zoom level
+      const dx = (event.clientX - this.startDragX()) / currentZoom;
+      const dy = (event.clientY - this.startDragY()) / currentZoom;
+
       this.originX.set(this.originX() + dx);
       this.originY.set(this.originY() + dy);
       this.startDragX.set(event.clientX);
       this.startDragY.set(event.clientY);
     }
   }
+  public mousewheel(e: Event) {
+    const limits = { min: 0.1, max: 2 };
 
-  @HostListener('mouseup') onMouseUp() {
-    this.isDragging.set(false);
+    const event = e as WheelEvent;
+    event.preventDefault();
+    const delta = event.deltaY / 1000;
+    const offset = this.zoom() + -delta;
+    const newScale = Math.min(Math.max(offset, limits.min), limits.max);
+
+    this.zoom.set(newScale);
+  }
+  public contextmenu(event: MouseEvent) {
+    return;
+    event.preventDefault();
   }
   //#endregion
 
@@ -71,8 +92,9 @@ export class GraphComponent {
 
   constructor() {
     effect(() => {
-      this.transform = `translate(${this.originX()}px, ${this.originY()}px) scale(${this.scale()})`;
-      this.backgroundSize = `${100 * this.scale()}px`;
+      this.cssZoom = `${this.zoom()}`;
+      this.cssOriginX = `${this.originX()}px`;
+      this.cssOriginY = `${this.originY()}px`;
     });
   }
 }
