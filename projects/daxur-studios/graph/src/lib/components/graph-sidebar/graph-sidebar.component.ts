@@ -1,4 +1,10 @@
-import { Component, Input, WritableSignal } from '@angular/core';
+import {
+  Component,
+  HostBinding,
+  Input,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { IGraphOptions } from '../../models';
 
 @Component({
@@ -13,5 +19,13 @@ export class GraphSidebarComponent {
   @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
   //#endregion
 
+  @HostBinding('style.--width') cssWidth = '15rem';
+  readonly isSidebarOpen = signal(true);
+
   constructor() {}
+
+  public toggleSidebar() {
+    this.isSidebarOpen.set(!this.isSidebarOpen());
+    this.cssWidth = this.isSidebarOpen() ? '15rem' : '0rem';
+  }
 }

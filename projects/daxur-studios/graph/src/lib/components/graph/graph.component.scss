@@ -3,7 +3,9 @@
   --backgroundSize: 0px;
   --originX: 0px;
   --originY: 0px;
-  --zoom: 1;
+  --scale: 1;
+  --width: 100%;
+  --height: 100%;
   //#endregion
 
   --gridColor: #81818166;
@@ -15,8 +17,14 @@
 
 .graph-wrapper {
   overflow: hidden;
+  box-sizing: border-box;
 
-  zoom: var(--zoom);
+  transform-origin: 0 0;
+
+  transform: translate3d(0px, 0px, 0px) scale(var(--scale));
+  width: var(--width);
+  height: var(--height);
+  flex: 0 0 var(--width);
 
   /* Small grid with 1px lines */
   background-image: linear-gradient(
@@ -37,7 +45,6 @@
 
   background-position-x: var(--originX);
   background-position-y: var(--originY);
-  transform: translate3d(0px, 0px, 0px);
 
   border: dashed 2px indianred;
 }
@@ -45,4 +52,16 @@
 .graph-toolbar {
   display: flex;
   gap: 0.5rem;
+}
+
+.sidebar-inner-graph-box {
+  display: flex;
+  flex: 1 1;
+}
+
+.resize-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  overflow: hidden;
 }

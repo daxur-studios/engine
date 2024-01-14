@@ -2,8 +2,12 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  ElementRef,
   HostBinding,
   Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
   WritableSignal,
   effect,
   signal,
@@ -26,7 +30,7 @@ import { GraphSidebarComponent } from '../graph-sidebar/graph-sidebar.component'
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.scss'],
 })
-export class GraphComponent {
+export class GraphComponent implements OnInit, OnDestroy {
   //#region Inputs
   @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
   //#endregion
@@ -40,8 +44,8 @@ export class GraphComponent {
   public get originY() {
     return this.graphService?.originY;
   }
-  public get zoom() {
-    return this.graphService?.zoom;
+  public get scale() {
+    return this.graphService?.scale;
   }
   //#endregion
 
@@ -53,9 +57,12 @@ export class GraphComponent {
   @HostBinding('class') cssClass = 'flex-page';
   //#region CSS variables
   @HostBinding('style.--backgroundSize') cssBackgroundSize = '100px';
-  @HostBinding('style.--zoom') cssZoom = '1';
+  @HostBinding('style.--scale') cssZoom = '1';
   @HostBinding('style.--originX') cssOriginX = '0px';
   @HostBinding('style.--originY') cssOriginY = '0px';
+
+  @HostBinding('style.--width') cssWidth = '100%';
+  @HostBinding('style.--height') cssHeight = '100%';
   //#endregion
 
   //#region Input events
@@ -80,9 +87,9 @@ export class GraphComponent {
   }
   public mousemove(event: MouseEvent) {
     if (this.isDragging()) {
-      const currentZoom = this.zoom();
+      const currentZoom = this.scale();
 
-      // Adjust the deltas based on the current zoom level
+      // Adjust the deltas based on the current scale level
       const dx = (event.clientX - this.startDragX()) / currentZoom;
       const dy = (event.clientY - this.startDragY()) / currentZoom;
 
@@ -98,10 +105,10 @@ export class GraphComponent {
     const event = e as WheelEvent;
     event.preventDefault();
     const delta = event.deltaY / 1000;
-    const offset = this.zoom() + -delta;
+    const offset = this.scale() + -delta;
     const newScale = Math.min(Math.max(offset, limits.min), limits.max);
 
-    this.zoom.set(newScale);
+    this.scale.set(newScale);
   }
   public contextmenu(event: MouseEvent) {
     return;
@@ -111,7 +118,11 @@ export class GraphComponent {
 
   constructor(public graphService: GraphService) {
     effect(() => {
-      this.cssZoom = `${this.zoom()}`;
+      const scale = this.scale();
+      this.cssZoom = `${scale}`;
+
+      this.cssWidth = `${100 / scale}%`;
+      this.cssHeight = `${100 / scale}%`;
     });
     effect(() => {
       this.cssOriginX = `${this.originX()}px`;
@@ -120,4 +131,7 @@ export class GraphComponent {
       this.cssOriginY = `${this.originY()}px`;
     });
   }
+
+  ngOnDestroy(): void {}
+  ngOnInit(): void {}
 }

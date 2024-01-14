@@ -1,0 +1,6 @@
+:host {
+  --width: 0rem;
+
+  width: var(--width);
+  flex: 0 0 var(--width);
+}

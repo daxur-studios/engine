@@ -30,8 +30,8 @@ export class GraphNodeComponent {
   public get originY() {
     return this.graphService?.originY;
   }
-  public get zoom() {
-    return this.graphService?.zoom;
+  public get scale() {
+    return this.graphService?.scale;
   }
   //#endregion
 
@@ -43,38 +43,28 @@ export class GraphNodeComponent {
     dimensions: DOMRect,
     pickupPositionInElement: Point
   ) => {
-    const zoom = this.zoom();
-    const originX = this.originX();
-    const originY = this.originY();
+    const scale = this.scale(); // Ensure this correctly retrieves the current scale factor
 
     const newPoint = { ...userPointerPosition };
 
-    const pickupZoomedX = pickupPositionInElement.x / zoom;
-    const pickupZoomedY = pickupPositionInElement.y / zoom;
-    //#region
-    newPoint.x -= pickupZoomedX;
-    newPoint.y -= pickupZoomedY;
-    //#endregion
+    // Adjusting for the pickup position
+    newPoint.x -= pickupPositionInElement.x;
+    newPoint.y -= pickupPositionInElement.y;
 
-    // Adjust based on zoom
-
-    if (zoom > 1) {
-      // move less
-      newPoint.x /= zoom;
-      newPoint.y /= zoom;
-    } else {
-      // move more
-      newPoint.x /= zoom;
-      newPoint.y /= zoom;
-    }
+    // Adjusting for scale
+    // The idea is to scale the difference between the original and the new position
+    // This ensures that the element moves in sync with the cursor
+    newPoint.x = (newPoint.x - dimensions.left) / scale + dimensions.left;
+    newPoint.y = (newPoint.y - dimensions.top) / scale + dimensions.top;
 
     return newPoint;
   };
+
   nodeDragMoved(event: CdkDragMove, node: INode) {
     node.pendingPosition = event.source.getFreeDragPosition();
   }
   nodeDragEnded(event: CdkDragEnd, node: INode) {
-    const zoom = this.zoom();
+    const scale = this.scale();
     const originX = this.originX();
     const originY = this.originY();
 
@@ -87,9 +77,9 @@ export class GraphNodeComponent {
     // newPoint.y -= event.source.getFreeDragPosition().y;
     // //#endregion
 
-    // // Adjust based on zoom
-    // newPoint.x /= zoom;
-    // newPoint.y /= zoom;
+    // // Adjust based on scale
+    // newPoint.x /= scale;
+    // newPoint.y /= scale;
 
     node.position.x = event.source.getFreeDragPosition().x;
     node.position.y = event.source.getFreeDragPosition().y;

@@ -1,7 +1,7 @@
 <div class="graph-toolbar">
   <div class="scale-box">
-    Zoom: {{ zoom() | percent }}
-    <button (click)="zoom.set(1)">🔙</button>
+    Scale: {{ scale() | percent }}
+    <button (click)="scale.set(1)">🔙</button>
   </div>
   <div class="position-box">
     Position: {{ originX() }} {{ originY() }}
@@ -9,20 +9,23 @@
   </div>
 </div>
 
-<lib-graph-sidebar [options]="options" />
-
-<div
-  class="graph-wrapper flex-page mat-app-background"
-  tabindex="0"
-  (keyup)="keyup($event)"
-  (keydown)="keydown($event)"
-  (mousedown)="mousedown($event)"
-  (mouseup)="mouseup($event)"
-  (mousemove)="mousemove($event)"
-  (mousewheel)="mousewheel($event)"
-  (contextmenu)="contextmenu($event)"
->
-  @for (node of options().nodes; track $index) {
-  <lib-graph-node [node]="node"></lib-graph-node>
-  }
+<div class="sidebar-inner-graph-box">
+  <lib-graph-sidebar [options]="options" />
+  <div class="resize-wrapper">
+    <div
+      class="graph-wrapper flex-page mat-app-background"
+      tabindex="0"
+      (keyup)="keyup($event)"
+      (keydown)="keydown($event)"
+      (mousedown)="mousedown($event)"
+      (mouseup)="mouseup($event)"
+      (mousemove)="mousemove($event)"
+      (mousewheel)="mousewheel($event)"
+      (contextmenu)="contextmenu($event)"
+    >
+      @for (node of options().nodes; track $index) {
+      <lib-graph-node [node]="node"></lib-graph-node>
+      }
+    </div>
+  </div>
 </div>
