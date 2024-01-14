@@ -9,11 +9,12 @@
   </div>
 </div>
 
-<div class="sidebar-inner-graph-box">
+<div class="sidebar-and-drag-box">
   <lib-graph-sidebar [options]="options" />
-  <div class="resize-wrapper">
+  <div class="resize-wrapper" #resizeWrapper>
     <div
-      class="graph-wrapper flex-page mat-app-background"
+      #graphDragBox
+      class="graph-drag-box flex-page mat-app-background"
       tabindex="0"
       (keyup)="keyup($event)"
       (keydown)="keydown($event)"

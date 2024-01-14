@@ -5,6 +5,8 @@ import { RouterModule, RouterOutlet } from '@angular/router';
 import { AxesHelper } from 'three';
 import { MatListModule } from '@angular/material/list';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ThemeController } from './theme/theme.controller';
 
 @Component({
   selector: 'app-root',
@@ -14,6 +16,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     RouterModule,
     RouterOutlet,
     MatListModule,
+    MatToolbarModule,
     MatSlideToggleModule,
   ],
   templateUrl: './app.component.html',
@@ -21,4 +24,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 })
 export class AppComponent {
   title = 'demo';
+
+  readonly themeController = new ThemeController();
 }

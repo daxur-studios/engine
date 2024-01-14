@@ -1,9 +1,10 @@
-<div
+<mat-toolbar
+  color="primary"
   style="
     display: flex;
     flex-wrap: wrap;
     padding: 0rem 0.5rem;
-    background: #4caf50;
+
     height: 45px;
     align-items: center;
     gap: 0.5rem;
@@ -16,7 +17,11 @@
   </div>
   }
 
-  <mat-slide-toggle style="float: right">Dark Mode</mat-slide-toggle>
-</div>
+  <mat-slide-toggle
+    style="float: right"
+    (toggleChange)="themeController.toggle()"
+    >Dark Mode</mat-slide-toggle
+  >
+</mat-toolbar>
 
 <router-outlet></router-outlet>

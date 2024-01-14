@@ -54,7 +54,15 @@ export class GraphComponent implements OnInit, OnDestroy {
   readonly startDragY = signal(0);
   //#endregion
 
-  @HostBinding('class') cssClass = 'flex-page';
+  //#region ViewChild
+  @ViewChild('resizeWrapper', { static: true })
+  resizeWrapper!: ElementRef<HTMLDivElement>;
+  @ViewChild('graphDragBox', { static: true })
+  graphDragBox!: ElementRef<HTMLDivElement>;
+  //#endregion
+
+  @HostBinding('class')
+  cssClass = 'flex-page';
   //#region CSS variables
   @HostBinding('style.--backgroundSize') cssBackgroundSize = '100px';
   @HostBinding('style.--scale') cssZoom = '1';
@@ -63,6 +71,19 @@ export class GraphComponent implements OnInit, OnDestroy {
 
   @HostBinding('style.--width') cssWidth = '100%';
   @HostBinding('style.--height') cssHeight = '100%';
+  //#endregion
+
+  //#region Resize
+  @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
+
+  private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
+    const { width, height } = entries[0].contentRect;
+    this.onResize(width, height);
+  });
+  private onResize(width: number, height: number): void {
+    this.graphService.width.set(width);
+    this.graphService.height.set(height);
+  }
   //#endregion
 
   //#region Input events
@@ -132,6 +153,23 @@ export class GraphComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {}
-  ngOnInit(): void {}
+  ngOnDestroy(): void {
+    this.resizeObserver.disconnect();
+  }
+  ngOnInit(): void {
+    this.resizeObserver.observe(this.resizeWrapper.nativeElement);
+
+    //#region Move the graph to the center of the
+    setTimeout(() => {}, 10);
+
+    //#endregion
+  }
+  ngAfterViewInit() {
+    const graphRect = this.graphDragBox.nativeElement.getBoundingClientRect();
+    const viewportCenterX = graphRect.width / 2;
+    const viewportCenterY = graphRect.height / 2;
+
+    this.originX.set(viewportCenterX);
+    this.originY.set(viewportCenterY);
+  }
 }

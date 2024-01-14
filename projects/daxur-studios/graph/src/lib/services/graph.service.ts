@@ -7,6 +7,9 @@ export class GraphService {
 
   readonly originX = signal(0);
   readonly originY = signal(0);
+
+  readonly width = signal(0);
+  readonly height = signal(0);
   //#endregion
 
   constructor() {}

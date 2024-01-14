@@ -15,7 +15,7 @@
   flex-wrap: wrap;
 }
 
-.graph-wrapper {
+.graph-drag-box {
   overflow: hidden;
   box-sizing: border-box;
 
@@ -49,12 +49,25 @@
   border: dashed 2px indianred;
 }
 
+.graph-drag-box::after {
+  // Visualize the center of the graph
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  //adjust by scale
+  width: calc(5px / var(--scale));
+  height: calc(5px / var(--scale));
+  background-color: rgba(0, 255, 26, 0.457);
+  border-radius: 50%;
+}
+
 .graph-toolbar {
   display: flex;
   gap: 0.5rem;
 }
 
-.sidebar-inner-graph-box {
+.sidebar-and-drag-box {
   display: flex;
   flex: 1 1;
 }
