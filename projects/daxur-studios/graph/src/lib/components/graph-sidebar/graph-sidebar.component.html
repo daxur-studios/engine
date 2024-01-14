@@ -2,10 +2,11 @@
 
 <button (click)="toggleSidebar()">Toggle Sidebar</button>
 
-<button>Add</button>
+<button (click)="addNode()">Add</button>
 
 @for (node of options().nodes; track $index) {
 <div class="sidebar-item">
-  {{ node.id }}
+  {{ node.id }} {{ node.position | json }}
+  <button (click)="goToNode(node)">Go To</button>
 </div>
 }

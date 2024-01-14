@@ -114,8 +114,11 @@ export class GraphComponent implements OnInit, OnDestroy {
       const dx = (event.clientX - this.startDragX()) / currentZoom;
       const dy = (event.clientY - this.startDragY()) / currentZoom;
 
-      this.originX.set(this.originX() + dx);
-      this.originY.set(this.originY() + dy);
+      this.graphService.setPosition({
+        x: this.originX() + dx,
+        y: this.originY() + dy,
+      });
+
       this.startDragX.set(event.clientX);
       this.startDragY.set(event.clientY);
     }
@@ -169,7 +172,9 @@ export class GraphComponent implements OnInit, OnDestroy {
     const viewportCenterX = graphRect.width / 2;
     const viewportCenterY = graphRect.height / 2;
 
-    this.originX.set(viewportCenterX);
-    this.originY.set(viewportCenterY);
+    this.graphService.setPosition({
+      x: viewportCenterX,
+      y: viewportCenterY,
+    });
   }
 }

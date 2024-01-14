@@ -40,8 +40,8 @@
   /* Size of small and large grid */
   background-size: var(--backgroundSize) var(--backgroundSize),
     var(--backgroundSize) var(--backgroundSize),
-    calc(var(--backgroundSize) * 3) calc(var(--backgroundSize) * 3),
-    calc(var(--backgroundSize) * 3) calc(var(--backgroundSize) * 3);
+    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
+    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
 
   background-position-x: var(--originX);
   background-position-y: var(--originY);
