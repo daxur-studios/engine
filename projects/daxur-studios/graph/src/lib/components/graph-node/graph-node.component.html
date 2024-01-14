@@ -1,0 +1,24 @@
+<div
+  cdkDrag
+  [cdkDragData]="node"
+  [cdkDragFreeDragPosition]="{ x: node.position.x, y: node.position.y }"
+  [cdkDragConstrainPosition]="dragConstrainPoint"
+  [style.left]="originX() + 'px'"
+  [style.top]="originY() + 'px'"
+  class="node"
+  tabindex="0"
+  (cdkDragMoved)="nodeDragMoved($event, node)"
+  (cdkDragEnded)="nodeDragEnded($event, node)"
+  (keydown)="nodeKeydown($event, node)"
+  matTooltip="TOOLTIP TEST"
+>
+  <div class="node-title">{{ node.id }}</div>
+  <div class="node-content">
+    <pre>
+      x: {{
+        node.pendingPosition?.x || node.position.x | number : "1.0-0"
+      }}, y: {{ node.pendingPosition?.y || node.position.y | number : "1.0-0" }}
+  </pre
+    >
+  </div>
+</div>

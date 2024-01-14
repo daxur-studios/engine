@@ -1,0 +1,9 @@
+<p>graph-sidebar works!</p>
+
+<button>Add</button>
+
+@for (node of options().nodes; track $index) {
+<div class="sidebar-item">
+  {{ node.id }}
+</div>
+}

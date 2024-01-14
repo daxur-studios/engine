@@ -1,29 +1,50 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
 import {
   Component,
   HostBinding,
-  HostListener,
   Input,
   WritableSignal,
   effect,
   signal,
 } from '@angular/core';
-import { DragDropModule } from '@angular/cdk/drag-drop';
 import { IGraphOptions } from '../../models';
-import { CommonModule } from '@angular/common';
+import { GraphService } from '../../services';
+import { GraphNodeComponent } from '../graph-node/graph-node.component';
+import { GraphSidebarComponent } from '../graph-sidebar/graph-sidebar.component';
 
 @Component({
   selector: 'lib-graph',
   standalone: true,
-  imports: [DragDropModule, CommonModule],
+  imports: [
+    DragDropModule,
+    CommonModule,
+    GraphSidebarComponent,
+    GraphNodeComponent,
+  ],
+  providers: [GraphService],
   templateUrl: './graph.component.html',
   styleUrls: ['./graph.component.scss'],
 })
 export class GraphComponent {
-  //#region Signals
-  readonly zoom = signal(1);
+  //#region Inputs
+  @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
+  //#endregion
 
-  readonly originX = signal(0);
-  readonly originY = signal(0);
+  //#region Signals
+
+  //#region GraphService properties
+  public get originX() {
+    return this.graphService?.originX;
+  }
+  public get originY() {
+    return this.graphService?.originY;
+  }
+  public get zoom() {
+    return this.graphService?.zoom;
+  }
+  //#endregion
+
   readonly isDragging = signal(false);
   readonly startDragX = signal(0);
   readonly startDragY = signal(0);
@@ -88,12 +109,14 @@ export class GraphComponent {
   }
   //#endregion
 
-  @Input({ required: true }) options?: WritableSignal<IGraphOptions>;
-
-  constructor() {
+  constructor(public graphService: GraphService) {
     effect(() => {
       this.cssZoom = `${this.zoom()}`;
+    });
+    effect(() => {
       this.cssOriginX = `${this.originX()}px`;
+    });
+    effect(() => {
       this.cssOriginY = `${this.originY()}px`;
     });
   }

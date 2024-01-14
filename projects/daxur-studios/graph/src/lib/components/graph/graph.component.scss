@@ -10,6 +10,7 @@
 
   overflow: hidden;
   position: relative;
+  flex-wrap: wrap;
 }
 
 .graph-wrapper {
@@ -39,12 +40,6 @@
   transform: translate3d(0px, 0px, 0px);
 
   border: dashed 2px indianred;
-
-  .node {
-    position: absolute;
-    background: red;
-    padding: 1rem;
-  }
 }
 
 .graph-toolbar {

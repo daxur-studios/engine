@@ -5,7 +5,8 @@
   "schematics": {
     "@schematics/angular:component": {
       "skipTests": true,
-      "standalone": true
+      "standalone": true,
+      "style": "scss"
     },
     "@schematics/angular:class": {
       "skipTests": true
@@ -177,10 +178,7 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "tsConfig": "projects/daxur-studios/graph/tsconfig.spec.json",
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ]
+            "polyfills": ["zone.js", "zone.js/testing"]
           }
         }
       }

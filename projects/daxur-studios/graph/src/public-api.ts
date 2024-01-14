@@ -2,5 +2,6 @@
  * Public API Surface of graph
  */
 
-export * from './lib/graph.service';
-export * from './lib/components/graph/graph.component';
+export * from './lib/services';
+export * from './lib/components';
+export * from './lib/models';
