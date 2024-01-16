@@ -16,6 +16,7 @@
 }
 
 .graph-drag-box {
+  user-select: none;
   overflow: hidden;
   box-sizing: border-box;
 
@@ -43,8 +44,8 @@
     calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
     calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
 
-  background-position-x: var(--originX);
-  background-position-y: var(--originY);
+  background-position-x: calc(-1 * var(--originX));
+  background-position-y: calc(-1 * var(--originY));
 
   border: dashed 2px indianred;
 }

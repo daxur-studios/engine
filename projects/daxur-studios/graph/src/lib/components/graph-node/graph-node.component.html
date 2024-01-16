@@ -1,10 +1,9 @@
 <div
+  #nodeElement
   cdkDrag
   [cdkDragData]="node"
   [cdkDragFreeDragPosition]="{ x: node.position.x, y: node.position.y }"
   [cdkDragConstrainPosition]="dragConstrainPoint"
-  [style.left]="originX() + 'px'"
-  [style.top]="originY() + 'px'"
   class="node"
   tabindex="0"
   (cdkDragMoved)="nodeDragMoved($event, node)"

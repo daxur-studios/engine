@@ -1,4 +1,4 @@
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DragDropModule, Point } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import {
   Component,
@@ -8,14 +8,16 @@ import {
   OnDestroy,
   OnInit,
   ViewChild,
+  ViewChildren,
   WritableSignal,
   effect,
   signal,
 } from '@angular/core';
-import { IGraphOptions } from '../../models';
+import { IGraphOptions, INode } from '../../models';
 import { GraphService } from '../../services';
 import { GraphNodeComponent } from '../graph-node/graph-node.component';
 import { GraphSidebarComponent } from '../graph-sidebar/graph-sidebar.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'lib-graph',
@@ -35,30 +37,17 @@ export class GraphComponent implements OnInit, OnDestroy {
   @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
   //#endregion
 
+  readonly camera = this.graphService.camera;
   //#region Signals
 
-  //#region GraphService properties
-  public get originX() {
-    return this.graphService?.originX;
-  }
-  public get originY() {
-    return this.graphService?.originY;
-  }
-  public get scale() {
-    return this.graphService?.scale;
-  }
+  //#region GraphService Signals
+  readonly originX = this.graphService.originX;
+  readonly originY = this.graphService.originY;
+  readonly scale = this.graphService.scale;
+  readonly width = this.graphService.width;
+  readonly height = this.graphService.height;
   //#endregion
 
-  readonly isDragging = signal(false);
-  readonly startDragX = signal(0);
-  readonly startDragY = signal(0);
-  //#endregion
-
-  //#region ViewChild
-  @ViewChild('resizeWrapper', { static: true })
-  resizeWrapper!: ElementRef<HTMLDivElement>;
-  @ViewChild('graphDragBox', { static: true })
-  graphDragBox!: ElementRef<HTMLDivElement>;
   //#endregion
 
   @HostBinding('class')
@@ -71,6 +60,17 @@ export class GraphComponent implements OnInit, OnDestroy {
 
   @HostBinding('style.--width') cssWidth = '100%';
   @HostBinding('style.--height') cssHeight = '100%';
+  @HostBinding('style.--scaledWidth') cssScaledWidth = '0';
+  @HostBinding('style.--scaledHeight') cssScaledHeight = '0';
+  //#endregion
+
+  //#region ViewChild
+  @ViewChild('resizeWrapper', { static: true })
+  resizeWrapper?: ElementRef<HTMLDivElement>;
+  @ViewChild('graphDragBox', { static: true })
+  graphDragBox?: ElementRef<HTMLDivElement>;
+
+  @ViewChildren(GraphNodeComponent) graphNodes?: GraphNodeComponent[];
   //#endregion
 
   //#region Resize
@@ -81,58 +81,26 @@ export class GraphComponent implements OnInit, OnDestroy {
     this.onResize(width, height);
   });
   private onResize(width: number, height: number): void {
-    this.graphService.width.set(width);
-    this.graphService.height.set(height);
+    this.camera.onWrapperElementResize(width, height);
   }
   //#endregion
 
   //#region Input events
   public keyup(event: KeyboardEvent) {}
-  public keydown(event: KeyboardEvent) {}
+  public keydown(event: KeyboardEvent) {
+    this.camera.onKeyDown(event);
+  }
   public mousedown(event: MouseEvent) {
-    // Check if we are clicking on a node
-    if (event.target instanceof Element) {
-      const element = event.target as Element;
-      if (element.classList.contains('node') || element.closest('.node')) {
-        this.isDragging.set(false);
-        return;
-      }
-    }
-
-    this.isDragging.set(true);
-    this.startDragX.set(event.clientX);
-    this.startDragY.set(event.clientY);
+    this.camera.mouseDown(event);
   }
   public mouseup(event: MouseEvent) {
-    this.isDragging.set(false);
+    this.camera.mouseUp(event);
   }
   public mousemove(event: MouseEvent) {
-    if (this.isDragging()) {
-      const currentZoom = this.scale();
-
-      // Adjust the deltas based on the current scale level
-      const dx = (event.clientX - this.startDragX()) / currentZoom;
-      const dy = (event.clientY - this.startDragY()) / currentZoom;
-
-      this.graphService.setPosition({
-        x: this.originX() + dx,
-        y: this.originY() + dy,
-      });
-
-      this.startDragX.set(event.clientX);
-      this.startDragY.set(event.clientY);
-    }
+    this.camera.mouseMove(event);
   }
   public mousewheel(e: Event) {
-    const limits = { min: 0.1, max: 2 };
-
-    const event = e as WheelEvent;
-    event.preventDefault();
-    const delta = event.deltaY / 1000;
-    const offset = this.scale() + -delta;
-    const newScale = Math.min(Math.max(offset, limits.min), limits.max);
-
-    this.scale.set(newScale);
+    this.camera.mouseWheel(e);
   }
   public contextmenu(event: MouseEvent) {
     return;
@@ -141,12 +109,22 @@ export class GraphComponent implements OnInit, OnDestroy {
   //#endregion
 
   constructor(public graphService: GraphService) {
+    this.graphService.component = this;
+
     effect(() => {
       const scale = this.scale();
       this.cssZoom = `${scale}`;
 
+      const w = this.width();
+      const h = this.height();
+
       this.cssWidth = `${100 / scale}%`;
       this.cssHeight = `${100 / scale}%`;
+      //this.cssHeight = `${h / scale}px`;
+    });
+    effect(() => {
+      this.cssScaledWidth = `${this.camera.scaledWidth()}px`;
+      this.cssScaledHeight = `${this.camera.scaledHeight()}px`;
     });
     effect(() => {
       this.cssOriginX = `${this.originX()}px`;
@@ -154,27 +132,40 @@ export class GraphComponent implements OnInit, OnDestroy {
     effect(() => {
       this.cssOriginY = `${this.originY()}px`;
     });
+
+    this.graphService.camera.assignComponent(this);
   }
 
+  readonly onDestroy = new Subject<void>();
   ngOnDestroy(): void {
+    this.onDestroy.next();
+    this.onDestroy.complete();
     this.resizeObserver.disconnect();
   }
   ngOnInit(): void {
-    this.resizeObserver.observe(this.resizeWrapper.nativeElement);
-
-    //#region Move the graph to the center of the
-    setTimeout(() => {}, 10);
-
+    //#region TEST
+    const wrapper = this.resizeWrapper!.nativeElement;
+    this.camera.baseWidth.set(wrapper.clientWidth);
+    this.camera.baseHeight.set(wrapper.clientHeight);
     //#endregion
+
+    this.resizeObserver.observe(this.resizeWrapper!.nativeElement);
   }
   ngAfterViewInit() {
-    const graphRect = this.graphDragBox.nativeElement.getBoundingClientRect();
-    const viewportCenterX = graphRect.width / 2;
-    const viewportCenterY = graphRect.height / 2;
+    // Center the graph
+    // const graphRect = this.graphDragBox!.nativeElement.getBoundingClientRect();
+    // const viewportCenterX = graphRect.width / 2;
+    // const viewportCenterY = graphRect.height / 2;
+    // this.graphService.setCameraPosition({
+    //   x: viewportCenterX,
+    //   y: viewportCenterY,
+    // });
+    this.camera.setCameraPosition({ x: 0, y: 0 });
+  }
 
-    this.graphService.setPosition({
-      x: viewportCenterX,
-      y: viewportCenterY,
-    });
+  focusNode(node: INode) {
+    this.graphNodes
+      ?.find((n) => n.node === node)
+      ?.nodeElement?.nativeElement?.focus();
   }
 }

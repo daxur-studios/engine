@@ -6,7 +6,7 @@ import {
   Point,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
 import { INode } from '../../models';
 import { GraphService } from '../../services';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -20,6 +20,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 })
 export class GraphNodeComponent {
   @Input({ required: true }) node!: INode;
+
+  @ViewChild('nodeElement', { static: true })
+  nodeElement?: ElementRef<HTMLDivElement>;
 
   private readonly graphService = inject(GraphService);
 
@@ -64,23 +67,6 @@ export class GraphNodeComponent {
     node.pendingPosition = event.source.getFreeDragPosition();
   }
   nodeDragEnded(event: CdkDragEnd, node: INode) {
-    const scale = this.scale();
-    const originX = this.originX();
-    const originY = this.originY();
-
-    const newPoint = { ...event.source.getFreeDragPosition() };
-
-    event.distance;
-
-    // //#region
-    // newPoint.x -= event.source.getFreeDragPosition().x;
-    // newPoint.y -= event.source.getFreeDragPosition().y;
-    // //#endregion
-
-    // // Adjust based on scale
-    // newPoint.x /= scale;
-    // newPoint.y /= scale;
-
     node.position.x = event.source.getFreeDragPosition().x;
     node.position.y = event.source.getFreeDragPosition().y;
 
@@ -107,6 +93,17 @@ export class GraphNodeComponent {
       case 'ArrowRight':
         node.position.x += amount;
         break;
+
+      case 'Escape':
+        // Lose focus
+        const target = event.target as HTMLElement;
+        target?.blur();
+
+        this.graphService.component?.graphDragBox?.nativeElement.focus();
+
+        break;
     }
+
+    event.stopPropagation();
   }
 }
