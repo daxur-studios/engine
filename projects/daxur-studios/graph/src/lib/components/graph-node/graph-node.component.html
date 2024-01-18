@@ -13,6 +13,30 @@
 >
   <div class="node-title">{{ node.id }}</div>
   <div class="node-content">
+    <div class="somewrapper" style="display: flex">
+      <div class="inputs sockets">
+        <div>INPUTS <button (click)="addInput()">add input</button></div>
+        @for (input of inputs$|async; track input.id) {
+        <lib-socket [socket]="input" />
+        }
+      </div>
+      <div class="body" style="flex: 1 1 100%">
+        <!--Start-->
+        <select>
+          <option>test</option>
+        </select>
+        <!--End-->
+        <select>
+          <option>test</option>
+        </select>
+      </div>
+      <div class="outputs sockets">
+        <div>OUTPUTS <button (click)="addOutput()">add output</button></div>
+        @for (output of outputs$|async; track output.id) {
+        <lib-socket [socket]="output" />
+        }
+      </div>
+    </div>
     <pre>
       x: {{
         node.pendingPosition?.x || node.position.x | number : "1.0-0"

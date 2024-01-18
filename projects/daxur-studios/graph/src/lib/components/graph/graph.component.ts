@@ -13,7 +13,7 @@ import {
   effect,
   signal,
 } from '@angular/core';
-import { IGraphOptions, INode } from '../../models';
+import { GraphController, INode } from '../../models';
 import { GraphService } from '../../services';
 import { GraphNodeComponent } from '../graph-node/graph-node.component';
 import { GraphSidebarComponent } from '../graph-sidebar/graph-sidebar.component';
@@ -34,7 +34,7 @@ import { Subject } from 'rxjs';
 })
 export class GraphComponent implements OnInit, OnDestroy {
   //#region Inputs
-  @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
+  @Input({ required: true }) controller!: WritableSignal<GraphController>;
   //#endregion
 
   readonly camera = this.graphService.camera;
@@ -98,6 +98,9 @@ export class GraphComponent implements OnInit, OnDestroy {
   }
   public mousemove(event: MouseEvent) {
     this.camera.mouseMove(event);
+  }
+  public mouseleave(event: MouseEvent) {
+    this.camera.mouseLeave(event);
   }
   public mousewheel(e: Event) {
     this.camera.mouseWheel(e);

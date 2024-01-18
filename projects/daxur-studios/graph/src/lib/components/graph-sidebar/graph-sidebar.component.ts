@@ -5,20 +5,26 @@ import {
   WritableSignal,
   signal,
 } from '@angular/core';
-import { IGraphOptions, INode } from '../../models';
+import { GraphController, INode } from '../../models';
 import { GraphService } from '../../services';
 import { CommonModule } from '@angular/common';
+import {
+  CdkDragDrop,
+  DragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'lib-graph-sidebar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DragDropModule],
   templateUrl: './graph-sidebar.component.html',
   styleUrl: './graph-sidebar.component.scss',
 })
 export class GraphSidebarComponent {
   //#region Inputs
-  @Input({ required: true }) options!: WritableSignal<IGraphOptions>;
+  @Input({ required: true }) controller!: WritableSignal<GraphController>;
   //#endregion
 
   @HostBinding('style.--width') cssWidth = '15rem';
@@ -36,14 +42,21 @@ export class GraphSidebarComponent {
   }
 
   public addNode() {
-    this.options().nodes.push({
+    this.controller().nodes.push({
       data: {},
-      edges: [],
-      id: this.options().nodes.length + '',
+      id: this.controller().nodes.length + 1 + '',
       position: {
         x: 0,
         y: 0,
       },
     });
+  }
+
+  public drop(event: CdkDragDrop<INode<any>[], any, any>) {
+    moveItemInArray(
+      event.container.data,
+      event.previousIndex,
+      event.currentIndex
+    );
   }
 }

@@ -3,8 +3,9 @@
 }
 .node {
   position: absolute;
-  background: red;
+  background: #3f51b5;
   padding: 1rem;
   left: calc(-1 * var(--originX));
   top: calc(-1 * var(--originY));
+  border: dashed #ff9800;
 }

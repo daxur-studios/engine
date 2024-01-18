@@ -22,7 +22,7 @@
 </div>
 
 <div class="sidebar-and-drag-box">
-  <lib-graph-sidebar [options]="options" />
+  <lib-graph-sidebar [controller]="controller" />
   <div class="resize-wrapper" #resizeWrapper>
     <div
       #graphDragBox
@@ -33,10 +33,11 @@
       (mousedown)="mousedown($event)"
       (mouseup)="mouseup($event)"
       (mousemove)="mousemove($event)"
+      (mouseleave)="mouseleave($event)"
       (mousewheel)="mousewheel($event)"
       (contextmenu)="contextmenu($event)"
     >
-      @for (node of options().nodes; track $index) {
+      @for (node of controller().nodes; track $index) {
       <lib-graph-node [node]="node"></lib-graph-node>
       }
     </div>

@@ -6,19 +6,29 @@ import {
   Point,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
-import { INode } from '../../models';
+import {
+  Component,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import { IInput, INode, IOutput } from '../../models';
 import { GraphService } from '../../services';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { SocketComponent } from '../socket/socket.component';
 
 @Component({
   selector: 'lib-graph-node',
   standalone: true,
-  imports: [DragDropModule, CommonModule, MatTooltipModule],
+  imports: [DragDropModule, CommonModule, MatTooltipModule, SocketComponent],
   templateUrl: './graph-node.component.html',
   styleUrl: './graph-node.component.scss',
 })
-export class GraphNodeComponent {
+export class GraphNodeComponent implements OnDestroy, OnInit {
   @Input({ required: true }) node!: INode;
 
   @ViewChild('nodeElement', { static: true })
@@ -38,8 +48,55 @@ export class GraphNodeComponent {
   }
   //#endregion
 
+  readonly inputs$ = new BehaviorSubject<IInput[]>([]);
+  readonly outputs$ = new BehaviorSubject<IOutput[]>([]);
+
+  readonly onDestroy$ = new Subject<void>();
+
   constructor() {}
 
+  ngOnInit(): void {
+    this.initSockets();
+  }
+
+  initSockets() {
+    const controller = this.graphService.component?.controller();
+    if (!controller) return;
+
+    controller.inputs$.pipe(takeUntil(this.onDestroy$)).subscribe((inputs) => {
+      this.inputs$.next(
+        inputs.filter((input) => input.nodeId === this.node.id)
+      );
+    });
+
+    controller.outputs$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((outputs) => {
+        this.outputs$.next(
+          outputs.filter((output) => output.nodeId === this.node.id)
+        );
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+
+  addOutput() {
+    if (!this.graphService.component) return;
+    const controller = this.graphService.component.controller();
+
+    controller.addOutputToNode(this.node);
+  }
+  addInput() {
+    if (!this.graphService.component) return;
+    const controller = this.graphService.component.controller();
+
+    controller.addInputToNode(this.node);
+  }
+
+  //#region Dragging
   dragConstrainPoint = (
     userPointerPosition: Point,
     dragRef: DragRef<INode>,
@@ -72,6 +129,7 @@ export class GraphNodeComponent {
 
     node.pendingPosition = undefined;
   }
+  //#endregion
 
   nodeKeydown(event: KeyboardEvent, node: INode) {
     let amount = 1;

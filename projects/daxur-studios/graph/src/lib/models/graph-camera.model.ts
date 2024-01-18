@@ -156,6 +156,9 @@ export class GraphCamera {
       this.startDragY.set(event.clientY);
     }
   }
+  public mouseLeave(event: MouseEvent) {
+    this.isDragging.set(false);
+  }
   //#endregion
 
   //#region Graph Component
