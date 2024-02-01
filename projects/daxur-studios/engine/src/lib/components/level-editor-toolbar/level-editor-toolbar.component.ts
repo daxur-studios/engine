@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { EngineComponent } from '../engine/engine.component';
 
-import { ProjectService, LevelService } from '../../services';
+import { ProjectService, LevelService, EngineService } from '../../services';
 import { ILevel, IProject } from '../../models';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Portal, PortalModule } from '@angular/cdk/portal';
@@ -54,6 +54,7 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private builder: FormBuilder,
+    readonly engineService: EngineService,
     public projectService: ProjectService,
     public levelService: LevelService,
     private dialog: MatDialog
@@ -61,13 +62,13 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
     this.toolbarForm.controls.fpsLimit.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.engine?.setFPSLimit(value ? Number(value) : 0);
+        this.engineService.setFPSLimit(value ? Number(value) : 0);
       });
 
     this.toolbarForm.controls.timeSpeed.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.engine?.setTimeSpeed(value ? Number(value) : 1);
+        this.engineService.setTimeSpeed(value ? Number(value) : 1);
       });
 
     //#region Project
@@ -94,7 +95,7 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   }
 
   onBeginPlay() {
-    this.engine?.onBeginPlay();
+    this.engineService.beginPlay();
   }
 
   /** Add custom ui elements to the Level Editor Toolbar */

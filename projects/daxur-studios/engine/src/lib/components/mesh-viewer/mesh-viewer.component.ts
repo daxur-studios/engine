@@ -62,11 +62,11 @@ export class MeshViewerComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.controls = new OrbitControls(
         this.engine!.camera,
-        this.engine?.renderer.domElement
+        this.engine!.renderer!.domElement
       );
       this.controls.enableDamping = true;
 
-      this.engine?.tick$.subscribe((delta) => {
+      this.engine?.engineService.tick$.subscribe((delta) => {
         this.controls?.update();
 
         cube.rotation.x += 0.01;
@@ -76,14 +76,14 @@ export class MeshViewerComponent implements OnInit, OnDestroy {
     }, 1);
 
     //#region VR
-    const renderer = this.engine!.renderer;
+    const renderer = this.engine!.renderer!;
 
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     renderer.xr.enabled = true;
     renderer.xr.setReferenceSpaceType('local');
-    this.engine!.mode = 'VR';
+    //this.engine!.mode = 'VR';
 
     // Add VRButton to the DOM and set up WebXR
     const vrButton = VRButton.createButton(renderer);

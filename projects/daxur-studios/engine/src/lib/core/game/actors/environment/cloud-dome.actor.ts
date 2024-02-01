@@ -8,7 +8,7 @@ import {
 import { degToRad } from 'three/src/math/MathUtils';
 
 import type { EngineComponent } from '../../../../components';
-import { SaveableData } from '../../../../models';
+import { IEngine, SaveableData } from '../../../../models';
 import { Field, Utilities3D } from '../../../utilities';
 import { GameMesh } from '../../game-mesh';
 import { GameActor } from '../game-actor';
@@ -32,7 +32,7 @@ export class CloudDome extends GameActor {
     super();
   }
 
-  override spawn(engine: EngineComponent) {
+  override spawn(engine: IEngine) {
     super.spawn(engine);
 
     engine.tick$.subscribe(() => {

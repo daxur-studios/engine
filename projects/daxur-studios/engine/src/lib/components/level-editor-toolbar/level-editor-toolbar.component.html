@@ -64,26 +64,23 @@
       id="frame-limit-selector"
     >
       @for (option of FPS_LIMIT_OPTIONS; track option) {
-  <option [value]="option">
-        {{ option ? option : "No " }} FPS Limit
-      </option>
-}
+      <option [value]="option">{{ option ? option : "No " }} FPS Limit</option>
+      }
     </select>
 
     <!--FPS-->
     @if (engine) {
-<span
+    <span
       id="fps-display"
-     
       style="
         padding-left: 1em;
         padding-right: 1em;
         opacity: 0.8;
         white-space: nowrap;
       "
-      >FPS {{ engine.frames.displayCount() }}</span
+      >FPS {{ engineService.fpsController.displayCount() }}</span
     >
-}
+    }
 
     <!--Time Dilation-->
     <select
@@ -91,13 +88,8 @@
       id="time-dilation-selector"
     >
       @for (speed of [0, 0.25, 0.5, 1, 2, 4, 8, 16]; track speed) {
-  <option
-       
-        [value]="speed"
-      >
-        {{ speed }}X Time Speed
-      </option>
-}
+      <option [value]="speed">{{ speed }}X Time Speed</option>
+      }
     </select>
 
     <!--Left Portal-->
@@ -109,7 +101,7 @@
     <button
       id="play-button"
       (click)="onBeginPlay()"
-      [disabled]="engine?.isPlaying()"
+      [disabled]="engineService.isPlaying()"
     >
       <i class="fas fa-play"></i> Play
     </button>

@@ -1,6 +1,7 @@
 import { takeUntil } from 'rxjs';
 import type { EngineComponent } from '../../components';
 import { GameActor } from '../game';
+import { IEngine } from '../../models';
 
 export class MouseMovementBinding {
   public x: number = 0;
@@ -18,8 +19,8 @@ export class MouseMovementBinding {
       .subscribe((scene) => this.spawn(scene));
   }
 
-  private spawn(engine: EngineComponent) {
-    engine.input.mousemove$
+  private spawn(engine: IEngine) {
+    engine.mousemove$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onMouseMove(event));
   }

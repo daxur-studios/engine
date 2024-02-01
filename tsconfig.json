@@ -4,11 +4,9 @@
   "compilerOptions": {
     "paths": {
       "@daxur-studios/engine": [
-        "dist/daxur-studios/engine"
+        "./projects/daxur-studios/engine/src/public-api"
       ],
-      "@daxur-studios/graph": [
-        "./dist/daxur-studios/graph"
-      ]
+      "@daxur-studios/graph": ["./projects/daxur-studios/graph/src/public-api"]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",

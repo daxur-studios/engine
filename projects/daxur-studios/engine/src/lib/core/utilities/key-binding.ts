@@ -1,6 +1,7 @@
 import { takeUntil } from 'rxjs';
 import type { EngineComponent } from '../../components';
 import { GameActor } from '../game';
+import { IEngine } from '../../models';
 
 export class KeyBinding {
   public eventCodes: string[];
@@ -35,12 +36,12 @@ export class KeyBinding {
       .subscribe((engine) => this.spawn(engine));
   }
 
-  private spawn(engine: EngineComponent) {
-    engine.input.keyup$
+  private spawn(engine: IEngine) {
+    engine.keyup$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onKeyUp(event));
 
-    engine.input.keydown$
+    engine.keydown$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onKeyDown(event));
   }

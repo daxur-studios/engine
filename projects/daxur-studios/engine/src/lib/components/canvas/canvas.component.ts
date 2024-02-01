@@ -18,14 +18,15 @@ import { Scene, WebGLRenderer } from 'three';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { EngineService, InputService } from '../../services';
+import { EngineService } from '../../services';
+import { IEngineOptions } from '../../models';
 
 @Component({
   selector: 'daxur-canvas',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './canvas.component.html',
-  styleUrls: ['./canvas.component.css'],
+  styleUrls: ['./canvas.component.scss'],
   host: {
     class: 'flex-page',
   },
@@ -34,6 +35,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
   @Output() resize = this.engineService.resize;
 
   @Input({ required: true }) canvas?: HTMLCanvasElement;
+  @Input({ required: true }) options?: IEngineOptions;
 
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
 
@@ -44,7 +46,6 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   constructor(
     private renderer: Renderer2,
-    public input: InputService,
     public readonly engineService: EngineService
   ) {}
 

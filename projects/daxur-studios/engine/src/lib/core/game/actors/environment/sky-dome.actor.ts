@@ -7,11 +7,12 @@ import {
   Vector3,
 } from 'three';
 
-import type { EngineComponent } from '../../../../components';
-import { SaveableData } from '../../../../models';
+import { IEngine, SaveableData } from '../../../../models';
 import { GameMesh } from '../..';
 import { Field } from '../../../utilities';
 import { GameActor } from '../game-actor';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EngineService } from '../../../../services';
 
 export class SkyDome extends GameActor {
   static override emoji = '☀️';
@@ -101,7 +102,7 @@ export class SkyDome extends GameActor {
     this.add(this.hemiLight);
   }
 
-  override spawn(engine: EngineComponent): void {
+  override spawn(engine: IEngine): void {
     super.spawn(engine);
 
     this.refreshSunPosition();
@@ -334,3 +335,22 @@ const SkyShader = {
         #endif
       } `,
 };
+
+@Component({
+  selector: 'sky-dome',
+  template: '',
+  standalone: true,
+  imports: [],
+})
+export class SkyDomeComponent implements OnInit, OnDestroy {
+  actor = new SkyDome();
+
+  constructor(readonly engineService: EngineService) {}
+
+  ngOnDestroy(): void {
+    this.engineService.destroyActor(this.actor);
+  }
+  ngOnInit(): void {
+    this.engineService.spawnActor(this.actor);
+  }
+}

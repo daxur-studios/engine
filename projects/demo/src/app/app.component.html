@@ -11,10 +11,22 @@
   "
 >
   <div>Daxur Studios Libraries - Demo</div>
-  @for (link of [['engine-demo','Engine'],['graph-demo','Graph']]; track link) {
-  <div>
-    <a [routerLink]="link[0]">{{ link[1] }}</a>
-  </div>
+  @for (link of links; track link) {
+  <button mat-button [matMenuTriggerFor]="menu" *ngIf="link.menu">
+    {{ link.name }}
+  </button>
+
+  <mat-menu #menu="matMenu">
+    <button
+      mat-menu-item
+      *ngFor="let item of link.menu"
+      [routerLink]="item.path"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      {{ item.name }}
+    </button>
+  </mat-menu>
   }
 
   <mat-slide-toggle

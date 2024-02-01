@@ -14,6 +14,7 @@ import { SceneTreeComponent } from '../scene-tree/scene-tree.component';
 
 import { LevelEditorService } from '../../services/level-editor.service';
 import { IEngineOptions } from '../../models/engine.model';
+import { EngineService } from '../../services';
 
 @Component({
   selector: 'daxur-level-editor',
@@ -34,7 +35,10 @@ export class LevelEditorComponent implements OnInit {
 
   @Output() ready: EventEmitter<ILevelEditorReady> = new EventEmitter();
 
-  constructor(public readonly levelEditorService: LevelEditorService) {}
+  constructor(
+    public readonly levelEditorService: LevelEditorService,
+    readonly engineService: EngineService
+  ) {}
 
   ngOnInit(): void {}
 

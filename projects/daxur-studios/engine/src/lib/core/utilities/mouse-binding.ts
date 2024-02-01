@@ -18,6 +18,7 @@ export enum MouseButtonEnum {
 import { takeUntil } from 'rxjs';
 import type { EngineComponent } from '../../components';
 import { GameActor } from '../game';
+import { IEngine } from '../../models';
 
 export class MouseBinding {
   public button: MouseButtonEnum;
@@ -34,12 +35,12 @@ export class MouseBinding {
       .subscribe((engine) => this.spawn(engine));
   }
 
-  private spawn(engine: EngineComponent) {
-    engine.input.mousedown$
+  private spawn(engine: IEngine) {
+    engine.mousedown$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onMouseDown(event));
 
-    engine.input.mouseup$
+    engine.mouseup$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onMouseUp(event));
   }

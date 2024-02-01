@@ -4,19 +4,19 @@ import { WritableSignal, signal } from '@angular/core';
 import { GameGroup, IGameGroup } from '../game-group';
 import { Feature } from './features/feature';
 import type { EngineComponent } from '../../../components';
-import { SaveableData } from '../../../models';
+import { IEngine, SaveableData } from '../../../models';
 
 export class GameActor extends GameGroup implements IGameActor {
   static emoji = '🎭';
 
-  engine?: EngineComponent;
+  engine?: IEngine;
   actorFeatures = new Map<string, Feature>();
 
   //#region Events
   isPlaying = signal(false);
   onBeginPlay$ = new ReplaySubject<void>();
   tick$ = new BehaviorSubject<number>(0);
-  onSpawn$ = new ReplaySubject<EngineComponent>();
+  onSpawn$ = new ReplaySubject<IEngine>();
   onLoad$ = new BehaviorSubject<GameActor | null>(null);
   //#endregion
 
@@ -30,12 +30,13 @@ export class GameActor extends GameGroup implements IGameActor {
   }
 
   /** Add to Scene */
-  spawn(engine: EngineComponent) {
+  spawn(engine: IEngine) {
     this.engine = engine;
 
     engine.scene.add(this);
 
     this.onSpawn$.next(engine);
+
     this.onSpawn$.complete();
 
     this.engine.onBeginPlay$
@@ -108,21 +109,21 @@ export class GameActor extends GameGroup implements IGameActor {
 }
 
 export interface IGameActor extends IGameGroup {
-  engine?: EngineComponent;
+  engine?: IEngine;
   actorFeatures: Map<string, Feature>;
 
   //#region Events
   isPlaying: WritableSignal<boolean>;
   onBeginPlay$: ReplaySubject<void>;
   tick$: BehaviorSubject<number>;
-  onSpawn$: ReplaySubject<EngineComponent>;
+  onSpawn$: ReplaySubject<IEngine>;
   onDestroy$: ReplaySubject<void>;
   /** Event when the actor's load function is called */
   onLoad$: BehaviorSubject<GameActor | null>;
   //#endregion
 
   tick(delta: number): void;
-  spawn(engine: EngineComponent): void;
+  spawn(engine: IEngine): void;
   onBeginPlay(): void;
   destroy(): void;
 

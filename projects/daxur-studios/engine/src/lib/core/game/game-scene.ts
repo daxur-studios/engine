@@ -2,10 +2,9 @@ import { Object3D, Scene } from 'three';
 import { ReplaySubject, Subject } from 'rxjs';
 import { GameObject3D } from './game.model';
 import { GameActor } from './actors/game-actor';
-import type { EngineComponent } from '../../components';
 
 export class GameScene extends Scene implements GameObject3D {
-  engine: EngineComponent;
+  //engine: EngineComponent;
 
   addEvent$ = new Subject<Object3D[]>();
   removeEvent$ = new Subject<Object3D[]>();
@@ -13,9 +12,9 @@ export class GameScene extends Scene implements GameObject3D {
 
   actors: Map<string, GameActor> = new Map();
 
-  constructor(engine: EngineComponent) {
+  constructor() {
     super();
-    this.engine = engine;
+    //this.engine = engine;
   }
 
   override add(...objects: Object3D[]): this {

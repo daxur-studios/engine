@@ -1,6 +1,7 @@
 import { takeUntil } from 'rxjs';
 import type { EngineComponent } from '../../components';
 import { GameActor } from '../game';
+import { IEngine } from '../../models';
 
 export class MouseWheelBinding {
   public deltaY: number = 0;
@@ -17,8 +18,8 @@ export class MouseWheelBinding {
       .subscribe((scene) => this.spawn(scene));
   }
 
-  private spawn(engine: EngineComponent) {
-    engine.input.mousewheel$
+  private spawn(engine: IEngine) {
+    engine.mousewheel$
       .pipe(takeUntil(this.actor.onDestroy$))
       .subscribe((event) => this.onWheel(event));
   }

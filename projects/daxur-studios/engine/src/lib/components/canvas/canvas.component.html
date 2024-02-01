@@ -2,11 +2,19 @@
   #wrapper
   class="canvas-size-observer flex-wrapper"
   tabindex="0"
-  (keyup)="input.keyup$.next($event)"
-  (keydown)="input.keydown$.next($event)"
-  (mousedown)="input.mousedown$.next($event)"
-  (mouseup)="input.mouseup$.next($event)"
-  (mousemove)="input.mousemove$.next($event)"
-  (mousewheel)="input.mousewheel$.next($event)"
-  (contextmenu)="input.contextmenu$.next($event); $event.preventDefault()"
-></div>
+  (keyup)="engineService.keyup$.next($event)"
+  (keydown)="engineService.keydown$.next($event)"
+  (mousedown)="engineService.mousedown$.next($event)"
+  (mouseup)="engineService.mouseup$.next($event)"
+  (mousemove)="engineService.mousemove$.next($event)"
+  (mousewheel)="engineService.mousewheel$.next($event)"
+  (contextmenu)="
+    engineService.contextmenu$.next($event); $event.preventDefault()
+  "
+>
+  @if (options?.showFPS) {
+  <div style="position: absolute; color: springgreen; background: black">
+    FPS: {{ engineService.fpsController.displayCount() }}
+  </div>
+  }
+</div>
