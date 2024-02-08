@@ -1,0 +1,136 @@
+:host {
+  //#region HostBinding variables
+  --backgroundSize: 0px;
+  --originX: 0px;
+  --originY: 0px;
+  --scale: 1;
+
+  --transform3DX: 0px;
+  --transform3DY: 0px;
+  --transform3DZ: 0px;
+
+  --width: 100%;
+  --height: 100%;
+  //#endregion
+
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  overflow: auto;
+
+  position: relative;
+}
+
+.output {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1;
+  overflow: hidden;
+
+  border: dashed 2px indianred;
+  box-sizing: border-box;
+
+  //#region Background grid
+  --gridColor: #81818166;
+  /* Small grid with 1px lines */
+  background-image: linear-gradient(
+      to right,
+      var(--gridColor) 1px,
+      transparent 1px
+    ),
+    linear-gradient(to bottom, var(--gridColor) 1px, transparent 1px),
+    /* Large grid with 3px lines */
+      linear-gradient(to right, var(--gridColor) 3px, transparent 3px),
+    linear-gradient(to bottom, var(--gridColor) 3px, transparent 3px);
+
+  /* Size of small and large grid */
+  background-size: var(--backgroundSize) var(--backgroundSize),
+    var(--backgroundSize) var(--backgroundSize),
+    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
+    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
+
+  background-position-x: calc(-1 * var(--originX));
+  background-position-y: calc(-1 * var(--originY));
+  //#endregion
+}
+.output::after {
+  // Visualize the center of the graph
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  //adjust by scale
+  width: 5px;
+  height: 5px;
+  background-color: rgba(0, 255, 26, 0.457);
+  border-radius: 50%;
+}
+
+.output {
+  padding: 1em;
+  position: relative;
+
+  perspective: 1298px;
+  perspective-origin: 50% 50%;
+}
+#default-example {
+  background: linear-gradient(skyblue, khaki);
+  height: 100%;
+  user-select: none;
+  transform-style: preserve-3d;
+
+  transform: translate3d(
+    var(--transform3DX),
+    var(--transform3DY),
+    var(--transform3DZ)
+  );
+}
+#example-element {
+  width: 100px;
+  height: 100px;
+  perspective: 690px;
+  transform-style: preserve-3d;
+  transform: translate3d(345px, 67px, 0px);
+}
+
+.face {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: inherit;
+  font-size: 60px;
+  color: #fff;
+}
+
+.front {
+  background: rgba(90, 90, 90, 0.7);
+  transform: translateZ(50px);
+}
+
+.back {
+  background: rgba(0, 210, 0, 0.7);
+  transform: rotateY(180deg) translateZ(50px);
+}
+
+.right {
+  background: rgba(210, 0, 0, 0.7);
+  transform: rotateY(89deg) translateZ(50px);
+}
+
+.left {
+  background: rgba(0, 0, 210, 0.7);
+  transform: rotateY(-90deg) translateZ(50px);
+}
+
+.top {
+  background: rgba(210, 210, 0, 0.7);
+  transform: rotateX(90deg) translateZ(50px);
+}
+
+.bottom {
+  background: rgba(210, 0, 210, 0.7);
+  transform: rotateX(-90deg) translateZ(50px);
+}

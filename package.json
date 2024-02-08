@@ -12,7 +12,8 @@
     "ai": "tsc ./scripts/ai.ts && node ./scripts/ai.js",
     "json-ai:graph": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/graph",
     "json-ai:engine": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/engine",
-    "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch"
+    "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch",
+    "start:graph": "ng build @daxur-studios/graph --configuration development && (cd dist/daxur-studios/graph && npm link) && ng build @daxur-studios/graph --configuration development --watch"
   },
   "private": true,
   "dependencies": {

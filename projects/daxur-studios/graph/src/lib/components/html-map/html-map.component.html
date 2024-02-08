@@ -1,0 +1,48 @@
+<p>html-map works!</p>
+<div style="display: flex">
+  <div>
+    scale: {{ scale() | percent }}
+
+    <button (click)="scale.set(1)">reset scale</button>
+  </div>
+  <div>
+    X: {{ camera.originX() }}, Y: {{ camera.originY() }}
+    <button (click)="camera.originX.set(0); camera.originY.set(0)">
+      reset position
+    </button>
+  </div>
+</div>
+<div
+  id="output"
+  class="output large"
+  (keyup)="keyup($event)"
+  (keydown)="keydown($event)"
+  (mousedown)="mousedown($event)"
+  (mouseup)="mouseup($event)"
+  (mousemove)="mousemove($event)"
+  (mouseleave)="mouseleave($event)"
+  (mousewheel)="mousewheel($event)"
+  (contextmenu)="contextmenu($event)"
+  tabindex="0"
+>
+  <section id="default-example" class="default-example">
+    @for (node of nodes; track $index) {
+    <div
+      id="example-element"
+      class="transition-all node"
+      cdkDrag
+      [cdkDragFreeDragPosition]="{ x: node.position.x, y: node.position.y }"
+      [cdkDragConstrainPosition]="dragConstrainPoint"
+      (cdkDragMoved)="nodeDragMoved($event, node)"
+      (cdkDragEnded)="nodeDragEnded($event, node)"
+    >
+      <div class="face front">1</div>
+      <div class="face back">2</div>
+      <div class="face right">3</div>
+      <div class="face left">4</div>
+      <div class="face top">5</div>
+      <div class="face bottom">6</div>
+    </div>
+    }
+  </section>
+</div>

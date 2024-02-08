@@ -29,4 +29,11 @@ export const routes: Routes = [
         (m) => m.GraphDemoPageComponent
       ),
   },
+  {
+    path: 'graph-demo/basic-html-map-demo',
+    loadComponent: () =>
+      import(
+        './pages/html-map-demo/basic-html-map-demo/basic-html-map-demo.component'
+      ).then((m) => m.BasicHtmlMapDemoComponent),
+  },
 ];

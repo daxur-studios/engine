@@ -36,6 +36,7 @@ import { IEngineOptions } from '../../models/engine.model';
   templateUrl: './engine.html',
   styleUrls: ['./engine.scss'],
   standalone: true,
+
   providers: [EngineService],
   imports: [CanvasComponent],
 })

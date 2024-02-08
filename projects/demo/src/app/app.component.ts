@@ -66,6 +66,10 @@ export class AppComponent {
           name: 'Basic Graph',
           path: 'graph-demo/graph',
         },
+        {
+          name: 'Basic HTML Map',
+          path: 'graph-demo/basic-html-map-demo',
+        },
       ],
     },
   ];
