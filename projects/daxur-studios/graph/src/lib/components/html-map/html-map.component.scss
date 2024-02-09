@@ -1,13 +1,17 @@
 :host {
+  //#region
+  --perspective: 1000px;
+  // https://www.youtube.com/watch?v=LzDf8BizhmQ&t=4s
+  --camera-spring-arm-length: 0px;
+  //#endregion
+
   //#region HostBinding variables
   --backgroundSize: 0px;
   --originX: 0px;
   --originY: 0px;
-  --scale: 1;
 
   --transform3DX: 0px;
   --transform3DY: 0px;
-  --transform3DZ: 0px;
 
   --width: 100%;
   --height: 100%;
@@ -70,11 +74,14 @@
   padding: 1em;
   position: relative;
 
-  perspective: 1298px;
+  perspective: var(--perspective);
   perspective-origin: 50% 50%;
 }
-#default-example {
-  background: linear-gradient(skyblue, khaki);
+.scene {
+  background: linear-gradient(
+    rgba(135, 207, 235, 0.562),
+    rgba(240, 230, 140, 0.671)
+  );
   height: 100%;
   user-select: none;
   transform-style: preserve-3d;
@@ -82,15 +89,15 @@
   transform: translate3d(
     var(--transform3DX),
     var(--transform3DY),
-    var(--transform3DZ)
+    var(--camera-spring-arm-length)
   );
 }
-#example-element {
+.node {
   width: 100px;
   height: 100px;
-  perspective: 690px;
+  perspective: var(--perspective);
   transform-style: preserve-3d;
-  transform: translate3d(345px, 67px, 0px);
+  transform: translate3d(0px, 0px, 0px);
 }
 
 .face {

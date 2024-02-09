@@ -1,9 +1,9 @@
 <p>html-map works!</p>
 <div style="display: flex">
   <div>
-    scale: {{ scale() | percent }}
+    scale: {{ cameraSpringArmLength() }}px
 
-    <button (click)="scale.set(1)">reset scale</button>
+    <button (click)="cameraSpringArmLength.set(0)">reset scale</button>
   </div>
   <div>
     X: {{ camera.originX() }}, Y: {{ camera.originY() }}
@@ -25,7 +25,7 @@
   (contextmenu)="contextmenu($event)"
   tabindex="0"
 >
-  <section id="default-example" class="default-example">
+  <section class="scene">
     @for (node of nodes; track $index) {
     <div
       id="example-element"

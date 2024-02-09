@@ -25,9 +25,9 @@ import {
 export class HtmlMapComponent {
   //#region CSS variables
 
-  @HostBinding('style.--scale') get _cssScale() {
-    return this.scale();
-  }
+  // @HostBinding('style.--scale') get _cssScale() {
+  //   return this.scale();
+  // }
 
   @HostBinding('style.--transform3DX') get _cssTransform3DX() {
     return `${this.transform3DX()}`;
@@ -35,10 +35,10 @@ export class HtmlMapComponent {
   @HostBinding('style.--transform3DY') get _cssTransform3DY() {
     return `${this.transform3DY()}`;
   }
-  @HostBinding('style.--transform3DZ') get _cssTransform3DZ() {
-    return `${this.transform3DZ()}`;
+  @HostBinding('style.--camera-spring-arm-length')
+  get _cssCameraSpringArmLength() {
+    return `${-1 * this.cameraSpringArmLength()}px`;
   }
-
   @HostBinding('style.--backgroundSize') _cssBackgroundSize = '100px';
   @HostBinding('style.--originX') _cssOriginX = '0px';
   @HostBinding('style.--originY') _cssOriginY = '0px';
@@ -50,19 +50,21 @@ export class HtmlMapComponent {
 
   //#endregion
 
-  readonly camera: HtmlMapCamera = new HtmlMapCamera();
-  readonly scale = this.camera.scale;
-  readonly scaleFactor = 1000;
+  @HostBinding('style.--perspective') get _cssPerspective() {
+    return `${this.perspective}px`;
+  }
+  readonly perspective = 1000;
 
-  /**
-   * at 1 scale it should be 0px
-   * at scale larger than 1 it should be positive
-   * at scale less than 1 it should be negative
-   */
-  readonly transform3DZ = computed(() => {
-    const scale = this.scale();
-    return `${-1 * (this.scaleFactor * (1 - scale))}px`;
+  readonly scaleFactor = 100;
+
+  readonly cameraSpringArmLength = signal(0);
+  readonly springArmLimits = { min: -1000, max: 10000 } as const;
+
+  readonly scale = computed(() => {
+    return this.calculateScale(this.cameraSpringArmLength(), this.perspective);
   });
+  readonly camera: HtmlMapCamera = new HtmlMapCamera(this.scale);
+
   readonly transform3DX = computed(() => {
     const originX = this.camera.originX();
     return `${-1 * originX}px`;
@@ -88,16 +90,24 @@ export class HtmlMapComponent {
   }
 
   public mousewheel(e: Event) {
-    const limits = { min: 0.01, max: 2 };
-
     const event = e as WheelEvent;
     event.preventDefault();
 
     const delta = event.deltaY / 1000;
-    const offset = this.scale() + -delta;
-    const newScale = Math.min(Math.max(offset, limits.min), limits.max);
 
-    this.scale.set(newScale);
+    const previousSpringArmLength = this.cameraSpringArmLength();
+
+    this.cameraSpringArmLength.set(
+      Math.min(
+        Math.max(
+          previousSpringArmLength +
+            delta * (this.scaleFactor + Math.abs(previousSpringArmLength) / 2),
+
+          this.springArmLimits.min
+        ),
+        this.springArmLimits.max
+      )
+    );
   }
 
   public keyup(event: KeyboardEvent) {}
@@ -127,7 +137,8 @@ export class HtmlMapComponent {
     dimensions: DOMRect,
     pickupPositionInElement: Point
   ) => {
-    const scale = this.scale(); // * this.scaleFactor;
+    const armLength = this.cameraSpringArmLength();
+    const scale = this.calculateScale(armLength, this.perspective);
 
     const newPoint = { ...userPointerPosition };
 
@@ -138,11 +149,25 @@ export class HtmlMapComponent {
     // Adjusting for scale
     // The idea is to scale the difference between the original and the new position
     // This ensures that the element moves in sync with the cursor
-    // newPoint.x = (newPoint.x - dimensions.left) / scale + dimensions.left;
-    // newPoint.y = (newPoint.y - dimensions.top) / scale + dimensions.top;
+    newPoint.x = (newPoint.x - dimensions.left) / scale + dimensions.left;
+    newPoint.y = (newPoint.y - dimensions.top) / scale + dimensions.top;
 
     return newPoint;
   };
+
+  /**
+   * Calculates the scale of an item based on its distance from the viewer.
+   *
+   * @param {number} distance The distance the item has been moved along the Z-axis.
+   * @param {number} perspective The perspective depth from the viewer to the item.
+   * @returns {number} The calculated scale of the item.
+   */
+  calculateScale(distance: number, perspective: number): number {
+    // Adjust this factor based on your specific needs. This is a simplification.
+    // For a more accurate perspective effect, you might need a more complex formula.
+    const scale = 1 / (1 + distance / perspective);
+    return scale;
+  }
 
   nodeDragMoved(event: CdkDragMove, node: INode) {
     node.pendingPosition = event.source.getFreeDragPosition();
@@ -162,8 +187,6 @@ interface INode {
 }
 
 export class HtmlMapCamera {
-  readonly scale = signal(1);
-
   //#region Top Left Corner
   /** Top left corner position of the div used as the "Camera" */
   readonly originX = signal(0);
@@ -174,17 +197,15 @@ export class HtmlMapCamera {
   /** Center of the screen */
   readonly cameraX = computed(() => {
     const width = this.baseWidth();
-    const scale = this.scale();
     const originX = this.originX();
 
-    return originX + width / 2 / scale;
+    return originX + width / 2;
   });
   readonly cameraY = computed(() => {
     const height = this.baseHeight();
-    const scale = this.scale();
     const originY = this.originY();
 
-    return originY + height / 2 / scale;
+    return originY + height / 2;
   });
   //#endregion
 
@@ -192,8 +213,8 @@ export class HtmlMapCamera {
   readonly baseWidth = signal(0);
   readonly baseHeight = signal(0);
   /** Width of the transform scaled graph element */
-  readonly scaledWidth = computed(() => this.baseWidth() / this.scale());
-  readonly scaledHeight = computed(() => this.baseHeight() / this.scale());
+  readonly scaledWidth = computed(() => this.baseWidth());
+  readonly scaledHeight = computed(() => this.baseHeight());
 
   /** Top Left Corner */
   // public filmPosition: Point = { x: 0, y: 0 };
@@ -211,7 +232,7 @@ export class HtmlMapCamera {
   readonly startDragY = signal(0);
   //#endregion
 
-  constructor() {}
+  constructor(readonly scale: Signal<number>) {}
 
   /**
    * Sets the camera position, which is centered on the screen
@@ -220,10 +241,9 @@ export class HtmlMapCamera {
   public setCameraPosition(point: Point) {
     const width = this.baseWidth();
     const height = this.baseHeight();
-    const scale = this.scale();
 
-    const x = point.x - width / 2 / scale;
-    const y = point.y - height / 2 / scale;
+    const x = point.x - width / 2;
+    const y = point.y - height / 2;
 
     this.originX.set(x);
     this.originY.set(y);
@@ -241,23 +261,6 @@ export class HtmlMapCamera {
   public dispose() {}
 
   //#region Zooming
-  public mouseWheel(e: Event) {
-    const limits = { min: 0.1, max: 2 };
-
-    const event = e as WheelEvent;
-    event.preventDefault();
-
-    const delta = event.deltaY / 1000;
-    const offset = this.scale() + -delta;
-    const newScale = Math.min(Math.max(offset, limits.min), limits.max);
-
-    this.onScale(newScale);
-  }
-  public onScale(scale: number) {
-    const cameraPositionBeforeScale = this.cameraPosition();
-    this.scale.set(scale);
-    this.setCameraPosition(cameraPositionBeforeScale);
-  }
   //#endregion
 
   public onKeyDown(event: KeyboardEvent) {
@@ -303,12 +306,9 @@ export class HtmlMapCamera {
   public mouseMove(event: MouseEvent) {
     if (this.isDragging()) {
       const currentZoom = this.scale();
-
       // Adjust the deltas based on the current scale level
-      // const dx = (event.clientX - this.startDragX()) / currentZoom;
-      // const dy = (event.clientY - this.startDragY()) / currentZoom;
-      const dx = event.clientX - this.startDragX();
-      const dy = event.clientY - this.startDragY();
+      const dx = (event.clientX - this.startDragX()) / currentZoom;
+      const dy = (event.clientY - this.startDragY()) / currentZoom;
 
       this.originX.set(this.originX() - dx);
       this.originY.set(this.originY() - dy);
