@@ -33,37 +33,39 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     const cameraX = this.camera.cameraX();
     const cameraY = this.camera.cameraY();
 
-    // The start and end positions of the tiles to the closest 50px
-    const startX = Math.floor(cameraX / 50) * 50;
-    const endX = Math.ceil(cameraX / 50) * 50;
-    const startY = Math.floor(cameraY / 50) * 50;
-    const endY = Math.ceil(cameraY / 50) * 50;
+    const tileSize = 100;
 
-    const items = [
-      {
-        position: { x: startX, y: startY },
+    // A multi dimensional array of tiles, eg 3x3
+    const tiles: { position: Point; width: number; height: number }[] = [];
+    const tilesX = 15;
+    const tilesY = 5;
 
-        width: 50,
-        height: 50,
-      },
-      {
-        position: { x: endX, y: startY },
-        width: 50,
-        height: 50,
-      },
-      {
-        position: { x: startX, y: endY },
-        width: 50,
-        height: 50,
-      },
-      {
-        position: { x: endX, y: endY },
-        width: 50,
-        height: 50,
-      },
-    ];
+    const halfX = tilesX * tileSize * 0.5;
+    const halfY = tilesY * tileSize * 0.5;
 
-    return items;
+    for (let x = 0; x < tilesX; x++) {
+      for (let y = 0; y < tilesY; y++) {
+        tiles.push({
+          position: { x: x * tileSize - halfX, y: y * tileSize - halfY },
+          width: tileSize,
+          height: tileSize,
+        });
+      }
+    }
+
+    // The start and end positions of the tiles to the closest tileSize px
+    const startX = Math.floor(cameraX / tileSize) * tileSize;
+    const endX = Math.ceil(cameraX / tileSize) * tileSize;
+    const startY = Math.floor(cameraY / tileSize) * tileSize;
+    const endY = Math.ceil(cameraY / tileSize) * tileSize;
+
+    // Apply the start and end positions to the tiles
+    tiles.forEach((tile) => {
+      tile.position.x += startX + tileSize / 2;
+      tile.position.y += startY + tileSize / 2;
+    });
+
+    return tiles;
   });
 
   //#region CSS variables

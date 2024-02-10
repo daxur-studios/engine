@@ -72,7 +72,6 @@
 }
 
 .output {
-  padding: 1em;
   position: relative;
 
   perspective: var(--perspective);
@@ -96,7 +95,6 @@
 .node {
   width: 100px;
   height: 100px;
-  perspective: var(--perspective);
   transform-style: preserve-3d;
   transform: translate3d(0px, 0px, 0px);
 }
@@ -147,4 +145,18 @@
   border: dashed 1px rgba(76, 0, 255, 0.683);
   box-sizing: border-box;
   position: absolute;
+
+  // background-image: linear-gradient(
+  //     to right,
+  //     var(--gridColor) 1px,
+  //     transparent 1px
+  //   ),
+  //   linear-gradient(to bottom, var(--gridColor) 1px, transparent 1px),
+  //   /* Large grid with 3px lines */
+  //     linear-gradient(to right, var(--gridColor) 3px, transparent 3px),
+  //   linear-gradient(to bottom, var(--gridColor) 3px, transparent 3px);
+  // background-size: var(--backgroundSize) var(--backgroundSize),
+  //   var(--backgroundSize) var(--backgroundSize),
+  //   calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
+  //   calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
 }
