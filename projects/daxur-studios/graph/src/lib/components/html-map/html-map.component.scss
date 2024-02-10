@@ -37,24 +37,24 @@
   //#region Background grid
   --gridColor: #81818166;
   /* Small grid with 1px lines */
-  background-image: linear-gradient(
-      to right,
-      var(--gridColor) 1px,
-      transparent 1px
-    ),
-    linear-gradient(to bottom, var(--gridColor) 1px, transparent 1px),
-    /* Large grid with 3px lines */
-      linear-gradient(to right, var(--gridColor) 3px, transparent 3px),
-    linear-gradient(to bottom, var(--gridColor) 3px, transparent 3px);
+  // background-image: linear-gradient(
+  //     to right,
+  //     var(--gridColor) 1px,
+  //     transparent 1px
+  //   ),
+  //   linear-gradient(to bottom, var(--gridColor) 1px, transparent 1px),
+  //   /* Large grid with 3px lines */
+  //     linear-gradient(to right, var(--gridColor) 3px, transparent 3px),
+  //   linear-gradient(to bottom, var(--gridColor) 3px, transparent 3px);
 
-  /* Size of small and large grid */
-  background-size: var(--backgroundSize) var(--backgroundSize),
-    var(--backgroundSize) var(--backgroundSize),
-    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
-    calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
+  // /* Size of small and large grid */
+  // background-size: var(--backgroundSize) var(--backgroundSize),
+  //   var(--backgroundSize) var(--backgroundSize),
+  //   calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5),
+  //   calc(var(--backgroundSize) * 5) calc(var(--backgroundSize) * 5);
 
-  background-position-x: calc(-1 * var(--originX));
-  background-position-y: calc(-1 * var(--originY));
+  // background-position-x: calc(-1 * var(--originX));
+  // background-position-y: calc(-1 * var(--originY));
   //#endregion
 }
 .output::after {
@@ -67,6 +67,7 @@
   width: 5px;
   height: 5px;
   background-color: rgba(0, 255, 26, 0.457);
+  transform: translate(-50%, -50%);
   border-radius: 50%;
 }
 
@@ -140,4 +141,10 @@
 .bottom {
   background: rgba(210, 0, 210, 0.7);
   transform: rotateX(-90deg) translateZ(50px);
+}
+
+.tile {
+  border: dashed 1px rgba(76, 0, 255, 0.683);
+  box-sizing: border-box;
+  position: absolute;
 }

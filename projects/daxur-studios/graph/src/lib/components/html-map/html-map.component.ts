@@ -13,6 +13,10 @@ import {
   signal,
   computed,
   Signal,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  OnDestroy,
 } from '@angular/core';
 
 @Component({
@@ -22,7 +26,46 @@ import {
   templateUrl: './html-map.component.html',
   styleUrl: './html-map.component.scss',
 })
-export class HtmlMapComponent {
+export class HtmlMapComponent implements OnInit, OnDestroy {
+  readonly backgroundTiles: Signal<
+    { position: Point; width: number; height: number }[]
+  > = computed(() => {
+    const cameraX = this.camera.cameraX();
+    const cameraY = this.camera.cameraY();
+
+    // The start and end positions of the tiles to the closest 50px
+    const startX = Math.floor(cameraX / 50) * 50;
+    const endX = Math.ceil(cameraX / 50) * 50;
+    const startY = Math.floor(cameraY / 50) * 50;
+    const endY = Math.ceil(cameraY / 50) * 50;
+
+    const items = [
+      {
+        position: { x: startX, y: startY },
+
+        width: 50,
+        height: 50,
+      },
+      {
+        position: { x: endX, y: startY },
+        width: 50,
+        height: 50,
+      },
+      {
+        position: { x: startX, y: endY },
+        width: 50,
+        height: 50,
+      },
+      {
+        position: { x: endX, y: endY },
+        width: 50,
+        height: 50,
+      },
+    ];
+
+    return items;
+  });
+
   //#region CSS variables
 
   // @HostBinding('style.--scale') get _cssScale() {
@@ -74,6 +117,20 @@ export class HtmlMapComponent {
     return `${-1 * originY}px`;
   });
 
+  //#region Resize
+  @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
+
+  private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
+    const { width, height } = entries[0].contentRect;
+    this.onResize(width, height);
+  });
+  private onResize(width: number, height: number): void {
+    this.camera.onWrapperElementResize(width, height);
+    this.centerTiles();
+  }
+  centerTiles() {}
+  //#endregion
+
   readonly nodes: INode[] = [
     { position: { x: 100, y: 100 } },
     { position: { x: 200, y: 200 } },
@@ -88,6 +145,12 @@ export class HtmlMapComponent {
       this._cssOriginY = `${this.camera.originY()}px`;
     });
   }
+  ngOnInit(): void {
+    this.resizeObserver.observe(this.wrapper?.nativeElement!);
+  }
+  ngOnDestroy(): void {
+    this.resizeObserver.disconnect();
+  }
 
   public mousewheel(e: Event) {
     const event = e as WheelEvent;
@@ -101,7 +164,8 @@ export class HtmlMapComponent {
       Math.min(
         Math.max(
           previousSpringArmLength +
-            delta * (this.scaleFactor + Math.abs(previousSpringArmLength) / 2),
+            delta *
+              (this.scaleFactor + Math.abs(previousSpringArmLength) / 1.5),
 
           this.springArmLimits.min
         ),
@@ -196,13 +260,13 @@ export class HtmlMapCamera {
   //#region Center of the screen
   /** Center of the screen */
   readonly cameraX = computed(() => {
-    const width = this.baseWidth();
+    const width = this.wrapperElementWidth();
     const originX = this.originX();
 
     return originX + width / 2;
   });
   readonly cameraY = computed(() => {
-    const height = this.baseHeight();
+    const height = this.wrapperElementHeight();
     const originY = this.originY();
 
     return originY + height / 2;
@@ -210,11 +274,11 @@ export class HtmlMapCamera {
   //#endregion
 
   /** Width of the resize wrapper element */
-  readonly baseWidth = signal(0);
-  readonly baseHeight = signal(0);
+  readonly wrapperElementWidth = signal(0);
+  readonly wrapperElementHeight = signal(0);
   /** Width of the transform scaled graph element */
-  readonly scaledWidth = computed(() => this.baseWidth());
-  readonly scaledHeight = computed(() => this.baseHeight());
+  readonly scaledWidth = computed(() => this.wrapperElementWidth());
+  readonly scaledHeight = computed(() => this.wrapperElementHeight());
 
   /** Top Left Corner */
   // public filmPosition: Point = { x: 0, y: 0 };
@@ -239,21 +303,19 @@ export class HtmlMapCamera {
    * based on offsetting by half the width and height of the base top left corner
    */
   public setCameraPosition(point: Point) {
-    const width = this.baseWidth();
-    const height = this.baseHeight();
-
-    const x = point.x - width / 2;
-    const y = point.y - height / 2;
-
-    this.originX.set(x);
-    this.originY.set(y);
+    // const width = this.wrapperElementWidth();
+    // const height = this.wrapperElementHeight();
+    // const x = point.x - width / 2;
+    // const y = point.y - height / 2;
+    // this.originX.set(x);
+    // this.originY.set(y);
   }
 
   public onWrapperElementResize(width: number, height: number) {
     const cameraPositionBeforeResize = this.cameraPosition();
 
-    this.baseWidth.set(width);
-    this.baseHeight.set(height);
+    this.wrapperElementWidth.set(width);
+    this.wrapperElementHeight.set(height);
 
     this.setCameraPosition(cameraPositionBeforeResize);
   }
@@ -306,6 +368,7 @@ export class HtmlMapCamera {
   public mouseMove(event: MouseEvent) {
     if (this.isDragging()) {
       const currentZoom = this.scale();
+
       // Adjust the deltas based on the current scale level
       const dx = (event.clientX - this.startDragX()) / currentZoom;
       const dy = (event.clientY - this.startDragY()) / currentZoom;
