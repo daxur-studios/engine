@@ -6,6 +6,7 @@ import {
   Point,
 } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
+
 import {
   Component,
   HostBinding,
@@ -17,12 +18,13 @@ import {
   ElementRef,
   OnInit,
   OnDestroy,
+  Input,
 } from '@angular/core';
 
 @Component({
   selector: 'lib-html-map',
   standalone: true,
-  imports: [CommonModule, DragDropModule],
+  imports: [CommonModule],
   templateUrl: './html-map.component.html',
   styleUrl: './html-map.component.scss',
 })
@@ -68,11 +70,12 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     return tiles;
   });
 
-  //#region CSS variables
+  @Input() set grid(value: boolean) {
+    this.showTiles.set(value);
+  }
+  readonly showTiles = signal(true);
 
-  // @HostBinding('style.--scale') get _cssScale() {
-  //   return this.scale();
-  // }
+  //#region CSS variables
 
   @HostBinding('style.--transform3DX') get _cssTransform3DX() {
     return `${this.transform3DX()}`;
@@ -133,12 +136,6 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
   centerTiles() {}
   //#endregion
 
-  readonly nodes: INode[] = [
-    { position: { x: 100, y: 100 } },
-    { position: { x: 200, y: 200 } },
-    { position: { x: 300, y: 300 } },
-  ];
-
   constructor() {
     effect(() => {
       this._cssOriginX = `${this.camera.originX()}px`;
@@ -175,6 +172,19 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
       )
     );
   }
+  /**
+   * Calculates the scale of an item based on its distance from the viewer.
+   *
+   * @param {number} distance The distance the item has been moved along the Z-axis.
+   * @param {number} perspective The perspective depth from the viewer to the item.
+   * @returns {number} The calculated scale of the item.
+   */
+  calculateScale(distance: number, perspective: number): number {
+    // Adjust this factor based on your specific needs. This is a simplification.
+    // For a more accurate perspective effect, you might need a more complex formula.
+    const scale = 1 / (1 + distance / perspective);
+    return scale;
+  }
 
   public keyup(event: KeyboardEvent) {}
   public keydown(event: KeyboardEvent) {}
@@ -195,61 +205,6 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     this.camera.mouseLeave(event);
   }
   //#endregion
-
-  //#region Dragging
-  dragConstrainPoint = (
-    userPointerPosition: Point,
-    dragRef: DragRef<INode>,
-    dimensions: DOMRect,
-    pickupPositionInElement: Point
-  ) => {
-    const armLength = this.cameraSpringArmLength();
-    const scale = this.calculateScale(armLength, this.perspective);
-
-    const newPoint = { ...userPointerPosition };
-
-    // Adjusting for the pickup position
-    newPoint.x -= pickupPositionInElement.x;
-    newPoint.y -= pickupPositionInElement.y;
-
-    // Adjusting for scale
-    // The idea is to scale the difference between the original and the new position
-    // This ensures that the element moves in sync with the cursor
-    newPoint.x = (newPoint.x - dimensions.left) / scale + dimensions.left;
-    newPoint.y = (newPoint.y - dimensions.top) / scale + dimensions.top;
-
-    return newPoint;
-  };
-
-  /**
-   * Calculates the scale of an item based on its distance from the viewer.
-   *
-   * @param {number} distance The distance the item has been moved along the Z-axis.
-   * @param {number} perspective The perspective depth from the viewer to the item.
-   * @returns {number} The calculated scale of the item.
-   */
-  calculateScale(distance: number, perspective: number): number {
-    // Adjust this factor based on your specific needs. This is a simplification.
-    // For a more accurate perspective effect, you might need a more complex formula.
-    const scale = 1 / (1 + distance / perspective);
-    return scale;
-  }
-
-  nodeDragMoved(event: CdkDragMove, node: INode) {
-    node.pendingPosition = event.source.getFreeDragPosition();
-  }
-  nodeDragEnded(event: CdkDragEnd, node: INode) {
-    node.position.x = event.source.getFreeDragPosition().x;
-    node.position.y = event.source.getFreeDragPosition().y;
-
-    node.pendingPosition = undefined;
-  }
-  //#endregion
-}
-
-interface INode {
-  pendingPosition?: Point;
-  position: Point;
 }
 
 export class HtmlMapCamera {

@@ -1,0 +1,7 @@
+<svg [attr.width]="width()" [attr.height]="height()" #svgElement>
+  @for (path of paths(); track $index) {
+  <path libGeneratedSvgPath [path]="path"></path>
+
+  }
+  <ng-content></ng-content>
+</svg>

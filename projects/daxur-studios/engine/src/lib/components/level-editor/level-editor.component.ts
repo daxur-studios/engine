@@ -19,13 +19,13 @@ import { EngineService } from '../../services';
 @Component({
   selector: 'daxur-level-editor',
   templateUrl: './level-editor.component.html',
-  styleUrls: ['./level-editor.component.css'],
+  styleUrls: ['./level-editor.component.scss'],
   standalone: true,
   host: {
     class: 'flex-page',
   },
   imports: [EngineComponent, LevelEditorToolbarComponent, SceneTreeComponent],
-  providers: [LevelEditorService],
+  providers: [EngineService, LevelEditorService],
 })
 export class LevelEditorComponent implements OnInit {
   @Input({ required: true }) options?: IEngineOptions;
@@ -36,7 +36,7 @@ export class LevelEditorComponent implements OnInit {
   @Output() ready: EventEmitter<ILevelEditorReady> = new EventEmitter();
 
   constructor(
-    public readonly levelEditorService: LevelEditorService,
+    readonly levelEditorService: LevelEditorService,
     readonly engineService: EngineService
   ) {}
 

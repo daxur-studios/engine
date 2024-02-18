@@ -3,6 +3,7 @@ import {
   Injectable,
   OnDestroy,
   OnInit,
+  WritableSignal,
   signal,
 } from '@angular/core';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
@@ -63,11 +64,16 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
 
   //#region Lifecycle Events
   public timeSpeed: number = 1;
-  public tick$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  readonly tick$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
+  readonly tickSignal = signal(0);
   /** Triggered when the EngineComponent is destroyed */
   readonly onDestroy$ = new ReplaySubject<void>();
+
   readonly onBeginPlay$ = new ReplaySubject<void>();
   readonly onEndPlay$ = new ReplaySubject<void>();
+  readonly onBeginPlaySignal: WritableSignal<boolean> = signal(false);
+  readonly onEndPlaySignal: WritableSignal<boolean> = signal(false);
+
   readonly isPlaying = signal(false);
   //#endregion
 
@@ -220,6 +226,7 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
     const delta = this.clock.getDelta() * this.timeSpeed;
 
     this.tick$.next(delta);
+    this.tickSignal.set(delta);
 
     this.render(time);
   }

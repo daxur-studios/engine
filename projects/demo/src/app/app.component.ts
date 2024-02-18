@@ -70,6 +70,10 @@ export class AppComponent {
           name: 'Basic HTML Map',
           path: 'graph-demo/basic-html-map-demo',
         },
+        {
+          name: 'SVG UI',
+          path: 'graph-demo/svg-ui-demo',
+        },
       ],
     },
   ];

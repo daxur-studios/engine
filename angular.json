@@ -182,6 +182,36 @@
           }
         }
       }
+    },
+    "@daxur-studios/svg-ui": {
+      "projectType": "library",
+      "root": "projects/daxur-studios/svg-ui",
+      "sourceRoot": "projects/daxur-studios/svg-ui/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/daxur-studios/svg-ui/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/daxur-studios/svg-ui/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/daxur-studios/svg-ui/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/daxur-studios/svg-ui/tsconfig.spec.json",
+            "polyfills": ["zone.js", "zone.js/testing"]
+          }
+        }
+      }
     }
   },
   "cli": {

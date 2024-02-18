@@ -30,8 +30,9 @@ import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
     MatDialogModule,
     PortalModule,
   ],
+
   templateUrl: './level-editor-toolbar.component.html',
-  styleUrls: ['./level-editor-toolbar.component.css'],
+  styleUrls: ['./level-editor-toolbar.component.scss'],
 })
 export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   @Input({ required: true }) engine?: EngineComponent;

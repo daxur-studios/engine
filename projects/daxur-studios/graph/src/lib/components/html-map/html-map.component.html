@@ -1,16 +1,18 @@
-<p>html-map works!</p>
 <div style="display: flex">
   <div>
-    scale: {{ cameraSpringArmLength() }}px
+    scale: {{ cameraSpringArmLength() | number : "1.2-2" }}
 
     <button (click)="cameraSpringArmLength.set(0)">reset scale</button>
   </div>
   <div>
-    X: {{ camera.originX() }}, Y: {{ camera.originY() }}
+    X: {{ camera.originX() | number : "1.2-2" }}, Y:
+    {{ camera.originY() | number : "1.2-2" }}
     <button (click)="camera.originX.set(0); camera.originY.set(0)">
       reset position
     </button>
   </div>
+
+  <button (click)="showTiles.set(!showTiles())">Hide Grid</button>
 </div>
 <div
   #wrapper
@@ -51,8 +53,15 @@
     }"
     ></div>
 
+    <div
+      class="external-content"
+      style="position: absolute; transform-style: preserve-3d"
+    >
+      <ng-content></ng-content>
+    </div>
+
     <!--Background Tiles-->
-    @for (tile of backgroundTiles(); track $index) {
+    @if (showTiles()) { @for (tile of backgroundTiles(); track $index) {
     <div
       class="tile"
       [ngStyle]="{
@@ -61,25 +70,6 @@
           transform: 'translate(' + tile.position.x + 'px, ' + tile.position.y + 'px)',
         }"
     ></div>
-    }
-    <!--Draggable Boxes-->
-    @for (node of nodes; track $index) {
-    <div
-      id="example-element"
-      class="transition-all node"
-      cdkDrag
-      [cdkDragFreeDragPosition]="{ x: node.position.x, y: node.position.y }"
-      [cdkDragConstrainPosition]="dragConstrainPoint"
-      (cdkDragMoved)="nodeDragMoved($event, node)"
-      (cdkDragEnded)="nodeDragEnded($event, node)"
-    >
-      <div class="face front">1</div>
-      <div class="face back">2</div>
-      <div class="face right">3</div>
-      <div class="face left">4</div>
-      <div class="face top">5</div>
-      <div class="face bottom">6</div>
-    </div>
-    }
+    } }
   </section>
 </div>

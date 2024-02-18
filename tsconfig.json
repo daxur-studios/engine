@@ -6,7 +6,10 @@
       "@daxur-studios/engine": [
         "./projects/daxur-studios/engine/src/public-api"
       ],
-      "@daxur-studios/graph": ["./projects/daxur-studios/graph/src/public-api"]
+      "@daxur-studios/graph": ["./projects/daxur-studios/graph/src/public-api"],
+      "@daxur-studios/svg-ui": [
+        "./projects/daxur-studios/svg-ui/src/public-api"
+      ]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",

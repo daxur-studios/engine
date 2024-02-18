@@ -36,4 +36,11 @@ export const routes: Routes = [
         './pages/html-map-demo/basic-html-map-demo/basic-html-map-demo.component'
       ).then((m) => m.BasicHtmlMapDemoComponent),
   },
+  {
+    path: 'graph-demo/svg-ui-demo',
+    loadComponent: () =>
+      import('./pages/svg-ui-demo-page/svg-ui-demo-page.component').then(
+        (m) => m.SvgUiDemoPageComponent
+      ),
+  },
 ];

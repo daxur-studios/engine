@@ -1,0 +1,49 @@
+<div style="flex-direction: row" class="flex-page">
+  <lib-html-map [grid]="false" style="flex: 1 1 70%">
+    <lib-generated-svg [paths]="paths">
+      @for (svgPathGroup of svgPathFormArray.controls; track $index) {
+      <!--Clickable Points-->
+      @for (group of svgPathGroup.controls.commands.controls; track $index) {
+      <svg:circle
+        [attr.cx]="group.controls.position.controls.x.value"
+        [attr.cy]="group.controls.position.controls.y.value"
+        [attr.r]="5"
+        [attr.fill]="'#5900ff'"
+        (click)="circleClicked(group)"
+        class="command-circle"
+        [class.isSelected]="group.controls.isSelected.value"
+      >
+        <ng-container *ngIf="group.controls.isSelected.value">
+          <animate
+            attributeName="r"
+            values="5; 10; 5"
+            dur="1s"
+            repeatCount="indefinite"
+          ></animate>
+        </ng-container>
+      </svg:circle>
+
+      @if (group.value.isSelected) {
+      <!--Curve X1, Y1, X2, Y2 Circles-->
+      <svg:circle
+        [attr.cx]="group.controls.position.controls.x1.value"
+        [attr.cy]="group.controls.position.controls.y1.value"
+        [attr.r]="5"
+        [attr.fill]="'#ff0059'"
+        class="command-circle"
+        [class.isSelected]="group.controls.isSelected.value"
+      ></svg:circle>
+      <svg:circle
+        [attr.cx]="group.controls.position.controls.x2.value"
+        [attr.cy]="group.controls.position.controls.y2.value"
+        [attr.r]="5"
+        [attr.fill]="'#ff0059'"
+        class="command-circle"
+        [class.isSelected]="group.controls.isSelected.value"
+      ></svg:circle>
+
+      } } }
+    </lib-generated-svg>
+  </lib-html-map>
+  <lib-svg-ui-editor-sidebar></lib-svg-ui-editor-sidebar>
+</div>

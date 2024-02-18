@@ -6,7 +6,14 @@ import {
   GameMesh,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
-import { AxesHelper, BoxGeometry, Mesh, MeshNormalMaterial } from 'three';
+import {
+  AxesHelper,
+  BoxGeometry,
+  Mesh,
+  MeshNormalMaterial,
+  SphereGeometry,
+  Vector3,
+} from 'three';
 
 @Component({
   selector: 'animated-cube',
@@ -31,9 +38,54 @@ export class AnimatedCubeComponent {
 }
 
 @Component({
+  selector: 'random-moving-ball',
+  standalone: true,
+  imports: [],
+  template: '',
+})
+export class RandomMovingBallComponent {
+  targetLocation: Vector3 = new Vector3(0, 0, 0);
+
+  constructor(readonly engineService: EngineService) {
+    const mesh = new Mesh(
+      new SphereGeometry(0.5, 6, 6),
+      new MeshNormalMaterial()
+    );
+    mesh.position.set(
+      Math.random() * 10 - 5,
+      Math.random() * 10 - 5,
+      Math.random() * 10 - 5
+    );
+    this.targetLocation.set(
+      Math.random() * 10 - 5,
+      Math.random() * 10 - 5,
+      Math.random() * 10 - 5
+    );
+
+    engineService.scene.add(mesh);
+
+    engineService.tick$
+      .pipe(takeUntil(engineService.onDestroy$))
+      .subscribe((delta) => {
+        let factor = 0.01;
+        // Move the ball towards the target location
+        mesh.position.lerp(this.targetLocation, factor);
+        // If the ball is close enough to the target location, set a new target location
+        if (mesh.position.distanceTo(this.targetLocation) < 0.1) {
+          this.targetLocation.set(
+            Math.random() * 10 - 5,
+            Math.random() * 10 - 5,
+            Math.random() * 10 - 5
+          );
+        }
+      });
+  }
+}
+
+@Component({
   selector: 'app-engine-demo-page',
   standalone: true,
-  imports: [EngineComponent, AnimatedCubeComponent],
+  imports: [EngineComponent, AnimatedCubeComponent, RandomMovingBallComponent],
   templateUrl: './engine-demo-page.component.html',
   styleUrl: './engine-demo-page.component.scss',
 })

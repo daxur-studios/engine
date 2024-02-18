@@ -18,13 +18,18 @@ export interface IEngineLifecycle {
 
   readonly fpsController: FPSController;
   readonly tick$: BehaviorSubject<number>;
+  readonly tickSignal: WritableSignal<number>;
+
   timeSpeed: number;
 
   beginPlay(): void;
   endPlay(): void;
+
   readonly isPlaying: WritableSignal<boolean>;
   readonly onBeginPlay$: ReplaySubject<void>;
+  readonly onBeginPlaySignal: WritableSignal<boolean>;
   readonly onEndPlay$: ReplaySubject<void>;
+  readonly onEndPlaySignal: WritableSignal<boolean>;
 
   tick(delta: number): void;
   startLoop(): void;
