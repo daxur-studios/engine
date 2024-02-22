@@ -1,0 +1,59 @@
+<div>
+  <mat-form-field>
+    <mat-label>Fill</mat-label>
+    <input matInput type="color" [formControl]="group.controls.fill" />
+    <button mat-icon-button (click)="group.controls.fill.setValue('#00000000')">
+      <mat-icon>format_color_reset</mat-icon>
+    </button>
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>Stroke</mat-label>
+    <input matInput type="color" [formControl]="group.controls.stroke" />
+    <button
+      mat-icon-button
+      (click)="group.controls.stroke.setValue('#00000000')"
+    >
+      <mat-icon>format_color_reset</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
+@if (GeneratedSvgForm.isSvgPathControls(group.controls)) {
+
+<mat-slide-toggle [formControl]="group.controls.closePath"
+  >Close Path</mat-slide-toggle
+>
+<!---->
+@for(commandGroup of group.controls.commands.controls; track $index) {
+
+<div style="display: flex; gap: 0.25rem; flex-wrap: wrap">
+  <lib-command-input [group]="commandGroup"></lib-command-input>
+  <div>
+    <button
+      type="button"
+      mat-icon-button
+      (click)="removePoint(group, $index)"
+      style="flex: 1 1"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+  </div>
+</div>
+
+} }@else if (GeneratedSvgForm.isCircleControls(group.controls)) { hello
+
+<mat-form-field class="dimension-input">
+  <mat-label>CX</mat-label>
+  <input matInput [formControl]="group.controls.cx" type="number" />
+</mat-form-field>
+<mat-form-field class="dimension-input">
+  <mat-label>CY</mat-label>
+  <input matInput [formControl]="group.controls.cy" type="number" />
+</mat-form-field>
+<mat-form-field class="dimension-input">
+  <mat-label>R</mat-label>
+  <input matInput [formControl]="group.controls.r" type="number" />
+</mat-form-field>
+
+}

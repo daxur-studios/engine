@@ -1,7 +1,17 @@
 <svg [attr.width]="width()" [attr.height]="height()" #svgElement>
-  @for (path of paths(); track $index) {
-  <path libGeneratedSvgPath [path]="path"></path>
+  @for (input of inputs(); track $index) {
+  <!---->
+  @if (input.type === 'circle') {
+  <circle
+    [attr.cx]="input.cx"
+    [attr.cy]="input.cy"
+    [attr.r]="input.r"
+    [attr.fill]="input.fill"
+    [attr.stroke]="input.stroke"
+  ></circle>
+  }@else if (input.type === 'path') {
 
-  }
+  <path libGeneratedSvgPath [path]="input"></path>
+  } }
   <ng-content></ng-content>
 </svg>

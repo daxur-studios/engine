@@ -20,28 +20,46 @@ import { GeneratedSvgPathComponent } from './generated-svg-path/generated-svg-pa
   styleUrl: './generated-svg.component.scss',
 })
 export class GeneratedSvgComponent {
-  @Input({ required: true }) paths!: WritableSignal<GeneratedSVG.Path[]>;
+  @Input({ required: true }) inputs!: WritableSignal<GeneratedSVG.SVGInput[]>;
 
   @ViewChild('svgElement', { static: true })
   svgElement?: ElementRef<SVGGraphicsElement>;
 
   readonly width = computed(() => {
-    const paths = this.paths();
-    return paths.reduce((max, path) => {
-      return path.commands.reduce((max, command) => {
-        if (command.type === 'Z') return max;
-        return Math.max(max, command.x);
-      }, max);
-    }, 0);
+    const inputs = this.inputs();
+
+    let maxX = 0;
+
+    inputs.forEach((input) => {
+      if (input.type === 'circle') {
+        maxX = Math.max(maxX, input.cx + input.r);
+      } else {
+        input.commands.forEach((command) => {
+          if (command.type === 'Z') return;
+          maxX = Math.max(maxX, command.x);
+        });
+      }
+    });
+
+    return maxX;
   });
   readonly height = computed(() => {
-    const paths = this.paths();
-    return paths.reduce((max, path) => {
-      return path.commands.reduce((max, command) => {
-        if (command.type === 'Z') return max;
-        return Math.max(max, command.y);
-      }, max);
-    }, 0);
+    const inputs = this.inputs();
+
+    let maxY = 0;
+
+    inputs.forEach((input) => {
+      if (input.type === 'circle') {
+        maxY = Math.max(maxY, input.cy + input.r);
+      } else {
+        input.commands.forEach((command) => {
+          if (command.type === 'Z') return;
+          maxY = Math.max(maxY, command.y);
+        });
+      }
+    });
+
+    return maxY;
   });
 
   constructor() {}

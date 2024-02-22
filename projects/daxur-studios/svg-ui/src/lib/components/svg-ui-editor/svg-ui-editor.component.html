@@ -1,7 +1,9 @@
 <div style="flex-direction: row" class="flex-page">
   <lib-html-map [grid]="false" style="flex: 1 1 70%">
-    <lib-generated-svg [paths]="paths">
-      @for (svgPathGroup of svgPathFormArray.controls; track $index) {
+    <lib-generated-svg [inputs]="inputs">
+      @for (svgPathGroup of svgInputFormArray.controls; track $index) {
+      <!---->
+      @if(GeneratedSvgForm.isSvgPathControls(svgPathGroup.controls)) {
       <!--Clickable Points-->
       @for (group of svgPathGroup.controls.commands.controls; track $index) {
       <svg:circle
@@ -42,7 +44,13 @@
         [class.isSelected]="group.controls.isSelected.value"
       ></svg:circle>
 
-      } } }
+      }
+      <!---->
+      }
+      <!---->
+      }
+      <!---->
+      }
     </lib-generated-svg>
   </lib-html-map>
   <lib-svg-ui-editor-sidebar></lib-svg-ui-editor-sidebar>

@@ -23,11 +23,10 @@ import { GeneratedSvgForm } from './svg-editor.form.model';
   styleUrl: './svg-ui-editor.component.scss',
 })
 export class SvgUiEditorComponent implements SVGEditor {
-  readonly paths = this.svgEditorService.paths;
+  readonly inputs = this.svgEditorService.inputs;
 
-  readonly svgPathFormArray = this.svgEditorService.svgPathFormArray;
-  // readonly commandsFormArray = this.svgEditorService.commandsFormArray;
-  // readonly dynamicSvgGroup = this.svgEditorService.dynamicSvgGroup;
+  readonly GeneratedSvgForm = GeneratedSvgForm;
+  readonly svgInputFormArray = this.svgEditorService.svgInputFormArray;
 
   constructor(readonly svgEditorService: SvgEditorService) {}
 

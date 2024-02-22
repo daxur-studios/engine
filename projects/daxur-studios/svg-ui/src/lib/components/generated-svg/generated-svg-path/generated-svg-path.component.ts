@@ -22,7 +22,8 @@ export class GeneratedSvgPathComponent {
 
   private calculateData() {
     this.data.set(
-      this.path.commands.map(GeneratedSVG.commandToString).join('')
+      this.path.commands.map(GeneratedSVG.commandToString).join('') +
+        (this.path.closePath ? 'Z' : '')
     );
   }
 

@@ -2,10 +2,25 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { GeneratedSVG } from '../../models';
 
 export module GeneratedSvgForm {
+  interface GeneratedSvgFormControls {
+    uniqueTags: FormControl<string[] | null>;
+    svgInputs: FormArray<SvgInputGroup>;
+  }
+  export type GeneratedSvgFormGroup = FormGroup<GeneratedSvgFormControls>;
+  export function createGeneratedSvgFormGroup(
+    svgFormValue?: GeneratedSvgFormGroup['value']
+  ) {
+    return new FormGroup<GeneratedSvgFormControls>({
+      uniqueTags: new FormControl(svgFormValue?.uniqueTags || []),
+      svgInputs: createSvgInputFormArray(svgFormValue?.svgInputs),
+    });
+  }
+
   //#region Command
 
   export interface CommandControls {
     type: FormControl<GeneratedSVG.CommandType | null>;
+    tags: FormControl<string[] | null>;
     position: PositionGroup;
     isSelected: FormControl<boolean | null>;
   }
@@ -26,6 +41,7 @@ export module GeneratedSvgForm {
   export function createCommandGroup(svgCommand: CommandGroup['value']) {
     return new FormGroup<CommandControls>({
       type: new FormControl(svgCommand.type ?? 'M'),
+      tags: new FormControl(svgCommand.tags ?? []),
       isSelected: new FormControl(svgCommand.isSelected ?? false),
       position: new FormGroup<PositionControls>({
         x: new FormControl(svgCommand.position?.x ?? 0),
@@ -38,32 +54,6 @@ export module GeneratedSvgForm {
     });
   }
 
-  /**
-   * Convert the commands form array to a path data string that can be used in an svg path element's `d` attribute.
-   */
-  export function commandsFormArrayToPathData(
-    commandsFormArray: FormArray<CommandGroup>
-  ): string {
-    let d = '';
-
-    for (let i = 0; i < commandsFormArray.length; i++) {
-      const command = commandsFormArray.at(i);
-
-      if (i === 0) {
-        d += `M ${command.get('position.x')?.value} ${
-          command.get('position.y')?.value
-        }`;
-      } else {
-        d += ` L ${command.get('position.x')?.value} ${
-          command.get('position.y')?.value
-        }`;
-      }
-    }
-
-    d += ' Z';
-
-    return d;
-  }
   export function toSvgCommands(
     commandsFormArray: FormArray<CommandGroup>
   ): GeneratedSVG.Command[] {
@@ -77,6 +67,7 @@ export module GeneratedSvgForm {
         M: (c) => {
           return {
             type: c.type,
+            tags: c.tags || [],
             x: c.position?.x ?? 0,
             y: c.position?.y ?? 0,
           };
@@ -84,6 +75,7 @@ export module GeneratedSvgForm {
         L: (c) => {
           return {
             type: c.type,
+            tags: c.tags || [],
             x: c.position?.x ?? 0,
             y: c.position?.y ?? 0,
           };
@@ -91,6 +83,7 @@ export module GeneratedSvgForm {
         C: (c) => {
           return {
             type: c.type,
+            tags: c.tags || [],
             x1: c.position?.x1 ?? 0,
             y1: c.position?.y1 ?? 0,
             x2: c.position?.x2 ?? 0,
@@ -102,6 +95,7 @@ export module GeneratedSvgForm {
         Z: (c) => {
           return {
             type: c.type,
+            tags: c.tags || [],
           };
         },
       };
@@ -111,58 +105,147 @@ export module GeneratedSvgForm {
 
     return commands;
   }
-  export function toSvgPath(svgPathGroup: SvgPathGroup): GeneratedSVG.Path {
-    const value = svgPathGroup.value;
-    return {
-      type: 'path',
-      fill: value.fill || '#000000',
-      stroke: value.stroke || '#a0a0a0',
-      strokeWidth: value.strokeWidth || '1',
-      commands: toSvgCommands(svgPathGroup.controls.commands),
-    };
+  export function toGeneratedSvgInput(
+    svgInputGroup: SvgInputGroup
+  ): GeneratedSVG.SVGInput | undefined {
+    const value = svgInputGroup.value;
+
+    if (isSvgPathControls(svgInputGroup.controls) && value.type === 'path') {
+      return {
+        type: 'path',
+        fill: value.fill ?? '#000000',
+        stroke: value.stroke ?? '#a0a0a0',
+        strokeWidth: value.strokeWidth || '1',
+        commands: toSvgCommands(svgInputGroup.controls.commands),
+        closePath: value.closePath ?? true,
+      };
+    } else if (value.type === 'circle') {
+      return {
+        type: 'circle',
+        tags: value.tags || [],
+        cx: value.cx || 0,
+        cy: value.cy || 0,
+        fill: value.fill ?? '#000000',
+        r: value.r || 0,
+        stroke: value.stroke ?? '#a0a0a0',
+        strokeWidth: value.strokeWidth || '1',
+      };
+    } else {
+      return undefined;
+    }
   }
 
   //#endregion
 
-  //#region Generated SVg
+  //#region Generated SVG
+
+  export type SvgInputControls = {
+    type: FormControl<GeneratedSVG.SvgInputType | null>;
+    tags: FormControl<string[] | null>;
+  } & (SvgPathControls | CircleControls);
+
+  export type SvgInputGroup = FormGroup<SvgInputControls>;
+
   export interface SvgPathControls {
+    type: FormControl<'path' | null>;
+    tags: FormControl<string[] | null>;
     fill: FormControl<string | null>;
     stroke: FormControl<string | null>;
     strokeWidth: FormControl<string | null>;
     commands: FormArray<CommandGroup>;
-  }
-  export type SvgPathGroup = FormGroup<SvgPathControls>;
 
-  export function createSvgPathGroup(svgPath?: SvgPathGroup['value']) {
-    return new FormGroup<SvgPathControls>({
-      fill: new FormControl(svgPath?.fill || '#000000'),
-      stroke: new FormControl(svgPath?.stroke || '#a0a0a0'),
-      strokeWidth: new FormControl(svgPath?.strokeWidth || '1'),
-      commands: new FormArray<CommandGroup>(
-        (svgPath?.commands || []).map((command) => createCommandGroup(command))
-      ),
+    closePath: FormControl<boolean | null>;
+  }
+
+  //#region Type Guards
+  export function isSvgPathGroup(group: SvgInputGroup): group is SvgInputGroup {
+    return group.value.type === 'path';
+  }
+
+  export function isSvgPathControls(
+    controls: SvgInputControls
+  ): controls is SvgPathControls {
+    return controls.type.value === 'path';
+  }
+
+  export function isCircleControls(
+    controls: SvgInputControls
+  ): controls is CircleControls {
+    return controls.type.value === 'circle';
+  }
+  //#endregion
+
+  export function createSvgInputGroup(
+    input?: SvgInputGroup['value']
+  ): SvgInputGroup {
+    if (input?.type === 'path') {
+      return new FormGroup<SvgInputControls>({
+        type: new FormControl('path'),
+        tags: new FormControl(input?.tags || []),
+        fill: new FormControl(input?.fill ?? '#000000'),
+        stroke: new FormControl(input?.stroke ?? '#a0a0a0'),
+        strokeWidth: new FormControl(input?.strokeWidth || '1'),
+        commands: new FormArray<CommandGroup>(
+          (input?.commands || []).map((command) => createCommandGroup(command))
+        ),
+        closePath: new FormControl(input?.closePath || true),
+      });
+    } else if (input?.type === 'circle') {
+      return createCircleGroup(input);
+    } else {
+      throw new Error('Invalid SVG Input Type ' + input?.type);
+    }
+  }
+
+  export type SvgInputFormArray = FormArray<SvgInputGroup>;
+  export function createSvgInputFormArray(
+    inputs: FormArray<SvgInputGroup>['value'] | undefined
+  ) {
+    return new FormArray<SvgInputGroup>(inputs?.map(createSvgInputGroup) || []);
+  }
+
+  //#region Circle
+  type CircleControls = {
+    [v in keyof GeneratedSVG.Circle]: FormControl<
+      GeneratedSVG.Circle[v] | null
+    >;
+  };
+
+  export function createCircleGroup(
+    input?: SvgInputGroup['value'] & { type: 'circle' | null | undefined }
+  ) {
+    if (!input?.type) {
+      throw new Error('Circle type not provided');
+    }
+    return new FormGroup<SvgInputControls>({
+      type: new FormControl('circle'),
+      tags: new FormControl(input?.tags || []),
+      cx: new FormControl(input?.cx || 0),
+      cy: new FormControl(input?.cy || 0),
+      r: new FormControl(input?.r || 0),
+      fill: new FormControl(input?.fill ?? '#000000'),
+      stroke: new FormControl(input?.stroke ?? '#a0a0a0'),
+      strokeWidth: new FormControl(input?.strokeWidth || '1'),
     });
   }
+  //#endregion
 
-  export type SvgPathFormArray = FormArray<SvgPathGroup>;
-  export function createSvgPathFormArray() {
-    return new FormArray<SvgPathGroup>([]);
-  }
-
-  export function exportAsJson(svgPathFormArray: SvgPathFormArray) {
-    return JSON.stringify(svgPathFormArray.value, null, 2);
+  export function exportAsJson(group: GeneratedSvgFormGroup) {
+    return JSON.stringify(group.value, null, 2);
   }
 
   export function importFromJson(
-    svgPathFormArray: SvgPathFormArray,
-    json: typeof svgPathFormArray.value
+    group: GeneratedSvgFormGroup,
+    jsonFormValue: GeneratedSvgFormGroup['value']
   ) {
     try {
-      svgPathFormArray.clear();
-      //generatedSvgGroup.controls.commands.clear({ emitEvent: false });
+      group.controls.svgInputs.clear();
+      group.patchValue(jsonFormValue);
 
-      json.forEach((path, i) => {
-        svgPathFormArray.push(createSvgPathGroup(path));
+      //  createGeneratedSvgFormGroup(jsonFormValue);
+
+      jsonFormValue.svgInputs?.forEach((input, i) => {
+        group.controls.svgInputs.push(createSvgInputGroup(input));
       });
     } catch (error) {
       console.error('Error importing from JSON', error);

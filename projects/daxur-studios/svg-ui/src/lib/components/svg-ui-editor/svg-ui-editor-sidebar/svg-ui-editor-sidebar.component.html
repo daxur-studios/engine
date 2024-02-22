@@ -4,86 +4,48 @@
     <button type="button" (click)="exportAsJson()">Export as JSON</button>
     <button type="button" (click)="importFromJson()">Import JSON</button>
   </div>
+
   <div>
-    @for (svgPathGroup of svgPathFormArray.controls; track $index) {
-    <button (click)="setCurrentPathFormGroup(svgPathGroup)" type="button">
-      Select Path
+    <mat-form-field>
+      <mat-label>Tags</mat-label>
+      <mat-chip-grid #chipGrid [formControl]="uniqueTags">
+        @for (tag of uniqueTags.value; track tag) {
+        <mat-chip-row (removed)="removeTag(tag)">
+          {{ tag }}
+          <button matChipRemove>
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-chip-row>
+        }
+      </mat-chip-grid>
+      <input
+        placeholder="New keyword..."
+        [matChipInputFor]="chipGrid"
+        (matChipInputTokenEnd)="addTag($event)"
+      />
+    </mat-form-field>
+  </div>
+
+  <div>
+    @for (svgInputGroup of svgInputFormArray.controls; track $index) {
+    <button (click)="setCurrentSvgInputGroup(svgInputGroup)" type="button">
+      Select Path #{{ $index + 1 }}
     </button>
     }
   </div>
 
-  @if (currentPathGroup(); as currentPathGroup){
+  @if (currentSvgInputGroup(); as currentSvgInputGroup){
 
-  <div>
-    <input type="color" [formControl]="currentPathGroup.controls.fill" />
-    <input type="color" [formControl]="currentPathGroup.controls.stroke" />
-  </div>
+  <lib-svg-editor-input [group]="currentSvgInputGroup"></lib-svg-editor-input>
 
-  @for (group of currentPathGroup.controls.commands.controls; track $index) {
-  <div style="display: flex; gap: 0.25rem; flex-wrap: wrap">
-    <input
-      [formControl]="group.controls.isSelected"
-      type="checkbox"
-      style="flex: 0 1 40px; width: 40px"
-    />
-
-    <select [formControl]="group.controls.type" style="flex: 1 1">
-      @for (option of TYPE_OPTIONS; track $index) {
-      <option [value]="option.value">{{ option.label }}</option>
-      }
-    </select>
-
-    <input
-      [formControl]="group.controls.position.controls.x"
-      type="number"
-      style="flex: 1 1; width: 0"
-    />
-    <input
-      [formControl]="group.controls.position.controls.y"
-      type="number"
-      style="flex: 1 1; width: 0"
-    />
-    @if (group.value.type === 'C') {
-    <div style="flex: 1 1 100%; display: flex">
-      <input
-        [formControl]="group.controls.position.controls.x1"
-        type="number"
-        style="flex: 1 1; width: 0"
-      />
-      <input
-        [formControl]="group.controls.position.controls.y1"
-        type="number"
-        style="flex: 1 1; width: 0"
-      />
-      <input
-        [formControl]="group.controls.position.controls.x2"
-        type="number"
-        style="flex: 1 1; width: 0"
-      />
-      <input
-        [formControl]="group.controls.position.controls.y2"
-        type="number"
-        style="flex: 1 1; width: 0"
-      />
-    </div>
-    }
-    <button
-      type="button"
-      (click)="removePoint(currentPathGroup, $index)"
-      style="flex: 1 1"
-    >
-      -
-    </button>
-  </div>
-
-  }
-
-  <button type="button" (click)="addPoint(currentPathGroup)">Add Point</button>
+  <button type="button" (click)="addPoint(currentSvgInputGroup)">
+    Add Point
+  </button>
 
   }
 
   <div style="display: flex; gap: 0.5rem">
-    <button type="button" (click)="addPath()">Add Path</button>
-    <button type="button" (click)="addCircle()">Add Circle</button>
+    <button type="button" (click)="addInput('path')">Add Path</button>
+    <button type="button" (click)="addInput('circle')">Add Circle</button>
   </div>
 </form>

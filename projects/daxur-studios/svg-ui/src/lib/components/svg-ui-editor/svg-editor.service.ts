@@ -2,15 +2,22 @@ import { Injectable, WritableSignal, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { GeneratedSvgForm } from './svg-editor.form.model';
 import { GeneratedSVG } from '../../models';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SvgEditorService {
-  readonly svgPathFormArray = GeneratedSvgForm.createSvgPathFormArray();
-  readonly currentPathGroup = signal<GeneratedSvgForm.SvgPathGroup | undefined>(
-    undefined
-  );
+  readonly generatedSvgFormGroup =
+    GeneratedSvgForm.createGeneratedSvgFormGroup();
+  readonly svgInputFormArray = this.generatedSvgFormGroup.controls.svgInputs;
+
+  readonly currentSvgInputGroup = signal<
+    GeneratedSvgForm.SvgInputGroup | undefined
+  >(undefined);
+
+  readonly uniqueTags = signal<string[]>([]);
+
   // readonly generatedSvgGroup = GeneratedSvgForm.createDynamicSvgGroup();
   // readonly commandsFormArray = this.generatedSvgGroup.controls.commands;
 
@@ -19,54 +26,62 @@ export class SvgEditorService {
   // > = signal([]);
 
   // readonly commands: WritableSignal<GeneratedSVG.Command[][]> = signal([]);
-  readonly paths: WritableSignal<GeneratedSVG.Path[]> = signal([]);
+  readonly inputs: WritableSignal<GeneratedSVG.SVGInput[]> = signal([]);
 
   constructor() {
     this.initValueChangeListeners();
   }
 
   private initValueChangeListeners() {
-    this.svgPathFormArray.valueChanges.subscribe(() => {
-      // this.selectedCommandGroups.set(
-      //   this.commandsFormArray.controls.filter(
-      //     (control) => control.value.isSelected
-      //   )
-      // );
+    this.generatedSvgFormGroup.controls.uniqueTags.valueChanges.subscribe(
+      (v) => {
+        this.uniqueTags.set(v || []);
+      }
+    );
 
-      const paths: GeneratedSVG.Path[] = [];
+    this.svgInputFormArray.valueChanges.subscribe((values) => {
+      const inputs: GeneratedSVG.SVGInput[] = [];
 
-      this.svgPathFormArray.controls.forEach((svgPathGroup) => {
-        paths.push(GeneratedSvgForm.toSvgPath(svgPathGroup));
+      this.svgInputFormArray.controls.forEach((svgInputGroup) => {
+        const input = GeneratedSvgForm.toGeneratedSvgInput(svgInputGroup);
+        if (input) inputs.push(input);
       });
 
-      this.paths.set(paths);
+      this.inputs.set(inputs);
 
       this.updateEditorOnlySvgCommands();
-      console.debug('commands', this.paths());
+      console.debug('commands', this.inputs());
     });
 
-    this.svgPathFormArray.valueChanges.subscribe((v) => {
+    this.svgInputFormArray.valueChanges.subscribe((v) => {
       console.debug('generatedSvgGroup', v);
     });
   }
 
-  setCurrentPathFormGroup(group: GeneratedSvgForm.SvgPathGroup) {
-    this.currentPathGroup.set(group);
+  setCurrentSvgInputFormGroup(group: GeneratedSvgForm.SvgInputGroup) {
+    this.currentSvgInputGroup.set(group);
   }
 
   private updateEditorOnlySvgCommands() {
     const editorOnlyPaths: GeneratedSVG.Path[] = [];
 
-    this.svgPathFormArray.controls.forEach((svgPathGroup) => {
-      svgPathGroup.controls.commands.controls.forEach(
-        (selectedCommandGroup, i) => {
+    this.svgInputFormArray.controls.forEach((svgInputGroup) => {
+      if (GeneratedSvgForm.isSvgPathControls(svgInputGroup.controls)) {
+        for (
+          let i = 0;
+          i < svgInputGroup.controls.commands.controls.length;
+          i++
+        ) {
+          const selectedCommandGroup =
+            svgInputGroup.controls.commands.controls.at(i)!;
           if (
             selectedCommandGroup.value.type === 'C' &&
             selectedCommandGroup.value.isSelected
           ) {
-            const previousControl = svgPathGroup.controls.commands.controls.at(
+            const previousControl = svgInputGroup.controls.commands.controls.at(
               i - 1
             );
+
             const control = selectedCommandGroup;
             const position = control.value.position;
             editorOnlyPaths.push({
@@ -74,15 +89,18 @@ export class SvgEditorService {
               fill: '#000000',
               stroke: '#b02e0c',
               strokeWidth: '1',
+              closePath: false,
               commands: [
                 //#region Connect to previous point
                 {
                   type: 'M',
+                  tags: [],
                   x: position?.x1 ?? 0,
                   y: position?.y1 ?? 0,
                 },
                 {
                   type: 'L',
+                  tags: [],
                   x: previousControl?.value.position?.x ?? 0,
                   y: previousControl?.value.position?.y ?? 0,
                 },
@@ -90,16 +108,19 @@ export class SvgEditorService {
                 //#region Connect to current point
                 {
                   type: 'M',
+                  tags: [],
                   x: position?.x2 ?? 0,
                   y: position?.y2 ?? 0,
                 },
                 {
                   type: 'L',
+                  tags: [],
                   x: position?.x ?? 0,
                   y: position?.y ?? 0,
                 },
                 {
                   type: 'M',
+                  tags: [],
                   x: position?.x ?? 0,
                   y: position?.y ?? 0,
                 },
@@ -107,18 +128,18 @@ export class SvgEditorService {
               ],
             });
 
-            this.paths.update((paths) => {
+            this.inputs.update((paths) => {
               paths.push(...editorOnlyPaths);
               return paths;
             });
           }
         }
-      );
+      }
     });
   }
 
-  addPath(group: GeneratedSvgForm.SvgPathGroup) {
-    this.svgPathFormArray.push(group);
+  addInput(group: GeneratedSvgForm.SvgInputGroup) {
+    this.svgInputFormArray.push(group);
   }
 
   addPoint(
@@ -142,12 +163,12 @@ export class SvgEditorService {
   }
 
   exportAsJson() {
-    const json = GeneratedSvgForm.exportAsJson(this.svgPathFormArray);
+    const json = GeneratedSvgForm.exportAsJson(this.generatedSvgFormGroup);
     navigator.clipboard.writeText(json);
   }
   importFromJson(jsonString: string = prompt('Paste JSON here') ?? '') {
     const json = JSON.parse(jsonString);
-    GeneratedSvgForm.importFromJson(this.svgPathFormArray, json);
-    this.setCurrentPathFormGroup(this.svgPathFormArray.controls[0]);
+    GeneratedSvgForm.importFromJson(this.generatedSvgFormGroup, json);
+    this.setCurrentSvgInputFormGroup(this.svgInputFormArray.controls[0]);
   }
 }

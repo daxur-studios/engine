@@ -1,0 +1,86 @@
+<input
+  [formControl]="group.controls.isSelected"
+  type="checkbox"
+  style="flex: 0 1 40px; width: 40px"
+/>
+<mat-form-field style="flex: 1 1 100px; min-width: 80px">
+  <mat-label>Type</mat-label>
+  <mat-select [formControl]="group.controls.type" style="flex: 1 1">
+    @for (option of GeneratedSVG.TYPE_OPTIONS; track $index) {
+    <mat-option [value]="option.value">{{ option.label }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field>
+  <mat-label>Tags</mat-label>
+  <mat-select
+    [multiple]="true"
+    [formControl]="group.controls.tags"
+    style="flex: 1 1"
+  >
+    @for (option of uniqueTags(); track $index) {
+    <mat-option [value]="option">{{ option }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="dimension-input">
+  <mat-label>X</mat-label>
+  <input
+    [formControl]="group.controls.position.controls.x"
+    matInput
+    type="number"
+    style="flex: 1 1"
+  />
+</mat-form-field>
+<mat-form-field class="dimension-input">
+  <mat-label>Y</mat-label>
+  <input
+    matInput
+    [formControl]="group.controls.position.controls.y"
+    type="number"
+    style="flex: 1 1"
+  />
+</mat-form-field>
+
+@if (group.value.type === 'C') {
+<div style="flex: 1 1 100%; display: flex; flex-wrap: wrap">
+  <mat-form-field class="dimension-input">
+    <mat-label>X 1</mat-label>
+    <input
+      matInput
+      [formControl]="group.controls.position.controls.x1"
+      type="number"
+      style="flex: 1 1"
+    />
+  </mat-form-field>
+  <mat-form-field class="dimension-input">
+    <mat-label>Y 1</mat-label>
+    <input
+      matInput
+      [formControl]="group.controls.position.controls.y1"
+      type="number"
+      style="flex: 1 1"
+    />
+  </mat-form-field>
+  <mat-form-field class="dimension-input">
+    <mat-label>X 2</mat-label>
+    <input
+      matInput
+      [formControl]="group.controls.position.controls.x2"
+      type="number"
+      style="flex: 1 1"
+    />
+  </mat-form-field>
+  <mat-form-field class="dimension-input">
+    <mat-label>Y 2</mat-label>
+    <input
+      matInput
+      [formControl]="group.controls.position.controls.y2"
+      type="number"
+      style="flex: 1 1"
+    />
+  </mat-form-field>
+</div>
+}

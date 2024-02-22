@@ -31,6 +31,7 @@ export module GeneratedSVG {
 
   export type Command = {
     type: CommandType;
+    tags: string[];
   } & (MoveToCommand | LineToCommand | ClosePathCommand | CurveToCommand);
 
   export interface MoveToCommand {
@@ -71,16 +72,21 @@ export module GeneratedSVG {
     return formatters[command.type](command as any);
   }
 
+  /** The types of  */
+  export type SvgInputType = 'circle' | 'path';
+
   export interface Path {
     type: 'path';
     commands: Command[];
     fill: string;
     stroke: string;
     strokeWidth: string;
+    closePath: boolean;
   }
 
   export interface Circle {
     type: 'circle';
+    tags: string[];
     cx: number;
     cy: number;
     r: number;
@@ -90,6 +96,6 @@ export module GeneratedSVG {
   }
 
   export type SVGInput = {
-    type: 'circle' | 'path';
+    type: SvgInputType;
   } & (Path | Circle);
 }
