@@ -7,13 +7,17 @@
       <!--Clickable Points-->
       @for (group of svgPathGroup.controls.commands.controls; track $index) {
       <svg:circle
-        [attr.cx]="group.controls.position.controls.x.value"
-        [attr.cy]="group.controls.position.controls.y.value"
         [attr.r]="5"
         [attr.fill]="'#5900ff'"
         (click)="circleClicked(group)"
         class="command-circle"
         [class.isSelected]="group.controls.isSelected.value"
+        cdkDrag
+        [cdkDragFreeDragPosition]="{
+          x: group.value.position?.x!,
+          y: group.value.position?.y!
+        }"
+        (cdkDragEnded)="dragEnded($event, group)"
       >
         <ng-container *ngIf="group.controls.isSelected.value">
           <animate
@@ -28,20 +32,28 @@
       @if (group.value.isSelected) {
       <!--Curve X1, Y1, X2, Y2 Circles-->
       <svg:circle
-        [attr.cx]="group.controls.position.controls.x1.value"
-        [attr.cy]="group.controls.position.controls.y1.value"
         [attr.r]="5"
-        [attr.fill]="'#ff0059'"
+        [attr.fill]="'#ffC059'"
         class="command-circle"
         [class.isSelected]="group.controls.isSelected.value"
+        cdkDrag
+        [cdkDragFreeDragPosition]="{
+          x: group.controls.position.controls.x1.value!,
+          y: group.controls.position.controls.y1.value!
+        }"
+        (cdkDragEnded)="dragEndedCurve1($event, group)"
       ></svg:circle>
       <svg:circle
-        [attr.cx]="group.controls.position.controls.x2.value"
-        [attr.cy]="group.controls.position.controls.y2.value"
         [attr.r]="5"
-        [attr.fill]="'#ff0059'"
+        [attr.fill]="'#ffF059'"
         class="command-circle"
         [class.isSelected]="group.controls.isSelected.value"
+        cdkDrag
+        [cdkDragFreeDragPosition]="{
+          x: group.controls.position.controls.x2.value!,
+          y: group.controls.position.controls.y2.value!
+        }"
+        (cdkDragEnded)="dragEndedCurve2($event, group)"
       ></svg:circle>
 
       }

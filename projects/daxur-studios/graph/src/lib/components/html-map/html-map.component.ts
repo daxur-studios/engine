@@ -21,6 +21,8 @@ import {
   Input,
 } from '@angular/core';
 
+type PanBy = 'leftMouse' | 'rightMouse' | 'middleMouse';
+
 @Component({
   selector: 'lib-html-map',
   standalone: true,
@@ -70,7 +72,9 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     return tiles;
   });
 
-  @Input() set grid(value: boolean) {
+  @Input() panBy: PanBy[] = ['rightMouse', 'middleMouse'];
+  @Input()
+  set grid(value: boolean) {
     this.showTiles.set(value);
   }
   readonly showTiles = signal(true);
@@ -111,7 +115,7 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
   readonly scale = computed(() => {
     return this.calculateScale(this.cameraSpringArmLength(), this.perspective);
   });
-  readonly camera: HtmlMapCamera = new HtmlMapCamera(this.scale);
+  readonly camera: HtmlMapCamera = new HtmlMapCamera(this);
 
   readonly transform3DX = computed(() => {
     const originX = this.camera.originX();
@@ -252,8 +256,10 @@ export class HtmlMapCamera {
   readonly startDragX = signal(0);
   readonly startDragY = signal(0);
   //#endregion
-
-  constructor(readonly scale: Signal<number>) {}
+  readonly scale: Signal<number>;
+  constructor(readonly component: HtmlMapComponent) {
+    this.scale = component.scale;
+  }
 
   /**
    * Sets the camera position, which is centered on the screen
@@ -315,9 +321,20 @@ export class HtmlMapCamera {
       }
     }
 
-    this.isDragging.set(true);
-    this.startDragX.set(event.clientX);
-    this.startDragY.set(event.clientY);
+    // Check if the mouse button pressed is one of the specified in panBy
+    const mouseButtonMap = {
+      0: 'leftMouse',
+      1: 'middleMouse',
+      2: 'rightMouse',
+    } as const;
+    const mouseButtonPressed = mouseButtonMap[
+      event.button as keyof typeof mouseButtonMap
+    ] as PanBy;
+    if (this.component.panBy.includes(mouseButtonPressed)) {
+      this.isDragging.set(true);
+      this.startDragX.set(event.clientX);
+      this.startDragY.set(event.clientY);
+    }
   }
   public mouseUp(event: MouseEvent) {
     this.isDragging.set(false);
