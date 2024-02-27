@@ -3,8 +3,8 @@ import { GeneratedSVG } from '../../models';
 
 export module GeneratedSvgForm {
   interface GeneratedSvgFormControls {
-    uniqueTags: FormControl<string[] | null>;
-    svgInputs: FormArray<SvgInputGroup>;
+    uniqueTags: FormControl<GeneratedSVG.ITag[] | null>;
+    elements: FormArray<SvgInputGroup>;
   }
   export type GeneratedSvgFormGroup = FormGroup<GeneratedSvgFormControls>;
   export function createGeneratedSvgFormGroup(
@@ -12,7 +12,7 @@ export module GeneratedSvgForm {
   ) {
     return new FormGroup<GeneratedSvgFormControls>({
       uniqueTags: new FormControl(svgFormValue?.uniqueTags || []),
-      svgInputs: createSvgInputFormArray(svgFormValue?.svgInputs),
+      elements: createSvgInputFormArray(svgFormValue?.elements),
     });
   }
 
@@ -30,6 +30,9 @@ export module GeneratedSvgForm {
   type PositionControls = {
     x: FormControl<number | null>;
     y: FormControl<number | null>;
+
+    offsetX: FormControl<number | null>;
+    offsetY: FormControl<number | null>;
 
     x1: FormControl<number | null>;
     y1: FormControl<number | null>;
@@ -50,6 +53,9 @@ export module GeneratedSvgForm {
         x2: new FormControl(svgCommand.position?.x2 ?? 0),
         y1: new FormControl(svgCommand.position?.y1 ?? 0),
         y2: new FormControl(svgCommand.position?.y2 ?? 0),
+
+        offsetX: new FormControl(svgCommand.position?.offsetX ?? 0),
+        offsetY: new FormControl(svgCommand.position?.offsetY ?? 0),
       }),
     });
   }
@@ -70,6 +76,9 @@ export module GeneratedSvgForm {
             tags: c.tags || [],
             x: c.position?.x ?? 0,
             y: c.position?.y ?? 0,
+
+            offsetX: c.position?.offsetX ?? 0,
+            offsetY: c.position?.offsetY ?? 0,
           };
         },
         L: (c) => {
@@ -78,6 +87,9 @@ export module GeneratedSvgForm {
             tags: c.tags || [],
             x: c.position?.x ?? 0,
             y: c.position?.y ?? 0,
+
+            offsetX: c.position?.offsetX ?? 0,
+            offsetY: c.position?.offsetY ?? 0,
           };
         },
         C: (c) => {
@@ -90,6 +102,9 @@ export module GeneratedSvgForm {
             y2: c.position?.y2 ?? 0,
             x: c.position?.x ?? 0,
             y: c.position?.y ?? 0,
+
+            offsetX: c.position?.offsetX ?? 0,
+            offsetY: c.position?.offsetY ?? 0,
           };
         },
         Z: (c) => {
@@ -105,9 +120,9 @@ export module GeneratedSvgForm {
 
     return commands;
   }
-  export function toGeneratedSvgInput(
+  export function toGeneratedSvgElement(
     svgInputGroup: SvgInputGroup
-  ): GeneratedSVG.SVGInput | undefined {
+  ): GeneratedSVG.SVGElement | undefined {
     const value = svgInputGroup.value;
 
     if (isSvgPathControls(svgInputGroup.controls) && value.type === 'path') {
@@ -125,6 +140,8 @@ export module GeneratedSvgForm {
         tags: value.tags || [],
         cx: value.cx || 0,
         cy: value.cy || 0,
+        offsetCx: value.offsetCx || 0,
+        offsetCy: value.offsetCy || 0,
         fill: value.fill ?? '#000000',
         r: value.r || 0,
         stroke: value.stroke ?? '#a0a0a0',
@@ -133,6 +150,16 @@ export module GeneratedSvgForm {
     } else {
       return undefined;
     }
+  }
+  export function toGeneratedSvgData(
+    group: GeneratedSvgFormGroup
+  ): GeneratedSVG.GeneratedSvgData {
+    return {
+      controlPoints: group.value.uniqueTags || [],
+      elements: group.controls.elements.controls
+        .map(toGeneratedSvgElement)
+        .filter((x) => !!x) as GeneratedSVG.SVGElement[],
+    };
   }
 
   //#endregion
@@ -222,6 +249,8 @@ export module GeneratedSvgForm {
       tags: new FormControl(input?.tags || []),
       cx: new FormControl(input?.cx || 0),
       cy: new FormControl(input?.cy || 0),
+      offsetCx: new FormControl(input?.offsetCx || 0),
+      offsetCy: new FormControl(input?.offsetCy || 0),
       r: new FormControl(input?.r || 0),
       fill: new FormControl(input?.fill ?? '#000000'),
       stroke: new FormControl(input?.stroke ?? '#a0a0a0'),
@@ -239,13 +268,13 @@ export module GeneratedSvgForm {
     jsonFormValue: GeneratedSvgFormGroup['value']
   ) {
     try {
-      group.controls.svgInputs.clear();
+      group.controls.elements.clear();
       group.patchValue(jsonFormValue);
 
       //  createGeneratedSvgFormGroup(jsonFormValue);
 
-      jsonFormValue.svgInputs?.forEach((input, i) => {
-        group.controls.svgInputs.push(createSvgInputGroup(input));
+      jsonFormValue.elements?.forEach((input, i) => {
+        group.controls.elements.push(createSvgInputGroup(input));
       });
     } catch (error) {
       console.error('Error importing from JSON', error);

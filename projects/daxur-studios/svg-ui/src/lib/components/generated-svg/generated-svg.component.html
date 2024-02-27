@@ -1,17 +1,22 @@
-<svg [attr.width]="width()" [attr.height]="height()" #svgElement>
-  @for (input of inputs(); track $index) {
+<svg [attr.width]="width | async" [attr.height]="height | async" #svgElement>
+  @for (element of (data|async)?.elements; track $index) {
   <!---->
-  @if (input.type === 'circle') {
+  @if (element.type === 'circle') {
   <circle
-    [attr.cx]="input.cx"
-    [attr.cy]="input.cy"
-    [attr.r]="input.r"
-    [attr.fill]="input.fill"
-    [attr.stroke]="input.stroke"
+    [attr.cx]="element.cx + element.offsetCx"
+    [attr.cy]="element.cy + element.offsetCy"
+    [attr.r]="element.r"
+    [attr.fill]="element.fill"
+    [attr.stroke]="element.stroke"
   ></circle>
-  }@else if (input.type === 'path') {
+  }@else if (element.type === 'path') {
 
-  <path libGeneratedSvgPath [path]="input"></path>
+  <path
+    [attr.d]="calculateData(element)"
+    [attr.fill]="element.fill"
+    [attr.stroke]="element.stroke"
+    [attr.stroke-width]="element.strokeWidth"
+  ></path>
   } }
   <ng-content></ng-content>
 </svg>

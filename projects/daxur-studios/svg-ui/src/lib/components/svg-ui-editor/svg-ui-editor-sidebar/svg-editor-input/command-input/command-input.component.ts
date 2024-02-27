@@ -25,7 +25,9 @@ import { GeneratedSVG, SvgEditorService } from '@daxur-studios/svg-ui';
 export class CommandInputComponent {
   @Input() group!: GeneratedSvgForm.CommandGroup;
 
-  readonly uniqueTags = this.svgEditorService.uniqueTags;
+  get uniqueTags() {
+    return this.svgEditorService.generatedSvgFormGroup.controls.uniqueTags;
+  }
 
   readonly GeneratedSvgForm = GeneratedSvgForm;
   readonly GeneratedSVG = GeneratedSVG;

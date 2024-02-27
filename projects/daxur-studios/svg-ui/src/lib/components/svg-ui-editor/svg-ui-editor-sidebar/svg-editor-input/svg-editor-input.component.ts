@@ -30,7 +30,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 export class SvgEditorInputComponent {
   @Input() group!: GeneratedSvgForm.SvgInputGroup;
 
-  readonly uniqueTags = this.svgEditorService.uniqueTags;
   readonly GeneratedSvgForm = GeneratedSvgForm;
   readonly GeneratedSVG = GeneratedSVG;
 

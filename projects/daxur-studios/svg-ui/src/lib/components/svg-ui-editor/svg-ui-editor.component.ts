@@ -10,6 +10,8 @@ import { SvgEditorService } from './svg-editor.service';
 import { GeneratedSvgComponent } from '../generated-svg/generated-svg.component';
 import { GeneratedSvgForm } from './svg-editor.form.model';
 import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
+import { GeneratedSVG } from '../../models';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'lib-svg-ui-editor',
@@ -20,15 +22,17 @@ import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
     SvgUiEditorSidebarComponent,
     GeneratedSvgComponent,
     DragDropModule,
+    MatTooltipModule,
   ],
   templateUrl: './svg-ui-editor.component.html',
   styleUrl: './svg-ui-editor.component.scss',
 })
 export class SvgUiEditorComponent implements SVGEditor {
-  readonly inputs = this.svgEditorService.inputs;
-
   readonly GeneratedSvgForm = GeneratedSvgForm;
+
+  readonly generatedSvgFormGroup = this.svgEditorService.generatedSvgFormGroup;
   readonly svgInputFormArray = this.svgEditorService.svgInputFormArray;
+  readonly inputs = this.svgEditorService.generatedSvgData;
 
   constructor(readonly svgEditorService: SvgEditorService) {}
 
@@ -65,6 +69,10 @@ export class SvgUiEditorComponent implements SVGEditor {
         y2: event.source.getFreeDragPosition().y,
       },
     });
+  }
+  dragEndedTag(event: CdkDragEnd, tag: GeneratedSVG.ITag) {
+    tag.x = event.source.getFreeDragPosition().x;
+    tag.y = event.source.getFreeDragPosition().y;
   }
 }
 

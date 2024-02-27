@@ -8,10 +8,14 @@
   <div>
     <mat-form-field>
       <mat-label>Tags</mat-label>
-      <mat-chip-grid #chipGrid [formControl]="uniqueTags">
-        @for (tag of uniqueTags.value; track tag) {
-        <mat-chip-row (removed)="removeTag(tag)">
-          {{ tag }}
+      <mat-chip-grid
+        #chipGrid
+        [formControl]="generatedSvgFormGroup.controls.uniqueTags"
+      >
+        @for (tag of generatedSvgFormGroup.controls.uniqueTags.value; track
+        tag.label) {
+        <mat-chip-row (removed)="removeTag(tag)" [value]="tag">
+          {{ tag.label }}
           <button matChipRemove>
             <mat-icon>cancel</mat-icon>
           </button>
@@ -19,7 +23,7 @@
         }
       </mat-chip-grid>
       <input
-        placeholder="New keyword..."
+        placeholder="Tag Label..."
         [matChipInputFor]="chipGrid"
         (matChipInputTokenEnd)="addTag($event)"
       />

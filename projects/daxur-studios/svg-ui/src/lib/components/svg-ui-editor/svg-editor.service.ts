@@ -2,7 +2,7 @@ import { Injectable, WritableSignal, signal } from '@angular/core';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { GeneratedSvgForm } from './svg-editor.form.model';
 import { GeneratedSVG } from '../../models';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -10,51 +10,48 @@ import { Subject } from 'rxjs';
 export class SvgEditorService {
   readonly generatedSvgFormGroup =
     GeneratedSvgForm.createGeneratedSvgFormGroup();
-  readonly svgInputFormArray = this.generatedSvgFormGroup.controls.svgInputs;
+  readonly svgInputFormArray = this.generatedSvgFormGroup.controls.elements;
 
   readonly currentSvgInputGroup = signal<
     GeneratedSvgForm.SvgInputGroup | undefined
   >(undefined);
 
-  readonly uniqueTags = signal<string[]>([]);
+  // readonly uniqueTags = signal<GeneratedSVG.ITag[]>([]);
 
-  // readonly generatedSvgGroup = GeneratedSvgForm.createDynamicSvgGroup();
-  // readonly commandsFormArray = this.generatedSvgGroup.controls.commands;
-
-  // readonly selectedCommandGroups: WritableSignal<
-  //   GeneratedSvgForm.CommandGroup[]
-  // > = signal([]);
-
-  // readonly commands: WritableSignal<GeneratedSVG.Command[][]> = signal([]);
-  readonly inputs: WritableSignal<GeneratedSVG.SVGInput[]> = signal([]);
+  readonly generatedSvgData =
+    new BehaviorSubject<GeneratedSVG.GeneratedSvgData>({
+      elements: [],
+      controlPoints: [],
+    });
 
   constructor() {
     this.initValueChangeListeners();
   }
 
   private initValueChangeListeners() {
-    this.generatedSvgFormGroup.controls.uniqueTags.valueChanges.subscribe(
-      (v) => {
-        this.uniqueTags.set(v || []);
-      }
-    );
+    // this.generatedSvgFormGroup.controls.uniqueTags.valueChanges.subscribe(
+    //   (v) => {
+    //     this.uniqueTags.set(v || []);
+    //   }
+    // );
 
     this.svgInputFormArray.valueChanges.subscribe((values) => {
-      const inputs: GeneratedSVG.SVGInput[] = [];
+      const elements: GeneratedSVG.SVGElement[] = [];
 
       this.svgInputFormArray.controls.forEach((svgInputGroup) => {
-        const input = GeneratedSvgForm.toGeneratedSvgInput(svgInputGroup);
-        if (input) inputs.push(input);
+        const input = GeneratedSvgForm.toGeneratedSvgElement(svgInputGroup);
+        if (input) elements.push(input);
       });
 
-      this.inputs.set(inputs);
+      this.generatedSvgData.next({
+        elements: elements,
+        controlPoints:
+          this.generatedSvgFormGroup.controls.uniqueTags.value || [],
+      });
 
       this.updateEditorOnlySvgCommands();
-      console.debug('commands', this.inputs());
-    });
-
-    this.svgInputFormArray.valueChanges.subscribe((v) => {
-      console.debug('generatedSvgGroup', v);
+      console.debug('generatedSvgData', this.generatedSvgData.value);
+      console.debug('generatedSvgFormGroup', this.generatedSvgFormGroup.value);
     });
   }
 
@@ -97,12 +94,18 @@ export class SvgEditorService {
                   tags: [],
                   x: position?.x1 ?? 0,
                   y: position?.y1 ?? 0,
+
+                  offsetX: position?.offsetX ?? 0,
+                  offsetY: position?.offsetY ?? 0,
                 },
                 {
                   type: 'L',
                   tags: [],
                   x: previousControl?.value.position?.x ?? 0,
                   y: previousControl?.value.position?.y ?? 0,
+
+                  offsetX: previousControl?.value.position?.offsetX ?? 0,
+                  offsetY: previousControl?.value.position?.offsetY ?? 0,
                 },
                 //#endregion
                 //#region Connect to current point
@@ -111,27 +114,35 @@ export class SvgEditorService {
                   tags: [],
                   x: position?.x2 ?? 0,
                   y: position?.y2 ?? 0,
+
+                  offsetX: position?.offsetX ?? 0,
+                  offsetY: position?.offsetY ?? 0,
                 },
                 {
                   type: 'L',
                   tags: [],
                   x: position?.x ?? 0,
                   y: position?.y ?? 0,
+
+                  offsetX: position?.offsetX ?? 0,
+                  offsetY: position?.offsetY ?? 0,
                 },
                 {
                   type: 'M',
                   tags: [],
                   x: position?.x ?? 0,
                   y: position?.y ?? 0,
+
+                  offsetX: position?.offsetX ?? 0,
+                  offsetY: position?.offsetY ?? 0,
                 },
                 //#endregion
               ],
             });
 
-            this.inputs.update((paths) => {
-              paths.push(...editorOnlyPaths);
-              return paths;
-            });
+            const data = this.generatedSvgData.value;
+            data.elements.push(...editorOnlyPaths);
+            this.generatedSvgData.next(data);
           }
         }
       }

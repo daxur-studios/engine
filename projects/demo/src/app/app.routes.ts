@@ -43,4 +43,11 @@ export const routes: Routes = [
         (m) => m.SvgUiDemoPageComponent
       ),
   },
+  {
+    path: 'graph-demo/svg-ui-demo-part-2',
+    loadComponent: () =>
+      import(
+        './pages/svg-ui-demo-page/svg-ui-demo-p2/svg-ui-demo-p2.component'
+      ).then((m) => m.SvgUiDemoP2Component),
+  },
 ];

@@ -1,0 +1,18 @@
+<!-- <div>height {{ sizes().height }} width {{ sizes().width }}</div> -->
+
+<div
+  #wrapper
+  style="
+    border: dashed 2px cyan;
+    display: flex;
+    flex: 1 1;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  "
+>
+  <lib-generated-svg
+    [data]="fku"
+    style="position: absolute"
+  ></lib-generated-svg>
+</div>

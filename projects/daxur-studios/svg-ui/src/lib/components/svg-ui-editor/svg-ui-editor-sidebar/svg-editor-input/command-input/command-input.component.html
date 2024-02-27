@@ -19,8 +19,8 @@
     [formControl]="group.controls.tags"
     style="flex: 1 1"
   >
-    @for (option of uniqueTags(); track $index) {
-    <mat-option [value]="option">{{ option }}</mat-option>
+    @for (option of uniqueTags.value; track $index) {
+    <mat-option [value]="option.label">{{ option.label }}</mat-option>
     }
   </mat-select>
 </mat-form-field>

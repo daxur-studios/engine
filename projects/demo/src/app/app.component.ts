@@ -74,6 +74,10 @@ export class AppComponent {
           name: 'SVG UI',
           path: 'graph-demo/svg-ui-demo',
         },
+        {
+          name: 'SVG UI Part 2',
+          path: 'graph-demo/svg-ui-demo-part-2',
+        },
       ],
     },
   ];

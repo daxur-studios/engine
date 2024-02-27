@@ -1,6 +1,6 @@
 <div style="flex-direction: row" class="flex-page">
   <lib-html-map [grid]="false" style="flex: 1 1 70%">
-    <lib-generated-svg [inputs]="inputs">
+    <lib-generated-svg [data]="inputs">
       @for (svgPathGroup of svgInputFormArray.controls; track $index) {
       <!---->
       @if(GeneratedSvgForm.isSvgPathControls(svgPathGroup.controls)) {
@@ -8,21 +8,21 @@
       @for (group of svgPathGroup.controls.commands.controls; track $index) {
       <svg:circle
         [attr.r]="5"
-        [attr.fill]="'#5900ff'"
+        [attr.fill]="'#5900ff90'"
         (click)="circleClicked(group)"
         class="command-circle"
         [class.isSelected]="group.controls.isSelected.value"
         cdkDrag
         [cdkDragFreeDragPosition]="{
-          x: group.value.position?.x!,
-          y: group.value.position?.y!
+          x: group.value.position?.x! + group.value.position?.offsetX!,
+          y: group.value.position?.y! + group.value.position?.offsetY!
         }"
         (cdkDragEnded)="dragEnded($event, group)"
       >
         <ng-container *ngIf="group.controls.isSelected.value">
           <animate
             attributeName="r"
-            values="5; 10; 5"
+            values="5; 7; 5"
             dur="1s"
             repeatCount="indefinite"
           ></animate>
@@ -62,6 +62,41 @@
       <!---->
       }
       <!---->
+      }
+
+      <!--Clickable Unique Tag Points-->
+      @for (tag of generatedSvgFormGroup.value.uniqueTags; track tag.label) {
+
+      <svg:line
+        [attr.x1]="tag.x + tag.offsetX - 5"
+        [attr.y1]="tag.y + tag.offsetY - 5"
+        [attr.x2]="tag.x + tag.offsetX + 5"
+        [attr.y2]="tag.y + tag.offsetY + 5"
+        [attr.stroke]="'#ffffff50'"
+        [attr.stroke-width]="1"
+      ></svg:line>
+
+      <svg:line
+        [attr.x1]="tag.x + tag.offsetX + 5"
+        [attr.y1]="tag.y + tag.offsetY - 5"
+        [attr.x2]="tag.x + tag.offsetX - 5"
+        [attr.y2]="tag.y + tag.offsetY + 5"
+        [attr.stroke]="'#ffffff50'"
+        [attr.stroke-width]="1"
+      ></svg:line>
+
+      <svg:circle
+        [attr.r]="10"
+        [attr.fill]="'#abcdef50'"
+        class="tag-circle"
+        cdkDrag
+        [cdkDragFreeDragPosition]="{
+          x: tag.x + tag.offsetX,
+          y: tag.y + tag.offsetY
+        }"
+        [matTooltip]="tag.label"
+        (cdkDragEnded)="dragEndedTag($event, tag)"
+      ></svg:circle>
       }
     </lib-generated-svg>
   </lib-html-map>

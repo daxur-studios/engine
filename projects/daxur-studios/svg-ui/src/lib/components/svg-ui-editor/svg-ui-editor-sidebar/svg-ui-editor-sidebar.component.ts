@@ -39,20 +39,32 @@ export class SvgUiEditorSidebarComponent {
     return this.generatedSvgFormGroup.controls.uniqueTags;
   }
 
-  removeTag(tag: string) {
+  removeTag(tag: GeneratedSVG.ITag) {
     this.uniqueTags.setValue(
-      this.uniqueTags.value?.filter((t) => t !== tag) || []
+      this.uniqueTags.value?.filter((t) => t.label !== tag.label) || []
     );
   }
   addTag(event: MatChipInputEvent) {
     const input = event.input;
-    const value = event.value;
+    const value = event.value?.trim() || '';
+    if (!value) return;
 
-    if ((value || '').trim()) {
-      this.uniqueTags.setValue(
-        Array.from(new Set([...(this.uniqueTags.value || []), value.trim()]))
-      );
-    }
+    const tag: GeneratedSVG.ITag = {
+      label: value,
+      x: 10,
+      y: 10,
+      offsetX: 0,
+      offsetY: 0,
+    };
+
+    const existingTags = this.uniqueTags.value || [];
+
+    this.generatedSvgFormGroup.controls.uniqueTags.setValue(
+      // Ensure tags are unique by label
+      [...existingTags, tag].filter(
+        (t, i, a) => a.findIndex((tag) => tag.label === t.label) === i
+      )
+    );
 
     if (input) {
       input.value = '';
@@ -108,5 +120,24 @@ export class SvgUiEditorSidebarComponent {
         });
       }
     }
+
+    this.svgEditorService.generatedSvgFormGroup.patchValue({
+      uniqueTags: [
+        {
+          label: 'test',
+          x: Math.round(Math.random() * (x?.clientWidth ?? 200)),
+          y: Math.round(Math.random() * (x?.clientHeight ?? 200)),
+          offsetX: 0,
+          offsetY: 0,
+        },
+        {
+          label: 'test2',
+          x: Math.round(Math.random() * (x?.clientWidth ?? 200)),
+          y: Math.round(Math.random() * (x?.clientHeight ?? 200)),
+          offsetX: 0,
+          offsetY: 0,
+        },
+      ],
+    });
   }
 }
