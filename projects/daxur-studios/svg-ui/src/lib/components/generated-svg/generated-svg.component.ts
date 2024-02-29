@@ -28,6 +28,8 @@ export class GeneratedSvgComponent implements OnInit, OnDestroy {
   @Input({ required: true })
   data!: BehaviorSubject<GeneratedSVG.GeneratedSvgData>;
 
+  @Input() showDebugPoints: boolean = false;
+
   @ViewChild('svgElement', { static: true })
   svgElement?: ElementRef<SVGGraphicsElement>;
 

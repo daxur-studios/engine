@@ -56,15 +56,27 @@ export module GeneratedSVG {
 
   export interface CurveToCommand {
     type: 'C';
+
     x1: number;
     y1: number;
+
     x2: number;
     y2: number;
+
     x: number;
     y: number;
 
     offsetX: number;
     offsetY: number;
+
+    offset_x1: number;
+    offset_y1: number;
+
+    offset_x2: number;
+    offset_y2: number;
+
+    tagsXY1: string[];
+    tagsXY2: string[];
   }
 
   export interface ClosePathCommand {
@@ -78,9 +90,9 @@ export module GeneratedSVG {
       M: (c) => `M ${c.x + c.offsetX} ${c.y + c.offsetY}`,
       L: (c) => `L ${c.x + c.offsetX} ${c.y + c.offsetY}`,
       C: (c) =>
-        `C ${c.x1} ${c.y1} ${c.x2} ${c.y2} ${c.x + c.offsetX} ${
-          c.y + c.offsetY
-        }`,
+        `C ${c.x1 + c.offset_x1} ${c.y1 + c.offset_y1} ${c.x2 + c.offset_x2} ${
+          c.y2 + c.offset_y2
+        } ${c.x + c.offsetX} ${c.y + c.offsetY}`,
       Z: (c) => 'Z',
     };
 
@@ -118,17 +130,23 @@ export module GeneratedSVG {
     type: SvgInputType;
   } & (Path | Circle);
 
-  export interface ITag<TAGS extends string = string> {
-    label: TAGS;
+  export interface ITag {
+    label: string;
     x: number;
     y: number;
 
     offsetX: number;
     offsetY: number;
+
+    offset_x1: number;
+    offset_y1: number;
+
+    offset_x2: number;
+    offset_y2: number;
   }
 
-  export type GeneratedSvgData<TAGS extends string = string> = {
-    controlPoints: ITag<TAGS>[];
+  export type GeneratedSvgData = {
+    controlPoints: ITag[];
     elements: SVGElement[];
   };
 
@@ -138,9 +156,7 @@ export module GeneratedSVG {
     [v in TAGS]: (sizes: Sizes, controlPoint: SVGControlPoint<TAGS>) => void;
   };
 
-  export class SVGControlPoint<TAGS extends string = string>
-    implements ITag<TAGS>
-  {
+  export class SVGControlPoint<TAGS extends string = string> implements ITag {
     label: TAGS;
     x: number;
     y: number;
@@ -148,22 +164,43 @@ export module GeneratedSVG {
     offsetX: number;
     offsetY: number;
 
+    offset_x1: number;
+    offset_y1: number;
+    offset_x2: number;
+    offset_y2: number;
+
     get children() {
       const results: {
         commands: Command[];
         circles: (SVGElement & { type: 'circle' })[];
+
+        XY1: (Command & { type: 'C' })[];
+        XY2: (Command & { type: 'C' })[];
       } = {
         commands: [],
         circles: [],
+
+        XY1: [],
+        XY2: [],
       };
 
       this.parent.elements.forEach((element) => {
         if (element.type === 'path') {
-          results.commands.push(
-            ...element.commands.filter((command) =>
-              command.tags.includes(this.label)
-            )
-          );
+          element.commands.forEach((command) => {
+            if (command.tags.includes(this.label)) {
+              results.commands.push(command);
+            }
+
+            if (command.type === 'C') {
+              if (command.tagsXY1.includes(this.label)) {
+                results.XY1.push(command);
+              }
+
+              if (command.tagsXY2.includes(this.label)) {
+                results.XY2.push(command);
+              }
+            }
+          });
         } else if (element.type === 'circle') {
           if (element.tags.includes(this.label)) {
             results.circles.push(element);
@@ -174,12 +211,17 @@ export module GeneratedSVG {
       return results;
     }
 
-    constructor(data: ITag<TAGS>, readonly parent: GSVG<TAGS>) {
-      this.label = data.label;
-      this.x = data.x;
-      this.y = data.y;
-      this.offsetX = data.offsetX;
-      this.offsetY = data.offsetY;
+    constructor(data: ITag, readonly parent: GSVG<TAGS>) {
+      this.label = data.label as TAGS;
+      this.x = data.x ?? 0;
+      this.y = data.y ?? 0;
+      this.offsetX = data.offsetX ?? 0;
+      this.offsetY = data.offsetY ?? 0;
+
+      this.offset_x1 = data.offset_x1 ?? 0;
+      this.offset_y1 = data.offset_y1 ?? 0;
+      this.offset_x2 = data.offset_x2 ?? 0;
+      this.offset_y2 = data.offset_y2 ?? 0;
     }
 
     public resetChildOffsets() {
@@ -190,6 +232,16 @@ export module GeneratedSVG {
 
         command.offsetX = 0;
         command.offsetY = 0;
+      });
+
+      children.XY1.forEach((command) => {
+        command.offset_x1 = 0;
+        command.offset_y1 = 0;
+      });
+
+      children.XY2.forEach((command) => {
+        command.offset_x2 = 0;
+        command.offset_y2 = 0;
       });
 
       children.circles.forEach((circle) => {
@@ -208,6 +260,16 @@ export module GeneratedSVG {
         command.offsetY += this.offsetY;
       });
 
+      children.XY1.forEach((command) => {
+        command.offset_x1 += this.offset_x1;
+        command.offset_y1 += this.offset_y1;
+      });
+
+      children.XY2.forEach((command) => {
+        command.offset_x2 += this.offset_x2;
+        command.offset_y2 += this.offset_y2;
+      });
+
       children.circles.forEach((circle) => {
         circle.offsetCx += this.offsetX;
         circle.offsetCy += this.offsetY;
@@ -215,56 +277,103 @@ export module GeneratedSVG {
     }
   }
 
-  export class GSVG<TAGS extends string = string> implements GeneratedSvgData {
-    controlPoints: SVGControlPoint<TAGS>[] = [];
-    elements: SVGElement[] = [];
+  export class GSVG<TAGS extends string> implements GeneratedSvgData {
+    readonly sizes$ = new BehaviorSubject<GeneratedSVG.Sizes>({
+      width: 0,
+      height: 0,
+    });
+    readonly resizeObserver = new ResizeObserver((entries) => {
+      this.onResize(entries);
+    });
+
+    readonly generatedSvgData$ =
+      new BehaviorSubject<GeneratedSVG.GeneratedSvgData>({
+        controlPoints: [],
+        elements: [],
+      });
+
+    get generatedSvgData() {
+      return this.generatedSvgData$.value;
+    }
+    get controlPoints() {
+      return this.generatedSvgData.controlPoints as SVGControlPoint<TAGS>[];
+    }
+    get elements() {
+      return this.generatedSvgData.elements;
+    }
+
+    // controlPoints: SVGControlPoint<TAGS>[] = [];
+    // elements: SVGElement[] = [];
 
     constructor(
       readonly options: {
         readonly onDestroy: Subject<void>;
-        readonly data: GeneratedSvgData<TAGS>;
-        readonly sizes: BehaviorSubject<Sizes>;
+        readonly data: GeneratedSvgData;
         readonly controlPointOffsetters: OffsetFn<TAGS>;
       }
     ) {
       const { data } = options;
-      this.controlPoints = data.controlPoints.map(
+
+      const generatedSvgData = this.generatedSvgData$.value;
+
+      generatedSvgData.controlPoints = data.controlPoints.map(
         (tag) => new SVGControlPoint<TAGS>(tag, this)
       );
-      this.elements = data.elements;
+      generatedSvgData.elements = data.elements;
+
+      this.generatedSvgData$.next(generatedSvgData);
 
       this.initSizeChanges();
+    }
+
+    public recalculate() {
+      this.sizes$.next(this.sizes$.value);
     }
 
     public getControlPointByLabel(label: TAGS) {
       return this.controlPoints.find((cp) => cp.label === label);
     }
     private initSizeChanges() {
-      this.options.sizes
-        .pipe(takeUntil(this.options.onDestroy))
-        .subscribe((sizes) => {
-          this.resetChildOffsets();
+      this.sizes$.pipe(takeUntil(this.options.onDestroy)).subscribe((sizes) => {
+        this.resetChildOffsets();
 
-          const methods = this.options.controlPointOffsetters;
+        const methods = this.options.controlPointOffsetters;
 
-          for (const key in methods) {
-            const point = this.getControlPointByLabel(key);
-            if (!point)
-              throw new Error(`Control point not found for label: ${key}`);
+        for (const key in methods) {
+          const point = this.getControlPointByLabel(key);
+          if (!point)
+            throw new Error(`Control point not found for label: ${key}`);
 
-            if (methods.hasOwnProperty(key)) {
-              methods[key](sizes, point);
+          if (methods.hasOwnProperty(key)) {
+            methods[key](sizes, point);
 
-              point.applyOffsetToChildren();
-            }
+            point.applyOffsetToChildren();
           }
-        });
+        }
+
+        this.generatedSvgData$.next(this.generatedSvgData);
+      });
+    }
+
+    public observeWrapperElement(wrapper: { nativeElement: HTMLElement }) {
+      this.resizeObserver.observe(wrapper.nativeElement);
+    }
+
+    private onResize(entries: ResizeObserverEntry[]) {
+      this.sizes$.next({
+        width: entries[0].contentRect.width,
+        height: entries[0].contentRect.height,
+      });
     }
 
     public resetChildOffsets() {
       this.controlPoints.forEach((controlPoint) => {
         controlPoint.resetChildOffsets();
       });
+    }
+
+    public dispose() {
+      this.resizeObserver.disconnect();
     }
   }
 }

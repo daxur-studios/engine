@@ -14,8 +14,8 @@
         [class.isSelected]="group.controls.isSelected.value"
         cdkDrag
         [cdkDragFreeDragPosition]="{
-          x: group.value.position?.x! + group.value.position?.offsetX!,
-          y: group.value.position?.y! + group.value.position?.offsetY!
+          x: group.value.x! + group.value.offsetX!,
+          y: group.value.y! + group.value.offsetY!
         }"
         (cdkDragEnded)="dragEnded($event, group)"
       >
@@ -29,7 +29,8 @@
         </ng-container>
       </svg:circle>
 
-      @if (group.value.isSelected) {
+      @if (group.value.isSelected &&
+      GeneratedSvgForm.isCurveCommandControls(group.controls)) {
       <!--Curve X1, Y1, X2, Y2 Circles-->
       <svg:circle
         [attr.r]="5"
@@ -38,8 +39,8 @@
         [class.isSelected]="group.controls.isSelected.value"
         cdkDrag
         [cdkDragFreeDragPosition]="{
-          x: group.controls.position.controls.x1.value!,
-          y: group.controls.position.controls.y1.value!
+          x: group.controls.x1.value!,
+          y: group.controls.y1.value!
         }"
         (cdkDragEnded)="dragEndedCurve1($event, group)"
       ></svg:circle>
@@ -50,8 +51,8 @@
         [class.isSelected]="group.controls.isSelected.value"
         cdkDrag
         [cdkDragFreeDragPosition]="{
-          x: group.controls.position.controls.x2.value!,
-          y: group.controls.position.controls.y2.value!
+          x: group.controls.x2.value!,
+          y: group.controls.y2.value!
         }"
         (cdkDragEnded)="dragEndedCurve2($event, group)"
       ></svg:circle>

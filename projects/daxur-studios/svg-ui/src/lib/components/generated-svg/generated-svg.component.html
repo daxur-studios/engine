@@ -17,6 +17,32 @@
     [attr.stroke]="element.stroke"
     [attr.stroke-width]="element.strokeWidth"
   ></path>
-  } }
+
+  @if (showDebugPoints) {
+  <!---->
+  @for (command of element.commands; track $index) {
+  <!---->
+  @if (command.type !== 'Z' ) {
+  <circle
+    [attr.cx]="command.x + command.offsetX"
+    [attr.cy]="command.y + command.offsetY"
+    [attr.r]="5"
+    [attr.fill]="'#ffF059'"
+  ></circle>
+
+  @if (command.type === 'C') {
+  <circle
+    [attr.cx]="command.x1 + command.offset_x1"
+    [attr.cy]="command.y1 + command.offset_y1"
+    [attr.r]="5"
+    [attr.fill]="'#ffA059'"
+  ></circle>
+  <circle
+    [attr.cx]="command.x2 + command.offset_x2"
+    [attr.cy]="command.y2 + command.offset_y2"
+    [attr.r]="5"
+    [attr.fill]="'#ffA059'"
+  ></circle>
+  } } } } } }
   <ng-content></ng-content>
 </svg>

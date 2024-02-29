@@ -67,4 +67,17 @@
   <input matInput [formControl]="group.controls.r" type="number" />
 </mat-form-field>
 
+<mat-form-field>
+  <mat-label>Tags</mat-label>
+  <mat-select
+    [multiple]="true"
+    [formControl]="group.controls.tags"
+    style="flex: 1 1"
+  >
+    @for (option of uniqueTags.value; track $index) {
+    <mat-option [value]="option.label">{{ option.label }}</mat-option>
+    }
+  </mat-select>
+</mat-form-field>
+
 }

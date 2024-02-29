@@ -1,0 +1,114 @@
+{
+  "uniqueTags": [
+    {
+      "label": "left",
+      "x": 1,
+      "y": 32,
+      "offsetX": 0,
+      "offsetY": 0
+    },
+    {
+      "label": "right",
+      "x": 598.9999923706055,
+      "y": 31,
+      "offsetX": 0,
+      "offsetY": 0
+    },
+    {
+      "label": "centre",
+      "x": 100.99999237060547,
+      "y": 67,
+      "offsetX": 0,
+      "offsetY": 0
+    }
+  ],
+  "elements": [
+    {
+      "type": "path",
+      "tags": [],
+      "fill": "#000000",
+      "stroke": "#00000000",
+      "strokeWidth": "1",
+      "commands": [
+        {
+          "type": "M",
+          "tags": ["left"],
+          "isSelected": false,
+          "x": 0,
+          "y": 0,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "C",
+          "isSelected": true,
+          "tags": ["centre"],
+          "tagsXY1": ["centre"],
+          "tagsXY2": ["centre"],
+          "x1": 61.99998474121094,
+          "x2": 65,
+          "y1": -2,
+          "y2": 50,
+          "x": 100,
+          "y": 50,
+          "offsetX": 0,
+          "offsetY": 0,
+          "offset_x1": 0,
+          "offset_y1": 0,
+          "offset_x2": 0,
+          "offset_y2": 0
+        },
+        {
+          "type": "C",
+          "isSelected": true,
+          "tags": ["right"],
+          "tagsXY1": ["centre"],
+          "tagsXY2": ["centre"],
+          "x1": 150,
+          "x2": 150,
+          "y1": 48,
+          "y2": -4,
+          "x": 600,
+          "y": 0,
+          "offsetX": 0,
+          "offsetY": 0,
+          "offset_x1": 0,
+          "offset_y1": 0,
+          "offset_x2": 0,
+          "offset_y2": 0
+        },
+        {
+          "type": "L",
+          "tags": ["right"],
+          "isSelected": false,
+          "x": 600,
+          "y": 100,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["left"],
+          "isSelected": false,
+          "x": 0,
+          "y": 100,
+          "offsetX": 0,
+          "offsetY": 0
+        }
+      ],
+      "closePath": true
+    },
+    {
+      "type": "circle",
+      "tags": ["centre"],
+      "cx": 100,
+      "cy": 10,
+      "offsetCx": 0,
+      "offsetCy": 0,
+      "r": 35,
+      "fill": "#44ff00",
+      "stroke": "#4715a5",
+      "strokeWidth": "1"
+    }
+  ]
+}

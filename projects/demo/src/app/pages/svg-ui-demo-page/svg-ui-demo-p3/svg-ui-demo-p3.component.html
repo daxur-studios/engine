@@ -1,0 +1,27 @@
+<div class="flex-page" style="border: dashed 2px rgb(0, 102, 255)">
+  MAIN CONTENT
+  <p>svg-ui-demo-p3 works!</p>
+  <input type="number" [formControl]="centre" #input />
+  <button (click)="showDebugPoints = !showDebugPoints">
+    show debug points
+  </button>
+</div>
+
+<div
+  #wrapper
+  style="
+    border: dashed 2px rgb(13, 255, 0);
+    display: flex;
+    flex: 1 1;
+    height: 100%;
+    position: relative;
+    overflow: visible;
+    max-height: 100px;
+  "
+>
+  <lib-generated-svg
+    [data]="gsvg.generatedSvgData$"
+    [showDebugPoints]="showDebugPoints"
+    style="position: absolute"
+  ></lib-generated-svg>
+</div>

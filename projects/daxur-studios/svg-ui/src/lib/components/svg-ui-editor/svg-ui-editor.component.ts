@@ -48,26 +48,20 @@ export class SvgUiEditorComponent implements SVGEditor {
   }
   dragEnded(event: CdkDragEnd, group: GeneratedSvgForm.CommandGroup) {
     group.patchValue({
-      position: {
-        x: event.source.getFreeDragPosition().x,
-        y: event.source.getFreeDragPosition().y,
-      },
+      x: event.source.getFreeDragPosition().x,
+      y: event.source.getFreeDragPosition().y,
     });
   }
   dragEndedCurve1(event: CdkDragEnd, group: GeneratedSvgForm.CommandGroup) {
     group.patchValue({
-      position: {
-        x1: event.source.getFreeDragPosition().x,
-        y1: event.source.getFreeDragPosition().y,
-      },
+      x1: event.source.getFreeDragPosition().x,
+      y1: event.source.getFreeDragPosition().y,
     });
   }
   dragEndedCurve2(event: CdkDragEnd, group: GeneratedSvgForm.CommandGroup) {
     group.patchValue({
-      position: {
-        x2: event.source.getFreeDragPosition().x,
-        y2: event.source.getFreeDragPosition().y,
-      },
+      x2: event.source.getFreeDragPosition().x,
+      y2: event.source.getFreeDragPosition().y,
     });
   }
   dragEndedTag(event: CdkDragEnd, tag: GeneratedSVG.ITag) {

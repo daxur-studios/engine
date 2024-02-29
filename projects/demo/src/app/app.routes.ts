@@ -50,4 +50,11 @@ export const routes: Routes = [
         './pages/svg-ui-demo-page/svg-ui-demo-p2/svg-ui-demo-p2.component'
       ).then((m) => m.SvgUiDemoP2Component),
   },
+  {
+    path: 'graph-demo/svg-ui-demo-part-3',
+    loadComponent: () =>
+      import(
+        './pages/svg-ui-demo-page/svg-ui-demo-p3/svg-ui-demo-p3.component'
+      ).then((m) => m.SvgUiDemoP3Component),
+  },
 ];

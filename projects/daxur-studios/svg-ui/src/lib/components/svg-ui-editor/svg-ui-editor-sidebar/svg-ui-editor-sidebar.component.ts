@@ -55,6 +55,10 @@ export class SvgUiEditorSidebarComponent {
       y: 10,
       offsetX: 0,
       offsetY: 0,
+      offset_x1: 0,
+      offset_y1: 0,
+      offset_x2: 0,
+      offset_y2: 0,
     };
 
     const existingTags = this.uniqueTags.value || [];
@@ -129,6 +133,10 @@ export class SvgUiEditorSidebarComponent {
           y: Math.round(Math.random() * (x?.clientHeight ?? 200)),
           offsetX: 0,
           offsetY: 0,
+          offset_x1: 0,
+          offset_y1: 0,
+          offset_x2: 0,
+          offset_y2: 0,
         },
         {
           label: 'test2',
@@ -136,6 +144,10 @@ export class SvgUiEditorSidebarComponent {
           y: Math.round(Math.random() * (x?.clientHeight ?? 200)),
           offsetX: 0,
           offsetY: 0,
+          offset_x1: 0,
+          offset_y1: 0,
+          offset_x2: 0,
+          offset_y2: 0,
         },
       ],
     });

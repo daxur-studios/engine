@@ -33,6 +33,10 @@ export class SvgEditorInputComponent {
   readonly GeneratedSvgForm = GeneratedSvgForm;
   readonly GeneratedSVG = GeneratedSVG;
 
+  get uniqueTags() {
+    return this.svgEditorService.generatedSvgFormGroup.controls.uniqueTags;
+  }
+
   constructor(private svgEditorService: SvgEditorService) {}
 
   removePoint(group: GeneratedSvgForm.SvgInputGroup, i: number) {

@@ -18,46 +18,94 @@ export module GeneratedSvgForm {
 
   //#region Command
 
-  export interface CommandControls {
+  export type CommandControls = {
     type: FormControl<GeneratedSVG.CommandType | null>;
     tags: FormControl<string[] | null>;
-    position: PositionGroup;
-    isSelected: FormControl<boolean | null>;
-  }
 
-  export type CommandGroup = FormGroup<CommandControls>;
-
-  type PositionControls = {
     x: FormControl<number | null>;
     y: FormControl<number | null>;
-
     offsetX: FormControl<number | null>;
     offsetY: FormControl<number | null>;
+
+    isSelected: FormControl<boolean | null>;
+  } & (
+    | MoveToCommandControls
+    | LineToCommandControls
+    | CurveCommandControls
+    | ClosePathCommandControls
+  );
+
+  export type MoveToCommandControls = {
+    type: FormControl<'M' | null>;
+  };
+  export type LineToCommandControls = {
+    type: FormControl<'L' | null>;
+  };
+  export type ClosePathCommandControls = {
+    type: FormControl<'Z' | null>;
+  };
+
+  export type CurveCommandControls = {
+    type: FormControl<'C' | null>;
+    tagsXY1: FormControl<string[] | null>;
+    tagsXY2: FormControl<string[] | null>;
 
     x1: FormControl<number | null>;
     y1: FormControl<number | null>;
     x2: FormControl<number | null>;
     y2: FormControl<number | null>;
+
+    offset_x1: FormControl<number | null>;
+    offset_y1: FormControl<number | null>;
+    offset_x2: FormControl<number | null>;
+    offset_y2: FormControl<number | null>;
   };
-  type PositionGroup = FormGroup<PositionControls>;
+
+  export type CommandGroup = FormGroup<CommandControls>;
+
+  export function isCurveCommandControls(
+    controls: CommandControls
+  ): controls is CommandControls & CurveCommandControls {
+    return controls.type.value === 'C';
+  }
 
   export function createCommandGroup(svgCommand: CommandGroup['value']) {
-    return new FormGroup<CommandControls>({
-      type: new FormControl(svgCommand.type ?? 'M'),
-      tags: new FormControl(svgCommand.tags ?? []),
-      isSelected: new FormControl(svgCommand.isSelected ?? false),
-      position: new FormGroup<PositionControls>({
-        x: new FormControl(svgCommand.position?.x ?? 0),
-        y: new FormControl(svgCommand.position?.y ?? 0),
-        x1: new FormControl(svgCommand.position?.x1 ?? 0),
-        x2: new FormControl(svgCommand.position?.x2 ?? 0),
-        y1: new FormControl(svgCommand.position?.y1 ?? 0),
-        y2: new FormControl(svgCommand.position?.y2 ?? 0),
+    if (svgCommand.type === 'C') {
+      return new FormGroup<CommandControls>({
+        type: new FormControl(svgCommand.type ?? 'C'),
+        isSelected: new FormControl(svgCommand.isSelected ?? false),
+        tags: new FormControl(svgCommand.tags ?? []),
+        tagsXY1: new FormControl(svgCommand.tagsXY1 ?? []),
+        tagsXY2: new FormControl(svgCommand.tagsXY2 ?? []),
 
-        offsetX: new FormControl(svgCommand.position?.offsetX ?? 0),
-        offsetY: new FormControl(svgCommand.position?.offsetY ?? 0),
-      }),
-    });
+        x1: new FormControl(svgCommand?.x1 ?? 0),
+        x2: new FormControl(svgCommand?.x2 ?? 0),
+        y1: new FormControl(svgCommand?.y1 ?? 0),
+        y2: new FormControl(svgCommand?.y2 ?? 0),
+
+        x: new FormControl(svgCommand?.x ?? 0),
+        y: new FormControl(svgCommand?.y ?? 0),
+
+        offsetX: new FormControl(svgCommand?.offsetX ?? 0),
+        offsetY: new FormControl(svgCommand?.offsetY ?? 0),
+        offset_x1: new FormControl(svgCommand?.offset_x1 ?? 0),
+        offset_y1: new FormControl(svgCommand?.offset_y1 ?? 0),
+        offset_x2: new FormControl(svgCommand?.offset_x2 ?? 0),
+        offset_y2: new FormControl(svgCommand?.offset_y2 ?? 0),
+      });
+    } else {
+      return new FormGroup<CommandControls>({
+        type: new FormControl((svgCommand.type as any) ?? 'M'),
+        tags: new FormControl(svgCommand.tags ?? []),
+        isSelected: new FormControl(svgCommand.isSelected ?? false),
+
+        x: new FormControl(svgCommand?.x ?? 0),
+        y: new FormControl(svgCommand?.y ?? 0),
+
+        offsetX: new FormControl(svgCommand?.offsetX ?? 0),
+        offsetY: new FormControl(svgCommand?.offsetY ?? 0),
+      });
+    }
   }
 
   export function toSvgCommands(
@@ -74,37 +122,45 @@ export module GeneratedSvgForm {
           return {
             type: c.type,
             tags: c.tags || [],
-            x: c.position?.x ?? 0,
-            y: c.position?.y ?? 0,
+            x: c?.x ?? 0,
+            y: c?.y ?? 0,
 
-            offsetX: c.position?.offsetX ?? 0,
-            offsetY: c.position?.offsetY ?? 0,
+            offsetX: c?.offsetX ?? 0,
+            offsetY: c?.offsetY ?? 0,
           };
         },
         L: (c) => {
           return {
             type: c.type,
             tags: c.tags || [],
-            x: c.position?.x ?? 0,
-            y: c.position?.y ?? 0,
+            x: c?.x ?? 0,
+            y: c?.y ?? 0,
 
-            offsetX: c.position?.offsetX ?? 0,
-            offsetY: c.position?.offsetY ?? 0,
+            offsetX: c?.offsetX ?? 0,
+            offsetY: c?.offsetY ?? 0,
           };
         },
         C: (c) => {
           return {
             type: c.type,
             tags: c.tags || [],
-            x1: c.position?.x1 ?? 0,
-            y1: c.position?.y1 ?? 0,
-            x2: c.position?.x2 ?? 0,
-            y2: c.position?.y2 ?? 0,
-            x: c.position?.x ?? 0,
-            y: c.position?.y ?? 0,
+            x1: c?.x1 ?? 0,
+            y1: c?.y1 ?? 0,
+            x2: c?.x2 ?? 0,
+            y2: c?.y2 ?? 0,
+            x: c?.x ?? 0,
+            y: c?.y ?? 0,
 
-            offsetX: c.position?.offsetX ?? 0,
-            offsetY: c.position?.offsetY ?? 0,
+            offsetX: c?.offsetX ?? 0,
+            offsetY: c?.offsetY ?? 0,
+
+            offset_x1: c?.offset_x1 ?? 0,
+            offset_y1: c?.offset_y1 ?? 0,
+            offset_x2: c?.offset_x2 ?? 0,
+            offset_y2: c?.offset_y2 ?? 0,
+
+            tagsXY1: c.tagsXY1 || [],
+            tagsXY2: c.tagsXY2 || [],
           };
         },
         Z: (c) => {

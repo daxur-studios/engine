@@ -71,16 +71,15 @@ export class SvgEditorService {
         ) {
           const selectedCommandGroup =
             svgInputGroup.controls.commands.controls.at(i)!;
-          if (
-            selectedCommandGroup.value.type === 'C' &&
-            selectedCommandGroup.value.isSelected
-          ) {
+
+          const control = selectedCommandGroup;
+          const value = control.value;
+
+          if (value.type === 'C' && value.isSelected) {
             const previousControl = svgInputGroup.controls.commands.controls.at(
               i - 1
             );
 
-            const control = selectedCommandGroup;
-            const position = control.value.position;
             editorOnlyPaths.push({
               type: 'path',
               fill: '#000000',
@@ -92,49 +91,49 @@ export class SvgEditorService {
                 {
                   type: 'M',
                   tags: [],
-                  x: position?.x1 ?? 0,
-                  y: position?.y1 ?? 0,
+                  x: value?.x1 ?? 0,
+                  y: value?.y1 ?? 0,
 
-                  offsetX: position?.offsetX ?? 0,
-                  offsetY: position?.offsetY ?? 0,
+                  offsetX: value?.offsetX ?? 0,
+                  offsetY: value?.offsetY ?? 0,
                 },
                 {
                   type: 'L',
                   tags: [],
-                  x: previousControl?.value.position?.x ?? 0,
-                  y: previousControl?.value.position?.y ?? 0,
+                  x: previousControl?.value.x ?? 0,
+                  y: previousControl?.value.y ?? 0,
 
-                  offsetX: previousControl?.value.position?.offsetX ?? 0,
-                  offsetY: previousControl?.value.position?.offsetY ?? 0,
+                  offsetX: previousControl?.value.offsetX ?? 0,
+                  offsetY: previousControl?.value.offsetY ?? 0,
                 },
                 //#endregion
                 //#region Connect to current point
                 {
                   type: 'M',
                   tags: [],
-                  x: position?.x2 ?? 0,
-                  y: position?.y2 ?? 0,
+                  x: value?.x2 ?? 0,
+                  y: value?.y2 ?? 0,
 
-                  offsetX: position?.offsetX ?? 0,
-                  offsetY: position?.offsetY ?? 0,
+                  offsetX: value?.offsetX ?? 0,
+                  offsetY: value?.offsetY ?? 0,
                 },
                 {
                   type: 'L',
                   tags: [],
-                  x: position?.x ?? 0,
-                  y: position?.y ?? 0,
+                  x: value?.x ?? 0,
+                  y: value?.y ?? 0,
 
-                  offsetX: position?.offsetX ?? 0,
-                  offsetY: position?.offsetY ?? 0,
+                  offsetX: value?.offsetX ?? 0,
+                  offsetY: value?.offsetY ?? 0,
                 },
                 {
                   type: 'M',
                   tags: [],
-                  x: position?.x ?? 0,
-                  y: position?.y ?? 0,
+                  x: value?.x ?? 0,
+                  y: value?.y ?? 0,
 
-                  offsetX: position?.offsetX ?? 0,
-                  offsetY: position?.offsetY ?? 0,
+                  offsetX: value?.offsetX ?? 0,
+                  offsetY: value?.offsetY ?? 0,
                 },
                 //#endregion
               ],
@@ -162,7 +161,8 @@ export class SvgEditorService {
     commandsFormArray.push(
       GeneratedSvgForm.createCommandGroup({
         type: length === 0 ? 'M' : 'L',
-        position: position,
+        x: position?.x ?? 0,
+        y: position?.y ?? 0,
       })
     );
   }
