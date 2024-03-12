@@ -1,0 +1,110 @@
+{
+  "uniqueTags": [
+    {
+      "label": "left",
+      "x": 500,
+      "y": 25,
+      "offsetX": 0,
+      "offsetY": 0,
+      "offset_x1": 0,
+      "offset_y1": 0,
+      "offset_x2": 0,
+      "offset_y2": 0
+    },
+    {
+      "label": "bottom",
+      "x": 250,
+      "y": 50,
+      "offsetX": 0,
+      "offsetY": 0,
+      "offset_x1": 0,
+      "offset_y1": 0,
+      "offset_x2": 0,
+      "offset_y2": 0
+    }
+  ],
+  "elements": [
+    {
+      "type": "path",
+      "tags": [],
+      "fill": "#000000",
+      "stroke": "#00000000",
+      "strokeWidth": "1",
+      "commands": [
+        {
+          "type": "M",
+          "tags": [],
+          "isSelected": false,
+          "x": 0,
+          "y": 0,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["left"],
+          "isSelected": false,
+          "x": 500,
+          "y": 0,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["left", "bottom"],
+          "isSelected": false,
+          "x": 500,
+          "y": 50,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["left", "bottom"],
+          "isSelected": false,
+          "x": 400,
+          "y": 50,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["left", "bottom"],
+          "isSelected": false,
+          "x": 390,
+          "y": 45,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["bottom"],
+          "isSelected": false,
+          "x": 110,
+          "y": 45,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["bottom"],
+          "isSelected": false,
+          "x": 100,
+          "y": 50,
+          "offsetX": 0,
+          "offsetY": 0
+        },
+        {
+          "type": "L",
+          "tags": ["bottom"],
+          "isSelected": false,
+          "x": 0,
+          "y": 50,
+          "offsetX": 0,
+          "offsetY": 0
+        }
+      ],
+      "closePath": true
+    }
+  ]
+}

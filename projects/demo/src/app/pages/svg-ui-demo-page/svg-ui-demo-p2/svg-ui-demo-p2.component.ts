@@ -15,6 +15,7 @@ import {
   GeneratedSVG,
   GeneratedSvgComponent,
   GeneratedSvgForm,
+  ResizeDirective,
 } from '@daxur-studios/svg-ui';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -88,7 +89,7 @@ const TEST: GeneratedSvgForm.GeneratedSvgFormGroup['value'] = {
 @Component({
   selector: 'app-svg-ui-demo-p2',
   standalone: true,
-  imports: [GeneratedSvgComponent, CommonModule],
+  imports: [GeneratedSvgComponent, CommonModule, ResizeDirective],
   templateUrl: './svg-ui-demo-p2.component.html',
   styleUrl: './svg-ui-demo-p2.component.scss',
 })
@@ -113,7 +114,7 @@ export class SvgUiDemoP2Component implements OnInit, OnDestroy {
   constructor(private readonly injector: Injector) {}
 
   ngOnInit() {
-    this.gsvg.observeWrapperElement(this.wrapper);
+    //  this.gsvg.observeWrapperElement(this.wrapper);
   }
 
   ngOnDestroy(): void {

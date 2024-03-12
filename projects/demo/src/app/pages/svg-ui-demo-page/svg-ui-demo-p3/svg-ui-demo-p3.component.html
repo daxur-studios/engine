@@ -16,12 +16,43 @@
     height: 100%;
     position: relative;
     overflow: visible;
-    max-height: 100px;
+    max-height: 50px;
   "
 >
-  <lib-generated-svg
-    [data]="gsvg.generatedSvgData$"
-    [showDebugPoints]="showDebugPoints"
-    style="position: absolute"
-  ></lib-generated-svg>
+  <div class="spacer" style="flex: 1 1 100%"></div>
+  <div
+    class="toolbar-items"
+    style="
+      position: relative;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      justify-content: center;
+      flex: 1 1;
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    "
+    #itemsWrapper
+    libResize
+    (onResize)="gsvg.onResize($event)"
+  >
+    <lib-generated-svg
+      [data]="gsvg.generatedSvgData$"
+      [showDebugPoints]="showDebugPoints"
+      style="position: absolute"
+    ></lib-generated-svg>
+
+    @for (item of toolbarItems; track $index) {
+    <button
+      mat-icon-button
+      [matTooltip]="item.label"
+      (click)="setCenter(button, itemsWrapper)"
+      #button
+    >
+      <mat-icon>{{ item.icon }}</mat-icon>
+    </button>
+
+    }
+  </div>
+  <div class="spacer" style="flex: 1 1 100%"></div>
 </div>

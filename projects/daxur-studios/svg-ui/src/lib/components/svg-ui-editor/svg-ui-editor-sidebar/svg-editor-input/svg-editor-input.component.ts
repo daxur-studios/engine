@@ -43,4 +43,9 @@ export class SvgEditorInputComponent {
     if (GeneratedSvgForm.isSvgPathControls(group.controls))
       this.svgEditorService.removePoint(group.controls.commands, i);
   }
+
+  addBetween(group: GeneratedSvgForm.SvgInputGroup, i: number) {
+    if (GeneratedSvgForm.isSvgPathControls(group.controls))
+      this.svgEditorService.addBetween(group.controls.commands, i);
+  }
 }

@@ -282,9 +282,9 @@ export module GeneratedSVG {
       width: 0,
       height: 0,
     });
-    readonly resizeObserver = new ResizeObserver((entries) => {
-      this.onResize(entries);
-    });
+    // readonly resizeObserver = new ResizeObserver((entries) => {
+    //   this.onResize(entries);
+    // });
 
     readonly generatedSvgData$ =
       new BehaviorSubject<GeneratedSVG.GeneratedSvgData>({
@@ -355,14 +355,14 @@ export module GeneratedSVG {
       });
     }
 
-    public observeWrapperElement(wrapper: { nativeElement: HTMLElement }) {
-      this.resizeObserver.observe(wrapper.nativeElement);
-    }
+    // public observeWrapperElement(wrapper: { nativeElement: HTMLElement }) {
+    //   this.resizeObserver.observe(wrapper.nativeElement);
+    // }
 
-    private onResize(entries: ResizeObserverEntry[]) {
+    public onResize(entries: ResizeObserverEntry[]) {
       this.sizes$.next({
-        width: entries[0].contentRect.width,
-        height: entries[0].contentRect.height,
+        width: entries[0].target.clientWidth,
+        height: entries[0].target.clientHeight,
       });
     }
 
@@ -373,7 +373,7 @@ export module GeneratedSVG {
     }
 
     public dispose() {
-      this.resizeObserver.disconnect();
+      //this.resizeObserver.disconnect();
     }
   }
 }

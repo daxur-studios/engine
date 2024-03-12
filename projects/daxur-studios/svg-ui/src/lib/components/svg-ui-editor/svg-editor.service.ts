@@ -173,6 +173,23 @@ export class SvgEditorService {
     commandsFormArray.removeAt(i);
   }
 
+  addBetween(
+    commandsFormArray: FormArray<GeneratedSvgForm.CommandGroup>,
+    i: number
+  ) {
+    const command = commandsFormArray.at(i);
+    const nextCommand = commandsFormArray.at(i + 1);
+
+    commandsFormArray.insert(
+      i + 1,
+      GeneratedSvgForm.createCommandGroup({
+        type: 'L',
+        x: (command?.value.x ?? 0 + (nextCommand?.value.x ?? 0)) / 2,
+        y: (command?.value.y ?? 0 + (nextCommand?.value.y ?? 0)) / 2,
+      })
+    );
+  }
+
   exportAsJson() {
     const json = GeneratedSvgForm.exportAsJson(this.generatedSvgFormGroup);
     navigator.clipboard.writeText(json);

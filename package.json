@@ -13,6 +13,7 @@
     "json:graph": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/graph",
     "json:engine": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/engine",
     "json:svg-ui": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/svg-ui",
+    "json": "npm run json:graph && npm run json:engine && npm run json:svg-ui",
     "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch",
     "start:graph": "ng build @daxur-studios/graph --configuration development && (cd dist/daxur-studios/graph && npm link) && ng build @daxur-studios/graph --configuration development --watch"
   },

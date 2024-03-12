@@ -16,8 +16,8 @@
     },
     {
       "label": "centre",
-      "x": 100.99999237060547,
-      "y": 67,
+      "x": -0.0000152587890625,
+      "y": 49,
       "offsetX": 0,
       "offsetY": 0
     }
@@ -45,9 +45,9 @@
           "tags": ["centre"],
           "tagsXY1": ["centre"],
           "tagsXY2": ["centre"],
-          "x1": 61.99998474121094,
-          "x2": 65,
-          "y1": -2,
+          "x1": 50,
+          "x2": 60,
+          "y1": 0,
           "y2": 50,
           "x": 100,
           "y": 50,
@@ -66,8 +66,8 @@
           "tagsXY2": ["centre"],
           "x1": 150,
           "x2": 150,
-          "y1": 48,
-          "y2": -4,
+          "y1": 50,
+          "y2": 0,
           "x": 600,
           "y": 0,
           "offsetX": 0,
@@ -82,7 +82,7 @@
           "tags": ["right"],
           "isSelected": false,
           "x": 600,
-          "y": 100,
+          "y": 50,
           "offsetX": 0,
           "offsetY": 0
         },
@@ -91,7 +91,7 @@
           "tags": ["left"],
           "isSelected": false,
           "x": 0,
-          "y": 100,
+          "y": 50,
           "offsetX": 0,
           "offsetY": 0
         }

@@ -10,6 +10,8 @@
     position: relative;
     overflow: hidden;
   "
+  libResize
+  (onResize)="gsvg.onResize($event)"
 >
   <lib-generated-svg
     [data]="gsvg.generatedSvgData$"
