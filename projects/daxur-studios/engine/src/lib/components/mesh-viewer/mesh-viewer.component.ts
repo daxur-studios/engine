@@ -15,7 +15,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
-import { LoaderService } from '../../services';
+import { EngineController, LoaderService } from '../../services';
 
 @Component({
   selector: 'daxur-mesh-viewer',
@@ -25,7 +25,7 @@ import { LoaderService } from '../../services';
   styleUrls: ['./mesh-viewer.component.css'],
 })
 export class MeshViewerComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) options?: IEngineOptions;
+  @Input({ required: true }) controller!: EngineController;
 
   /**
    * Path to the STL or GLB file to load
@@ -66,7 +66,7 @@ export class MeshViewerComponent implements OnInit, OnDestroy {
       );
       this.controls.enableDamping = true;
 
-      this.engine?.engineService.tick$.subscribe((delta) => {
+      this.engine?.controller().tick$.subscribe((delta) => {
         this.controls?.update();
 
         cube.rotation.x += 0.01;

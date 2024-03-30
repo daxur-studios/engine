@@ -12,6 +12,8 @@ var ignoreFolders = new Set([
     'functions',
     'emulator',
 ]);
+// Specify the file extensions to include
+var includeExtensions = new Set(['.ts', '.html', '.css', '.scss', '.json']);
 // Global JSON object to hold the directory structure and file content
 var jsonTree = {};
 // Start the recursive process from the base directory
@@ -35,9 +37,18 @@ function buildJsonTree(baseFolder, jsonNode) {
             buildJsonTree(path.join(baseFolder, entry.name), jsonNode[entry.name]);
         }
         else {
-            // If it's a file, read its content and add to the current node
+            // Check the file extension to determine if it should be included
+            var fileExtension = path.extname(entry.name).toLowerCase();
+            var content = '';
             var filePath = path.join(baseFolder, entry.name);
-            jsonNode[entry.name] = fs.readFileSync(filePath, 'utf8');
+            if (includeExtensions.has(fileExtension)) {
+                // If the file extension is in the include list, read its content and add to the current node
+                content = fs.readFileSync(filePath, 'utf8');
+            }
+            else {
+                content = entry.name;
+            }
+            jsonNode[entry.name] = content;
         }
     });
 }

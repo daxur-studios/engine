@@ -42,8 +42,8 @@ Update assets in angular.json
 Install Peer Dependencies
 
 ```
-    "three": "^0.160.0",
-    "@types/three": "^0.160.0",
+    "three": "^0.162.0",
+    "@types/three": "^0.162.0",
     "dexie": "^3.2.4"
 ```
 

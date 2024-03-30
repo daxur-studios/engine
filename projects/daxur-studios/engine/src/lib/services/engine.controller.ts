@@ -21,12 +21,12 @@ import {
 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-@Injectable()
-/** New Instance Per EngineComponent */
-export class EngineService implements IEngine, OnInit, OnDestroy {
+export class EngineController implements IEngine {
+  static instance = 0;
   //#region Core
-  options: IEngineOptions | undefined;
+
   //#region Sizes
   public resolution$ = new BehaviorSubject<{ width: number; height: number }>({
     width: 50,
@@ -65,7 +65,7 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
   //#region Lifecycle Events
   public timeSpeed: number = 1;
   readonly tick$: BehaviorSubject<number> = new BehaviorSubject<number>(0);
-  readonly tickSignal = signal(0);
+
   /** Triggered when the EngineComponent is destroyed */
   readonly onDestroy$ = new ReplaySubject<void>();
 
@@ -93,11 +93,17 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
 
   readonly fpsController = new FPSController(this);
 
-  constructor(private loaderService: LoaderService) {
+  constructor(readonly options: IEngineOptions) {
+    EngineController.instance++;
+    console.debug('EngineController.instance', EngineController.instance);
+
     this.cursor = new Cursor(this);
+
+    const renderer = this.initRenderer();
+    this.createComposer(renderer);
   }
 
-  ngOnDestroy(): void {
+  onComponentDestroy(): void {
     this.stopLoop();
 
     this.onDestroy$.next();
@@ -106,12 +112,11 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
     this.renderer?.dispose();
 
     this.scene.destroy();
+
+    this.orbitControls?.dispose();
   }
 
-  ngOnInit(): void {
-    const renderer = this.initRenderer();
-    this.createComposer(renderer);
-
+  onComponentInit(): void {
     this.startLoop();
   }
 
@@ -226,7 +231,8 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
     const delta = this.clock.getDelta() * this.timeSpeed;
 
     this.tick$.next(delta);
-    this.tickSignal.set(delta);
+
+    if (this.useOrbitControls) this.orbitControls?.update();
 
     this.render(time);
   }
@@ -268,5 +274,15 @@ export class EngineService implements IEngine, OnInit, OnDestroy {
 
     // Render the scene with the composer instead of the renderer
     this.render(this.fpsController.lastRenderTime, true);
+  }
+
+  private orbitControls: OrbitControls | undefined;
+  public useOrbitControls = false;
+
+  public switchToOrbitControls(domElement: HTMLCanvasElement) {
+    this.useOrbitControls = true;
+
+    this.orbitControls = new OrbitControls(this.camera, domElement);
+    this.orbitControls.enableDamping = true;
   }
 }

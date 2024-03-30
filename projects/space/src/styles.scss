@@ -1,0 +1,9 @@
+/* You can add global styles to this file, and also import other style files */
+//#region Angular Material Custom Theming
+@import url("../../daxur-studios/engine/assets/theme/theme.scss");
+//#endregion
+
+//#region Daxur Engine
+// @import url("../node_modules/@daxur-studios/engine/assets/daxur-engine.css");
+@import url("../../daxur-studios/engine/assets/daxur-engine.css");
+//#endregion

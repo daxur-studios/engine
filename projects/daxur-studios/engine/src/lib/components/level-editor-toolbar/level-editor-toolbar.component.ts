@@ -11,7 +11,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { EngineComponent } from '../engine/engine.component';
 
-import { ProjectService, LevelService, EngineService } from '../../services';
+import { ProjectService, LevelService, EngineController } from '../../services';
 import { ILevel, IProject } from '../../models';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Portal, PortalModule } from '@angular/cdk/portal';
@@ -35,7 +35,11 @@ import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
   styleUrls: ['./level-editor-toolbar.component.scss'],
 })
 export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) engine?: EngineComponent;
+  @Input({ required: true }) engine!: EngineComponent;
+
+  get controller(): EngineController {
+    return this.engine?.controller();
+  }
 
   unsubscribe: Subject<void> = new Subject<void>();
 
@@ -55,7 +59,6 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
 
   constructor(
     private builder: FormBuilder,
-    readonly engineService: EngineService,
     public projectService: ProjectService,
     public levelService: LevelService,
     private dialog: MatDialog
@@ -63,13 +66,13 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
     this.toolbarForm.controls.fpsLimit.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.engineService.setFPSLimit(value ? Number(value) : 0);
+        this.controller.setFPSLimit(value ? Number(value) : 0);
       });
 
     this.toolbarForm.controls.timeSpeed.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.engineService.setTimeSpeed(value ? Number(value) : 1);
+        this.controller.setTimeSpeed(value ? Number(value) : 1);
       });
 
     //#region Project
@@ -96,7 +99,7 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   }
 
   onBeginPlay() {
-    this.engineService.beginPlay();
+    this.controller.beginPlay();
   }
 
   /** Add custom ui elements to the Level Editor Toolbar */

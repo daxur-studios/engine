@@ -78,7 +78,7 @@
         opacity: 0.8;
         white-space: nowrap;
       "
-      >FPS {{ engineService.fpsController.displayCount() }}</span
+      >FPS {{ controller.fpsController.displayCount() }}</span
     >
     }
 
@@ -101,7 +101,7 @@
     <button
       id="play-button"
       (click)="onBeginPlay()"
-      [disabled]="engineService.isPlaying()"
+      [disabled]="controller.isPlaying()"
     >
       <i class="fas fa-play"></i> Play
     </button>

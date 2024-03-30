@@ -1,5 +1,5 @@
 <p>engine-virtual-grid-demo works! Move around!</p>
-<daxur-engine [options]="{ showFPS: true }">
-  <default-pawn />
-  <sky-dome />
+<daxur-engine [controller]="controller">
+  <default-pawn [controller]="controller" />
+  <sky-dome [controller]="controller" />
 </daxur-engine>

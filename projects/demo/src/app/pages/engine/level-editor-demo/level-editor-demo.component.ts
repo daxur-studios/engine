@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   DefaultPawnComponent,
-  EngineService,
+  EngineController,
   LevelEditorComponent,
   LevelEditorService,
   SkyDomeComponent,
@@ -23,22 +23,23 @@ import { takeUntil } from 'rxjs';
     AnimatedCubeComponent,
     RandomMovingBallComponent,
   ],
-  providers: [EngineService, LevelEditorService],
+  providers: [LevelEditorService],
   templateUrl: './level-editor-demo.component.html',
   styleUrl: './level-editor-demo.component.scss',
 })
-export class LevelEditorDemoComponent {
-  constructor(
-    readonly engineService: EngineService,
-    readonly levelEditorService: LevelEditorService
-  ) {
+export class LevelEditorDemoComponent implements OnInit {
+  public readonly controller = new EngineController({ showFPS: true });
+
+  constructor(readonly levelEditorService: LevelEditorService) {}
+
+  ngOnInit(): void {
     const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshNormalMaterial());
     mesh.position.set(0, 0, -4);
 
-    engineService.scene.add(mesh);
+    this.controller.scene.add(mesh);
 
-    engineService.tick$
-      .pipe(takeUntil(engineService.onDestroy$))
+    this.controller.tick$
+      .pipe(takeUntil(this.controller.onDestroy$))
       .subscribe((delta) => {
         mesh.rotation.x -= 0.01;
         mesh.rotation.y += 0.01;

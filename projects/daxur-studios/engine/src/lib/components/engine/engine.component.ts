@@ -9,6 +9,7 @@ import {
   signal,
   Output,
   EventEmitter,
+  input,
 } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas.component';
 import {
@@ -28,7 +29,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { BehaviorSubject, Subject, takeUntil, ReplaySubject, skip } from 'rxjs';
 import { FPSController, IInputEvents } from '../../models';
 import { GameScene } from '../../core/game/game-scene';
-import { EngineService } from '../../services';
+import { EngineController } from '../../services';
 import { IEngineOptions } from '../../models/engine.model';
 
 @Component({
@@ -37,11 +38,10 @@ import { IEngineOptions } from '../../models/engine.model';
   styleUrls: ['./engine.scss'],
   standalone: true,
 
-  providers: [EngineService],
   imports: [CanvasComponent],
 })
 export class EngineComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) options?: IEngineOptions;
+  readonly controller = input.required<EngineController>();
 
   @Output() ready: EventEmitter<EngineComponent> = new EventEmitter();
 
@@ -59,28 +59,27 @@ export class EngineComponent implements OnInit, OnDestroy {
   //   }
   // }
   get canvas() {
-    return this.engineService.canvas;
+    return this.controller().canvas;
   }
   get renderer() {
-    return this.engineService.renderer;
+    return this.controller().renderer;
   }
   get scene() {
-    return this.engineService.scene;
+    return this.controller().scene;
   }
   get camera() {
-    return this.engineService.camera;
+    return this.controller().camera;
   }
 
-  constructor(public readonly engineService: EngineService) {}
+  constructor() {}
 
   ngOnInit(): void {
-    this.engineService.options = this.options;
-    this.engineService.ngOnInit();
+    this.controller().onComponentInit();
 
     this.ready.emit(this);
   }
 
   ngOnDestroy(): void {
-    this.engineService.ngOnDestroy();
+    this.controller().onComponentDestroy();
   }
 }

@@ -8,7 +8,7 @@ import { FieldPanelComponent } from '../field-panel/field-panel.component';
 import { Object3D } from 'three';
 import { EulerField, Field, Vector3Field } from '../../core';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { EngineService } from '../../services';
+import { EngineController } from '../../services';
 
 @Component({
   selector: 'daxur-scene-tree',
@@ -19,13 +19,14 @@ import { EngineService } from '../../services';
 })
 export class SceneTreeComponent implements OnInit, OnDestroy {
   @Input({ required: true }) scene?: GameScene;
+  @Input({ required: true }) controller!: EngineController;
 
   onDestroy$ = new Subject<void>();
 
   selectedObject3D?: Object3D;
   transformControls: TransformControls | undefined;
 
-  constructor(readonly engineService: EngineService) {}
+  constructor() {}
 
   ngOnInit(): void {
     this.scene!.addEvent$.pipe(takeUntil(this.onDestroy$)).subscribe(
@@ -49,8 +50,8 @@ export class SceneTreeComponent implements OnInit, OnDestroy {
     this.selectedObject3D = object3D;
     if (this.selectedObject3D) {
       this.transformControls ||= new TransformControls(
-        this.engineService.camera,
-        this.engineService.renderer!.domElement
+        this.controller.camera,
+        this.controller.renderer!.domElement
       );
       this.transformControls.name = 'TransformControls';
       this.transformControls.attach(this.selectedObject3D);

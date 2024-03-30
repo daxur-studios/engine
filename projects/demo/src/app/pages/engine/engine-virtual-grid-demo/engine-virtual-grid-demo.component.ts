@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import {
   DefaultPawnComponent,
   EngineComponent,
-  EngineService,
+  EngineController,
   SkyDomeComponent,
 } from '@daxur-studios/engine';
 import { AxesHelper } from 'three';
@@ -10,16 +10,15 @@ import { AxesHelper } from 'three';
   selector: 'app-engine-virtual-grid-demo',
   standalone: true,
   imports: [EngineComponent, SkyDomeComponent, DefaultPawnComponent],
-  providers: [EngineService],
   templateUrl: './engine-virtual-grid-demo.component.html',
   styleUrl: './engine-virtual-grid-demo.component.scss',
 })
 export class EngineVirtualGridDemoComponent {
-  @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
+  public readonly controller = new EngineController({ showFPS: true });
 
-  constructor(readonly engineService: EngineService) {}
+  constructor() {}
 
   ngOnInit() {
-    this.engineService.scene.add(new AxesHelper(5));
+    this.controller.scene.add(new AxesHelper(5));
   }
 }

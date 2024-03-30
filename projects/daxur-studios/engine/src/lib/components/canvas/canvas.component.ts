@@ -10,6 +10,7 @@ import {
   Output,
   EventEmitter,
   Input,
+  input,
   Renderer2,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -18,7 +19,7 @@ import { Scene, WebGLRenderer } from 'three';
 
 import { BehaviorSubject } from 'rxjs';
 
-import { EngineService } from '../../services';
+import { EngineController } from '../../services';
 import { IEngineOptions } from '../../models';
 
 @Component({
@@ -32,10 +33,8 @@ import { IEngineOptions } from '../../models';
   },
 })
 export class CanvasComponent implements OnInit, OnDestroy {
-  @Output() resize = this.engineService.resize;
-
-  @Input({ required: true }) canvas?: HTMLCanvasElement;
-  @Input({ required: true }) options?: IEngineOptions;
+  readonly controller = input.required<EngineController>();
+  readonly canvas = input.required<HTMLCanvasElement>();
 
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
 
@@ -44,13 +43,10 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.onResize(width, height);
   });
 
-  constructor(
-    private renderer: Renderer2,
-    public readonly engineService: EngineService
-  ) {}
+  constructor(private renderer: Renderer2) {}
 
   ngAfterViewInit() {
-    const canvas = this.canvas;
+    const canvas = this.canvas();
     // append canvas to the wrapper
     this.renderer.appendChild(this.wrapper!.nativeElement, canvas);
   }
@@ -64,15 +60,18 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   onResize(width: number, height: number): void {
-    this.engineService.width$.next(width);
-    this.engineService.height$.next(height);
+    if (!this.controller) return;
+    const controller = this.controller()!;
 
-    this.engineService.resolution$.next({
+    controller.width$.next(width);
+    controller.height$.next(height);
+
+    controller.resolution$.next({
       width: width,
       height: height,
     });
 
-    this.resize.emit({
+    controller.resize.emit({
       width: width,
       height: height,
     });

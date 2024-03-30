@@ -18,9 +18,11 @@ export interface IEngineLifecycle {
 
   readonly fpsController: FPSController;
   readonly tick$: BehaviorSubject<number>;
-  readonly tickSignal: WritableSignal<number>;
 
   timeSpeed: number;
+
+  onComponentInit(): void;
+  onComponentDestroy(): void;
 
   beginPlay(): void;
   endPlay(): void;
@@ -38,7 +40,13 @@ export interface IEngineLifecycle {
   setFPSLimit(fps: number): void;
 }
 
-export interface IEngineCore {
+export interface IEngineCamera {
+  readonly camera$: BehaviorSubject<Camera>;
+  readonly camera: Camera;
+  switchCamera(camera: Camera): void;
+}
+
+export interface IEngineCore extends IEngineCamera {
   readonly canvas: HTMLCanvasElement;
 
   options: IEngineOptions | undefined;
@@ -48,10 +56,6 @@ export interface IEngineCore {
 
   readonly scene: GameScene;
   readonly clock: Clock;
-
-  readonly camera$: BehaviorSubject<Camera>;
-  readonly camera: Camera;
-  switchCamera(camera: Camera): void;
 
   cursor: Cursor;
 

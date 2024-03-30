@@ -11,8 +11,8 @@ import { IEngine, SaveableData } from '../../../../models';
 import { GameMesh } from '../..';
 import { Field } from '../../../utilities';
 import { GameActor } from '../game-actor';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EngineService } from '../../../../services';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { EngineController } from '../../../../services';
 
 export class SkyDome extends GameActor {
   static override emoji = '☀️';
@@ -343,14 +343,16 @@ const SkyShader = {
   imports: [],
 })
 export class SkyDomeComponent implements OnInit, OnDestroy {
+  @Input({ required: true }) controller!: EngineController;
+
   actor = new SkyDome();
 
-  constructor(readonly engineService: EngineService) {}
+  constructor() {}
 
   ngOnDestroy(): void {
-    this.engineService.destroyActor(this.actor);
+    this.controller.destroyActor(this.actor);
   }
   ngOnInit(): void {
-    this.engineService.spawnActor(this.actor);
+    this.controller.spawnActor(this.actor);
   }
 }

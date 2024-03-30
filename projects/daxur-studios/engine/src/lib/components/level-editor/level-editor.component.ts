@@ -14,7 +14,7 @@ import { SceneTreeComponent } from '../scene-tree/scene-tree.component';
 
 import { LevelEditorService } from '../../services/level-editor.service';
 import { IEngineOptions } from '../../models/engine.model';
-import { EngineService } from '../../services';
+import { EngineController } from '../../services';
 
 @Component({
   selector: 'daxur-level-editor',
@@ -25,20 +25,20 @@ import { EngineService } from '../../services';
     class: 'flex-page',
   },
   imports: [EngineComponent, LevelEditorToolbarComponent, SceneTreeComponent],
-  providers: [EngineService, LevelEditorService],
+  providers: [LevelEditorService],
 })
 export class LevelEditorComponent implements OnInit {
-  @Input({ required: true }) options?: IEngineOptions;
+  @Input({ required: true }) controller!: EngineController;
+  get options(): IEngineOptions {
+    return this.controller?.options;
+  }
   @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
   @ViewChild(LevelEditorToolbarComponent, { static: true })
   toolbar?: LevelEditorToolbarComponent;
 
   @Output() ready: EventEmitter<ILevelEditorReady> = new EventEmitter();
 
-  constructor(
-    readonly levelEditorService: LevelEditorService,
-    readonly engineService: EngineService
-  ) {}
+  constructor(readonly levelEditorService: LevelEditorService) {}
 
   ngOnInit(): void {}
 

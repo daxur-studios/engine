@@ -1,8 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import {
   DefaultPawn,
   EngineComponent,
-  EngineService,
+  EngineController,
   GameMesh,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
@@ -21,15 +21,19 @@ import {
   imports: [],
   template: '',
 })
-export class AnimatedCubeComponent {
-  constructor(readonly engineService: EngineService) {
+export class AnimatedCubeComponent implements OnInit {
+  @Input({ required: true }) controller!: EngineController;
+
+  constructor() {}
+
+  ngOnInit(): void {
     const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshNormalMaterial());
     mesh.position.set(0, 0, -4);
 
-    engineService.scene.add(mesh);
+    this.controller.scene.add(mesh);
 
-    engineService.tick$
-      .pipe(takeUntil(engineService.onDestroy$))
+    this.controller.tick$
+      .pipe(takeUntil(this.controller.onDestroy$))
       .subscribe((delta) => {
         mesh.rotation.x -= 0.01;
         mesh.rotation.y += 0.01;
@@ -43,10 +47,14 @@ export class AnimatedCubeComponent {
   imports: [],
   template: '',
 })
-export class RandomMovingBallComponent {
+export class RandomMovingBallComponent implements OnInit {
+  @Input({ required: true }) controller!: EngineController;
+
   targetLocation: Vector3 = new Vector3(0, 0, 0);
 
-  constructor(readonly engineService: EngineService) {
+  constructor() {}
+
+  ngOnInit(): void {
     const mesh = new Mesh(
       new SphereGeometry(0.5, 6, 6),
       new MeshNormalMaterial()
@@ -62,10 +70,10 @@ export class RandomMovingBallComponent {
       Math.random() * 10 - 5
     );
 
-    engineService.scene.add(mesh);
+    this.controller.scene.add(mesh);
 
-    engineService.tick$
-      .pipe(takeUntil(engineService.onDestroy$))
+    this.controller.tick$
+      .pipe(takeUntil(this.controller.onDestroy$))
       .subscribe((delta) => {
         let factor = 0.01;
         // Move the ball towards the target location
@@ -90,18 +98,19 @@ export class RandomMovingBallComponent {
   styleUrl: './engine-demo-page.component.scss',
 })
 export class EngineDemoPageComponent {
-  @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
+  readonly controller = new EngineController({ showFPS: true });
+
   ngOnInit() {
-    const service = this.engine?.engineService;
-    if (!service) return;
+    const controller = this.controller;
+    if (!controller) return;
 
     const axes = new AxesHelper(5);
     axes.position.set(-0.5, -0.5, -0.5);
     axes.rotation.set(0, 1, 0);
-    service.scene.add(axes);
+    controller.scene.add(axes);
 
     const pawn = new DefaultPawn();
-    service.spawnActor(pawn);
-    service.switchCamera(pawn.camera);
+    controller.spawnActor(pawn);
+    controller.switchCamera(pawn.camera);
   }
 }

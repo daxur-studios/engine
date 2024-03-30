@@ -11,8 +11,8 @@ import {
 import { PlayerController } from './features';
 
 import { GameMesh, GameActor } from '..';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EngineService } from '../../../services';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { EngineController } from '../../../services';
 
 export class DefaultPawn extends GameActor {
   static override emoji = '🎥';
@@ -146,13 +146,15 @@ export class DefaultPawn extends GameActor {
   template: '',
 })
 export class DefaultPawnComponent implements OnInit, OnDestroy {
+  @Input({ required: true }) controller!: EngineController;
+
   readonly actor = new DefaultPawn();
 
-  constructor(readonly engineService: EngineService) {}
+  constructor() {}
   ngOnDestroy(): void {
     this.actor.destroy();
   }
   ngOnInit(): void {
-    this.engineService.spawnActor(this.actor);
+    this.controller.spawnActor(this.actor);
   }
 }
