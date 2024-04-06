@@ -8,13 +8,13 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    title: 'Home',
+    title: 'Home | Space',
     loadComponent: () =>
       import('./pages/home/home.component').then((m) => m.HomeComponent),
   },
   {
     path: 'settings',
-    title: 'Settings',
+    title: 'Settings | Space',
     loadComponent: () =>
       import('./pages/settings/settings.component').then(
         (m) => m.SettingsComponent

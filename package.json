@@ -16,7 +16,8 @@
     "json:demo": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/demo",
     "json": "npm run json:graph && npm run json:engine && npm run json:svg-ui && npm run json:demo",
     "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch",
-    "start:graph": "ng build @daxur-studios/graph --configuration development && (cd dist/daxur-studios/graph && npm link) && ng build @daxur-studios/graph --configuration development --watch"
+    "start:graph": "ng build @daxur-studios/graph --configuration development && (cd dist/daxur-studios/graph && npm link) && ng build @daxur-studios/graph --configuration development --watch",
+    "start:svg-ui": "ng build @daxur-studios/svg-ui --configuration development && (cd dist/daxur-studios/svg-ui && npm link) && ng build @daxur-studios/svg-ui --configuration development --watch"
   },
   "private": true,
   "dependencies": {

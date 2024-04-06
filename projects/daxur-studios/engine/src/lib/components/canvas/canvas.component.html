@@ -13,7 +13,16 @@
   "
 >
   @if ( controller().options.showFPS) {
-  <div style="position: absolute; color: springgreen; background: black">
+  <div
+    style="
+      position: absolute;
+      color: springgreen;
+      user-select: none;
+      background: rgba(0, 0, 0, 0.15);
+      z-index: 999;
+    "
+    [ngStyle]="getShowStatsStyle()"
+  >
     FPS: {{ controller().fpsController.displayCount() }}
   </div>
   }

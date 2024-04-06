@@ -76,4 +76,15 @@ export class CanvasComponent implements OnInit, OnDestroy {
       height: height,
     });
   }
+
+  getShowStatsStyle() {
+    const position = this.controller().options.showFPSPosition ?? 'top-left';
+
+    return {
+      top: position.includes('top') ? 0 : undefined,
+      right: position.includes('right') ? 0 : undefined,
+      bottom: position.includes('bottom') ? 0 : undefined,
+      left: position.includes('left') ? 0 : undefined,
+    };
+  }
 }

@@ -12,7 +12,7 @@
     </button>
   </div>
 
-  <button (click)="showTiles.set(!showTiles())">Hide Grid</button>
+  <button (click)="toggleGrid()">Hide Grid</button>
 </div>
 <div
   #wrapper
@@ -61,7 +61,7 @@
     </div>
 
     <!--Background Tiles-->
-    @if (showTiles()) { @for (tile of backgroundTiles(); track $index) {
+    @if (options().showGrid) { @for (tile of backgroundTiles(); track $index) {
     <div
       class="tile"
       [ngStyle]="{

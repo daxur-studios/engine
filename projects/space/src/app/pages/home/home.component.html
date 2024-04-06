@@ -1,1 +1,112 @@
-<daxur-engine [controller]="controller"></daxur-engine>
+<daxur-engine [controller]="controller" #engine>
+  <sphere
+    #x
+    [position]="[4, 0, 0]"
+    [scale]="1"
+    [params]="{ widthSegments: 100, heightSegments: 100 }"
+  >
+    <mesh-standard-material [parameters]="{ color: 'red' }" />
+  </sphere>
+  <sphere
+    [position]="[-4, 0, 0]"
+    [scale]="2"
+    [params]="{ widthSegments: 100, heightSegments: 100 }"
+  >
+    <mesh-standard-material [parameters]="{ color: 'blue' }" />
+  </sphere>
+
+  <fiber-sphere>
+    <fiber-sphere [position]="[1, 2, 3]"> </fiber-sphere>
+  </fiber-sphere>
+
+  <mesh [position]="[-1, -1, -1]">
+    <box-geometry [params]="[2, 2, 4, 2, 2, 2]" />
+    <mesh-standard-material [parameters]="{ color: 'springgreen' }" />
+  </mesh>
+
+  <mesh [position]="[10, 2, 3]">
+    <box-geometry [params]="[1, 2, 3]" />
+    <mesh-normal-material />
+    <mesh [position]="[1, 2, 3]">
+      <box-geometry [params]="[1, 2, 3]" />
+      <mesh-normal-material />
+    </mesh>
+  </mesh>
+
+  <fiber-sphere [position]="[4, 4, 4]">
+    <fiber-sphere [position]="[1, 1, 1]"></fiber-sphere>
+  </fiber-sphere>
+
+  <ambient-light color="lightgray" [intensity]="0.1" />
+  <directional-light [position]="[1, 0, 1]" />
+
+  @for (item of items; track item;let index = $index) {
+  <grid-helper
+    [divisions]="5"
+    [size]="
+      index * index * index * index * index * index * index * index * index
+    "
+    [position]="[
+      0,
+      -1 *
+        (index * index * index * index * index * index * index * index * index),
+      0
+    ]"
+  ></grid-helper>
+  }
+
+  <!--100x-->
+  @for (sphere of tenXSpheres; track $index) {
+  <mesh>
+    <sphere-geometry [params]="[1, 40, 40]"></sphere-geometry>
+    <mesh-standard-material
+      [parameters]="{ color: sphere.color }"
+    ></mesh-standard-material>
+  </mesh>
+  }
+
+  <!--Sun-->
+  <sphere
+    #sun
+    [position]="[0, 0, 0]"
+    [scale]="1"
+    [params]="{ radius: 696340000, widthSegments: 100, heightSegments: 100 }"
+  >
+    <mesh-standard-material
+      [parameters]="{ color: 'yellow', emissive: 'orange' }"
+    />
+    <!--Earth-->
+    <sphere
+      [position]="[696340000 + 6371000 * 2, 0, 0]"
+      [scale]="1"
+      [params]="{ radius: 6371000, widthSegments: 100, heightSegments: 100 }"
+    >
+      <mesh-standard-material [parameters]="{ color: 'navy' }" />
+    </sphere>
+  </sphere>
+
+  @for (planet of planets; track planet.name) {
+  <celestial-body
+    [position]="planet.position"
+    [geometry]="planet.geometry"
+    [material]="planet.material"
+  ></celestial-body>
+  }
+</daxur-engine>
+<div
+  style="position: absolute; top: 0; height: 45px; left: 0; width: max-content"
+  class="mat-app-background"
+>
+  @for (planet of planets; track planet.name) {
+  <div
+    style="
+      display: inline-block;
+      margin: 5px;
+      padding: 5px;
+      background: rgba(0, 0, 0, 0.15);
+    "
+  >
+    {{ planet.name }}
+  </div>
+  }
+</div>

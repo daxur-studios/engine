@@ -10,12 +10,24 @@ import {
   Output,
   EventEmitter,
   input,
+  AfterContentInit,
+  ContentChildren,
+  contentChildren,
+  QueryList,
+  ElementRef,
+  Injector,
+  EffectRef,
+  forwardRef,
+  Signal,
+  WritableSignal,
 } from '@angular/core';
 import { CanvasComponent } from '../canvas/canvas.component';
 import {
   ACESFilmicToneMapping,
   Camera,
   Clock,
+  Object3D,
+  Object3DEventMap,
   PCFSoftShadowMap,
   PerspectiveCamera,
   Scene,
@@ -31,33 +43,45 @@ import { FPSController, IInputEvents } from '../../models';
 import { GameScene } from '../../core/game/game-scene';
 import { EngineController } from '../../services';
 import { IEngineOptions } from '../../models/engine.model';
+import { EngineService } from './engine.service';
+import { SceneComponent } from '../scene/scene.component';
+
+// Marker class, used as an interface
+export abstract class Object3DParent {
+  abstract name: string;
+  abstract object3D: WritableSignal<Object3D>;
+}
+
+// Helper method to provide the current component instance in the name of a `parentType`.
+// The `parentType` defaults to `Parent` when omitting the second parameter.
+export function provideObject3DParent(component: any, parentType?: any) {
+  return {
+    provide: parentType || Object3DParent,
+    useExisting: forwardRef(() => component),
+  };
+}
 
 @Component({
   selector: 'daxur-engine',
   templateUrl: './engine.html',
   styleUrls: ['./engine.scss'],
   standalone: true,
-
-  imports: [CanvasComponent],
+  providers: [EngineService, provideObject3DParent(EngineComponent)],
+  imports: [CanvasComponent, SceneComponent],
 })
-export class EngineComponent implements OnInit, OnDestroy {
+export class EngineComponent implements Object3DParent, OnInit, OnDestroy {
+  static instance = 0;
+  name = '';
+
   readonly controller = input.required<EngineController>();
+
+  /** This isn't used */
+  readonly parent = input<any>(undefined);
 
   @Output() ready: EventEmitter<EngineComponent> = new EventEmitter();
 
-  // private _mode: 'VR' | 'Desktop' = 'Desktop';
-  // @Input() set mode(value: 'VR' | 'Desktop') {
-  //   this._mode = value;
-  //   this.onModeChange(value);
-  // }
-  // get mode() {
-  //   return this._mode;
-  // }
-  // private onModeChange(value: 'VR' | 'Desktop') {
-  //   if (value === 'VR') {
-  //     this.composer?.dispose();
-  //   }
-  // }
+  readonly object3D = signal<Object3D>(this.engineService.scene);
+
   get canvas() {
     return this.controller().canvas;
   }
@@ -71,10 +95,20 @@ export class EngineComponent implements OnInit, OnDestroy {
     return this.controller().camera;
   }
 
-  constructor() {}
+  constructor(
+    public readonly engineService: EngineService,
+    readonly injector: Injector
+  ) {
+    EngineComponent.instance++;
+    this.name = `Engine ${EngineComponent.instance}`;
+  }
 
   ngOnInit(): void {
-    this.controller().onComponentInit();
+    const controller = this.controller();
+
+    controller.scene.add(this.engineService.scene);
+
+    controller.onComponentInit();
 
     this.ready.emit(this);
   }
@@ -82,4 +116,17 @@ export class EngineComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.controller().onComponentDestroy();
   }
+
+  getComponentObject3D(): Object3D<Object3DEventMap> {
+    return this.controller().scene;
+  }
+
+  //#region Object3DComponent
+  add(object: Object3D): void {
+    this.engineService.scene.add(object);
+  }
+  remove(object: Object3D): void {
+    this.engineService.scene.remove(object);
+  }
+  //#endregion
 }

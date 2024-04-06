@@ -19,9 +19,16 @@ import {
   OnInit,
   OnDestroy,
   Input,
+  input,
+  model,
 } from '@angular/core';
 
 type PanBy = 'leftMouse' | 'rightMouse' | 'middleMouse';
+
+export interface HtmlMapOptions {
+  showGrid?: boolean;
+  panBy?: PanBy[];
+}
 
 @Component({
   selector: 'lib-html-map',
@@ -72,12 +79,11 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     return tiles;
   });
 
-  @Input() panBy: PanBy[] = ['rightMouse', 'middleMouse'];
-  @Input()
-  set grid(value: boolean) {
-    this.showTiles.set(value);
-  }
-  readonly showTiles = signal(true);
+  readonly options = model.required<HtmlMapOptions>();
+  private readonly defaultOptions: HtmlMapOptions = {
+    panBy: ['middleMouse', 'rightMouse'],
+    showGrid: true,
+  };
 
   //#region CSS variables
 
@@ -150,6 +156,9 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
   }
   ngOnInit(): void {
     this.resizeObserver.observe(this.wrapper?.nativeElement!);
+
+    const options = this.options();
+    this.options.set({ ...this.defaultOptions, ...options });
   }
   ngOnDestroy(): void {
     this.resizeObserver.disconnect();
@@ -209,6 +218,13 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
     this.camera.mouseLeave(event);
   }
   //#endregion
+
+  public toggleGrid() {
+    this.options.set({
+      ...this.options(),
+      showGrid: !this.options().showGrid,
+    });
+  }
 }
 
 export class HtmlMapCamera {
@@ -330,7 +346,7 @@ export class HtmlMapCamera {
     const mouseButtonPressed = mouseButtonMap[
       event.button as keyof typeof mouseButtonMap
     ] as PanBy;
-    if (this.component.panBy.includes(mouseButtonPressed)) {
+    if (this.component.options()?.panBy?.includes(mouseButtonPressed)) {
       this.isDragging.set(true);
       this.startDragX.set(event.clientX);
       this.startDragY.set(event.clientY);

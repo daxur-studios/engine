@@ -6,7 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { GeneratedSvgForm } from '../../../svg-editor.form.model';
-import { GeneratedSVG, SvgEditorService } from '@daxur-studios/svg-ui';
+import { SvgEditorService } from '../../../svg-editor.service';
+import { GeneratedSVG } from '../../../../../models';
 
 @Component({
   selector: 'lib-command-input',

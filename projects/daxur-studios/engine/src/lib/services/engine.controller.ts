@@ -22,6 +22,7 @@ import {
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { EngineComponent } from '../components';
 
 export class EngineController implements IEngine {
   static instance = 0;
@@ -232,7 +233,7 @@ export class EngineController implements IEngine {
 
     this.tick$.next(delta);
 
-    if (this.useOrbitControls) this.orbitControls?.update();
+    if (this.useOrbitControls) this.orbitControls?.update(delta);
 
     this.render(time);
   }
@@ -279,10 +280,18 @@ export class EngineController implements IEngine {
   private orbitControls: OrbitControls | undefined;
   public useOrbitControls = false;
 
-  public switchToOrbitControls(domElement: HTMLCanvasElement) {
+  public switchToOrbitControls() {
     this.useOrbitControls = true;
 
-    this.orbitControls = new OrbitControls(this.camera, domElement);
+    if (this.orbitControls) this.orbitControls.dispose();
+
+    if (!this.renderer?.domElement)
+      throw new Error('EngineComponent does not have a renderer attached.');
+
+    this.orbitControls = new OrbitControls(
+      this.camera,
+      this.renderer.domElement
+    );
     this.orbitControls.enableDamping = true;
   }
 }

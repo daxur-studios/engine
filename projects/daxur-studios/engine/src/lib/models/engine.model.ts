@@ -9,6 +9,7 @@ import { FPSController } from './fps.controller';
 
 export interface IEngineOptions {
   showFPS?: boolean;
+  showFPSPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
   transparent?: boolean;
   webGLRendererParameters?: WebGLRendererParameters;
 }
