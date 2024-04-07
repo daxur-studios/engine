@@ -72,12 +72,8 @@ export class LineComponent extends Object3DComponent implements OnDestroy {
 
   readonly geometry = new BufferGeometry();
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(() => {
       this.updateLine(this.points(), this.material(), this.line());
@@ -109,12 +105,8 @@ export class LineComponent extends Object3DComponent implements OnDestroy {
   providers: [Object3DService],
 })
 export class TargetVisualizerComponent extends GroupComponent {
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
   }
 }
 
@@ -148,7 +140,7 @@ export class TargetVisualizerComponent extends GroupComponent {
         [0, 0, 0],
         [0, 10, 0]
       ]"
-      [rotation]="[0, 0, elapsedTime$.value * 0.1]"
+      [rotation]="[0, 0, elapsedTime$.value * 1]"
     >
       <line-basic-material [params]="{ color: 'red' }" />
     </line>
@@ -157,7 +149,7 @@ export class TargetVisualizerComponent extends GroupComponent {
         [0, 0, 0],
         [0, 10, 0]
       ]"
-      [rotation]="[0, 0, elapsedTime$.value * 00.1]"
+      [rotation]="[0, 0, elapsedTime$.value * 2]"
     >
       <line-basic-material [params]="{ color: 'green' }" />
     </line>
@@ -166,7 +158,7 @@ export class TargetVisualizerComponent extends GroupComponent {
         [0, 0, 0],
         [0, 10, 0]
       ]"
-      [rotation]="[0, 0, elapsedTime$.value * 000.1]"
+      [rotation]="[0, 0, elapsedTime$.value * 3]"
     >
       <line-basic-material [params]="{ color: 'blue' }" />
     </line>
@@ -181,11 +173,7 @@ export class TargetVisualizerComponent extends GroupComponent {
 export class SpaceClockComponent extends GroupComponent {
   elapsedTime$ = this.engineService.elapsedTime$;
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
   }
 }

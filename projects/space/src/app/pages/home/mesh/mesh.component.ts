@@ -14,12 +14,8 @@ import { MeshComponent, Object3DComponent } from './object-3d.component';
 export class GroupComponent extends Object3DComponent {
   override readonly object3D = signal(new Group());
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
   }
 }
 
@@ -32,12 +28,7 @@ export class GroupComponent extends Object3DComponent {
   providers: [Object3DService],
 })
 export class CelestialBodyComponent extends MeshComponent {
-  constructor(
-    public override readonly object3DService: Object3DService,
-
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
   }
 }

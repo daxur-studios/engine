@@ -45,14 +45,12 @@ export abstract class Object3DComponent implements Object3DParent {
   readonly engineService: EngineService = inject(EngineService, {
     skipSelf: true,
   });
-  //readonly object3DService: Object3DService = inject(Object3DService);
+  readonly object3DService = inject(Object3DService);
+  readonly parentService = inject(Object3DService, { skipSelf: true });
 
   abstract object3D: WritableSignal<Object3D>;
 
-  constructor(
-    public readonly object3DService: Object3DService,
-    @SkipSelf() public readonly parentService: Object3DService
-  ) {
+  constructor() {
     this.object3DService.setComponent(this);
     //#region Static Instance Counts
     Object3DComponent.InstanceCounts.set(
@@ -123,12 +121,8 @@ export class MeshComponent extends Object3DComponent implements OnDestroy {
     return this.object3D;
   }
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(() => {
       const geometry = this.geometry();
@@ -157,12 +151,8 @@ export class MeshComponent extends Object3DComponent implements OnDestroy {
   providers: [Object3DService],
 })
 export class FiberSphereComponent extends MeshComponent {
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     this.geometry.set(new SphereGeometry(1, 20, 20));
     this.material.set(new MeshNormalMaterial());

@@ -32,12 +32,8 @@ export class GridHelperComponent extends Object3DComponent {
 
   private previousGrid: GridHelper | undefined = this.grid();
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(
       () => {

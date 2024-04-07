@@ -28,12 +28,8 @@ export class AmbientLightComponent extends Object3DComponent {
     return this.object3D;
   }
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(() => {
       this.light().color.set(this.color());
@@ -62,12 +58,8 @@ export class DirectionalLightComponent extends Object3DComponent {
     return this.object3D;
   }
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(() => {
       this.light().color.set(this.color());

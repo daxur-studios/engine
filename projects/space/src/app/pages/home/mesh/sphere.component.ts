@@ -30,13 +30,8 @@ export class SphereComponent extends MeshComponent {
 
   override readonly object3D = signal(new Mesh<SphereGeometry>());
 
-  constructor(
-    public override readonly object3DService: Object3DService,
-    @Optional()
-    @SkipSelf()
-    public override readonly parentService: Object3DService
-  ) {
-    super(object3DService, parentService);
+  constructor() {
+    super();
 
     effect(
       () => {
