@@ -1,9 +1,6 @@
 <daxur-level-editor-toolbar [engine]="engine" #toolbar />
-<daxur-engine [controller]="controller" (ready)="onEngineReady($event)" #engine>
-  <daxur-scene-tree
-    [scene]="engine?.scene!"
-    [controller]="engine.controller()"
-  ></daxur-scene-tree>
+<daxur-engine (ready)="onEngineReady($event)" #engine>
+  <daxur-scene-tree [scene]="engine?.scene!"></daxur-scene-tree>
   <ng-content></ng-content>
 </daxur-engine>
 <div>FILES</div>

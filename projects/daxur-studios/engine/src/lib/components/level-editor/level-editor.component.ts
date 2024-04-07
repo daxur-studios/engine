@@ -1,20 +1,19 @@
 import {
   Component,
   EventEmitter,
-  Input,
   OnInit,
   Output,
   ViewChild,
+  input,
 } from '@angular/core';
 import { EngineComponent } from '../engine/engine.component';
 
-import { LevelEditorToolbarComponent } from '../level-editor-toolbar/level-editor-toolbar.component';
 import { ILevelEditorReady } from '../../models/level-editor.model';
+import { LevelEditorToolbarComponent } from '../level-editor-toolbar/level-editor-toolbar.component';
 import { SceneTreeComponent } from '../scene-tree/scene-tree.component';
 
-import { LevelEditorService } from '../../services/level-editor.service';
 import { IEngineOptions } from '../../models/engine.model';
-import { EngineController } from '../../services';
+import { LevelEditorService } from '../../services/level-editor.service';
 
 @Component({
   selector: 'daxur-level-editor',
@@ -25,13 +24,10 @@ import { EngineController } from '../../services';
     class: 'flex-page',
   },
   imports: [EngineComponent, LevelEditorToolbarComponent, SceneTreeComponent],
-  providers: [LevelEditorService],
 })
 export class LevelEditorComponent implements OnInit {
-  @Input({ required: true }) controller!: EngineController;
-  get options(): IEngineOptions {
-    return this.controller?.options;
-  }
+  readonly options = input.required<IEngineOptions>();
+
   @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
   @ViewChild(LevelEditorToolbarComponent, { static: true })
   toolbar?: LevelEditorToolbarComponent;

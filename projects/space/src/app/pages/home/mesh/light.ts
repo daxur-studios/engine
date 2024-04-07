@@ -1,6 +1,7 @@
 import {
   Component,
   Injector,
+  Optional,
   SkipSelf,
   effect,
   input,
@@ -8,15 +9,15 @@ import {
 } from '@angular/core';
 import { AmbientLight, DirectionalLight } from 'three';
 import { Object3DComponent } from './object-3d.component';
-import { Object3DParent, provideObject3DParent } from '@daxur-studios/engine';
+import { Object3DParent, Object3DService } from '@daxur-studios/engine';
 
 @Component({
   selector: 'ambient-light',
   template: `<ng-content></ng-content>`,
-  styles: ``,
+
   standalone: true,
   imports: [],
-  providers: [provideObject3DParent(AmbientLightComponent)],
+  providers: [Object3DService],
 })
 export class AmbientLightComponent extends Object3DComponent {
   readonly color = input<string>('#ffffff');
@@ -27,8 +28,12 @@ export class AmbientLightComponent extends Object3DComponent {
     return this.object3D;
   }
 
-  constructor(@SkipSelf() public override parent: Object3DParent) {
-    super(parent);
+  constructor(
+    public override readonly object3DService: Object3DService,
+    @SkipSelf()
+    public override readonly parentService: Object3DService
+  ) {
+    super(object3DService, parentService);
 
     effect(() => {
       this.light().color.set(this.color());
@@ -43,10 +48,10 @@ export class AmbientLightComponent extends Object3DComponent {
 @Component({
   selector: 'directional-light',
   template: `<ng-content></ng-content>`,
-  styles: ``,
+
   standalone: true,
   imports: [],
-  providers: [provideObject3DParent(DirectionalLightComponent)],
+  providers: [Object3DService],
 })
 export class DirectionalLightComponent extends Object3DComponent {
   readonly color = input<string>('#ffffff');
@@ -57,8 +62,12 @@ export class DirectionalLightComponent extends Object3DComponent {
     return this.object3D;
   }
 
-  constructor(@SkipSelf() public override parent: Object3DParent) {
-    super(parent);
+  constructor(
+    public override readonly object3DService: Object3DService,
+    @SkipSelf()
+    public override readonly parentService: Object3DService
+  ) {
+    super(object3DService, parentService);
 
     effect(() => {
       this.light().color.set(this.color());

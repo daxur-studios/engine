@@ -19,6 +19,6 @@ export class EngineVirtualGridDemoComponent {
   constructor() {}
 
   ngOnInit() {
-    this.controller.scene.add(new AxesHelper(5));
+    this.engineService.scene.add(new AxesHelper(5));
   }
 }

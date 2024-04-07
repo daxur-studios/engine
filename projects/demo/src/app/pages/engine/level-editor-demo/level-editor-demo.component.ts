@@ -36,10 +36,10 @@ export class LevelEditorDemoComponent implements OnInit {
     const mesh = new Mesh(new BoxGeometry(1, 1, 1), new MeshNormalMaterial());
     mesh.position.set(0, 0, -4);
 
-    this.controller.scene.add(mesh);
+    this.engineService.scene.add(mesh);
 
-    this.controller.tick$
-      .pipe(takeUntil(this.controller.onDestroy$))
+    this.engineService.tick$
+      .pipe(takeUntil(this.engineService.onDestroy$))
       .subscribe((delta) => {
         mesh.rotation.x -= 0.01;
         mesh.rotation.y += 0.01;

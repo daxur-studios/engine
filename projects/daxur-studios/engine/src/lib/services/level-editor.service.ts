@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 /** New Instance Per LevelEditorComponent */
 export class LevelEditorService {
   constructor() {}

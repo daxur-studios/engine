@@ -2,19 +2,24 @@ import {
   Component,
   Host,
   Inject,
+  InputSignal,
+  OnDestroy,
   Optional,
   SkipSelf,
+  WritableSignal,
   effect,
   forwardRef,
   input,
+  signal,
 } from '@angular/core';
 import {
   GameMesh,
   Object3DParent,
-  provideObject3DParent,
+  Object3DService,
 } from '@daxur-studios/engine';
 import {
   Material,
+  MaterialParameters,
   Mesh,
   MeshNormalMaterial,
   MeshNormalMaterialParameters,
@@ -23,60 +28,60 @@ import {
 } from 'three';
 import { MeshComponent } from './object-3d.component';
 
-// Marker class, used as an interface
-export abstract class MaterialComponentParent {
-  abstract material: Material;
-}
-
-// Helper method to provide the current component instance in the name of a `parentType`.
-// The `parentType` defaults to `Parent` when omitting the second parameter.
-export function provideMaterialComponentParent(
-  component: any,
-  parentType?: any
-) {
-  return {
-    provide: parentType || MaterialComponentParent,
-    useExisting: forwardRef(() => component),
-  };
-}
-
-// interface MaterialComponent {
-//   material: Material;
-// }
-
 @Component({
-  selector: 'mesh-standard-material',
+  selector: 'material',
   standalone: true,
   template: `<ng-content></ng-content>`,
-  styles: ``,
-  imports: [],
-  providers: [provideObject3DParent(MeshStandardMaterialComponent)],
 })
-export class MeshStandardMaterialComponent implements MaterialComponentParent {
-  readonly parameters = input<MeshStandardMaterialParameters>({});
+export abstract class MaterialComponent implements OnDestroy {
+  abstract params: InputSignal<MaterialParameters>;
+  abstract material: WritableSignal<Material>;
 
-  public material = new MeshStandardMaterial();
-
-  readonly meshComponent: MeshComponent;
-
-  constructor(@SkipSelf() public parent: Object3DParent) {
-    this.meshComponent = parent as MeshComponent;
-
+  constructor(readonly object3DService: Object3DService) {
     effect(
       () => {
-        this.updateFromParameters(this.parameters());
+        const meshComponent = object3DService.component() as MeshComponent;
+
+        this.updateFromParameters(
+          this.params(),
+          this.material(),
+          meshComponent
+        );
       },
       { allowSignalWrites: true }
     );
   }
 
-  private updateFromParameters(parameters: MeshStandardMaterialParameters) {
-    this.material.setValues(parameters);
-    this.material.needsUpdate = true;
+  updateFromParameters(
+    parameters: MaterialParameters,
+    material: Material,
+    meshComponent: MeshComponent
+  ) {
+    material.setValues(parameters);
+    material.needsUpdate = true;
 
-    if (this.meshComponent) {
-      this.meshComponent.material.set(this.material);
+    if (meshComponent) {
+      meshComponent.material.set(material);
     }
+  }
+
+  ngOnDestroy(): void {
+    this.material()?.dispose();
+  }
+}
+
+@Component({
+  selector: 'mesh-standard-material',
+  standalone: true,
+  template: `<ng-content></ng-content>`,
+})
+export class MeshStandardMaterialComponent extends MaterialComponent {
+  override readonly params = input<MeshStandardMaterialParameters>({});
+
+  override readonly material = signal(new MeshStandardMaterial());
+
+  constructor(public override readonly object3DService: Object3DService) {
+    super(object3DService);
   }
 }
 
@@ -84,32 +89,12 @@ export class MeshStandardMaterialComponent implements MaterialComponentParent {
   selector: 'mesh-normal-material',
   standalone: true,
   template: `<ng-content></ng-content>`,
-  styles: ``,
-  imports: [],
-  providers: [provideObject3DParent(MeshNormalMaterialComponent)],
 })
-export class MeshNormalMaterialComponent implements MaterialComponentParent {
-  readonly parameters = input<MeshNormalMaterialParameters>({});
-  public material = new MeshNormalMaterial();
+export class MeshNormalMaterialComponent extends MaterialComponent {
+  readonly params = input<MeshNormalMaterialParameters>({});
+  public override material = signal(new MeshNormalMaterial());
 
-  readonly meshComponent: MeshComponent;
-
-  constructor(@SkipSelf() public parent: Object3DParent) {
-    this.meshComponent = parent as MeshComponent;
-    effect(
-      () => {
-        this.updateParameters(this.parameters());
-      },
-      { allowSignalWrites: true }
-    );
-  }
-
-  private updateParameters(parameters: MeshNormalMaterialParameters) {
-    this.material.setValues(parameters);
-    this.material.needsUpdate = true;
-
-    if (this.meshComponent) {
-      this.meshComponent.material.set(this.material);
-    }
+  constructor(public override object3DService: Object3DService) {
+    super(object3DService);
   }
 }

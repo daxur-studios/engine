@@ -1,30 +1,38 @@
-<daxur-engine [controller]="controller" #engine>
+<daxur-engine>
+  <space-clock />
+  <!--Proxima Centauri-->
+  <sphere
+    [position]="[-155542487082161340, -119046723742847540, -379159977055869700]"
+    [scale]="1542487082161340"
+  >
+    <mesh-normal-material />
+  </sphere>
+
+  <mesh
+    [position]="[-6, -6, -6]"
+    [rotation]="[1, 2, elapsedTime$.value * 1.001]"
+  >
+    <box-geometry [params]="[2, 2, 4, 2, 2, 2]" />
+    <mesh-standard-material [params]="{ color: 'springgreen' }" />
+  </mesh>
+
   <sphere
     #x
-    [position]="[4, 0, 0]"
+    [position]="[40, 0, 0]"
     [scale]="1"
     [params]="{ widthSegments: 100, heightSegments: 100 }"
   >
-    <mesh-standard-material [parameters]="{ color: 'red' }" />
+    <mesh-standard-material [params]="{ color: 'red' }" />
   </sphere>
   <sphere
-    [position]="[-4, 0, 0]"
+    [position]="[-40, 0, 0]"
     [scale]="2"
     [params]="{ widthSegments: 100, heightSegments: 100 }"
   >
-    <mesh-standard-material [parameters]="{ color: 'blue' }" />
+    <mesh-standard-material [params]="{ color: 'blue' }" />
   </sphere>
 
-  <fiber-sphere>
-    <fiber-sphere [position]="[1, 2, 3]"> </fiber-sphere>
-  </fiber-sphere>
-
-  <mesh [position]="[-1, -1, -1]">
-    <box-geometry [params]="[2, 2, 4, 2, 2, 2]" />
-    <mesh-standard-material [parameters]="{ color: 'springgreen' }" />
-  </mesh>
-
-  <mesh [position]="[10, 2, 3]">
+  <mesh [position]="[10, 2, 3]" [rotation]="[0, elapsedTime$.value * 0.001, 0]">
     <box-geometry [params]="[1, 2, 3]" />
     <mesh-normal-material />
     <mesh [position]="[1, 2, 3]">
@@ -55,16 +63,6 @@
   ></grid-helper>
   }
 
-  <!--100x-->
-  @for (sphere of tenXSpheres; track $index) {
-  <mesh>
-    <sphere-geometry [params]="[1, 40, 40]"></sphere-geometry>
-    <mesh-standard-material
-      [parameters]="{ color: sphere.color }"
-    ></mesh-standard-material>
-  </mesh>
-  }
-
   <!--Sun-->
   <sphere
     #sun
@@ -73,7 +71,7 @@
     [params]="{ radius: 696340000, widthSegments: 100, heightSegments: 100 }"
   >
     <mesh-standard-material
-      [parameters]="{ color: 'yellow', emissive: 'orange' }"
+      [params]="{ color: 'yellow', emissive: 'orange' }"
     />
     <!--Earth-->
     <sphere
@@ -81,7 +79,7 @@
       [scale]="1"
       [params]="{ radius: 6371000, widthSegments: 100, heightSegments: 100 }"
     >
-      <mesh-standard-material [parameters]="{ color: 'navy' }" />
+      <mesh-standard-material [params]="{ color: 'navy' }" />
     </sphere>
   </sphere>
 
@@ -97,6 +95,10 @@
   style="position: absolute; top: 0; height: 45px; left: 0; width: max-content"
   class="mat-app-background"
 >
+  <button (click)="speedUp()">Speed Up</button>
+  <button (click)="speedDown()">Speed Down</button>
+  <button (click)="reset()">Reset</button>
+
   @for (planet of planets; track planet.name) {
   <div
     style="

@@ -1,7 +1,7 @@
-import { takeUntil } from 'rxjs';
-import { EngineComponent } from '../components';
 import { signal } from '@angular/core';
-import type { EngineController } from '../services';
+import { takeUntil } from 'rxjs';
+
+import { IEngine } from './engine.model';
 
 /** Frames per second */
 export class FPSController {
@@ -16,13 +16,13 @@ export class FPSController {
 
   graph: number[] = [];
 
-  constructor(public readonly controller: EngineController) {
+  constructor(public readonly engineService: IEngine) {
     this.tick();
   }
 
   tick() {
-    this.controller.tick$
-      .pipe(takeUntil(this.controller.onDestroy$))
+    this.engineService.tick$
+      .pipe(takeUntil(this.engineService.onDestroy$))
       .subscribe((delta) => {
         const now = performance.now();
         /**Do Not Change This */

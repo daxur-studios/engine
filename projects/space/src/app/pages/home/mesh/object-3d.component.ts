@@ -1,16 +1,19 @@
 import {
   Component,
+  OnDestroy,
   Optional,
   SkipSelf,
   WritableSignal,
   effect,
   forwardRef,
+  inject,
   model,
   signal,
 } from '@angular/core';
 import {
+  EngineService,
   Object3DParent,
-  provideObject3DParent,
+  Object3DService,
   xyz,
 } from '@daxur-studios/engine';
 import { BehaviorSubject } from 'rxjs';
@@ -28,7 +31,7 @@ import {
   standalone: true,
   selector: 'object-3d',
   template: `<ng-content></ng-content>`,
-  providers: [provideObject3DParent(Object3DComponent)],
+  providers: [Object3DService],
 })
 export abstract class Object3DComponent implements Object3DParent {
   static InstanceCounts = new Map<string, number>();
@@ -39,9 +42,18 @@ export abstract class Object3DComponent implements Object3DParent {
 
   name = '';
 
+  readonly engineService: EngineService = inject(EngineService, {
+    skipSelf: true,
+  });
+  //readonly object3DService: Object3DService = inject(Object3DService);
+
   abstract object3D: WritableSignal<Object3D>;
 
-  constructor(@SkipSelf() public parent: Object3DParent) {
+  constructor(
+    public readonly object3DService: Object3DService,
+    @SkipSelf() public readonly parentService: Object3DService
+  ) {
+    this.object3DService.setComponent(this);
     //#region Static Instance Counts
     Object3DComponent.InstanceCounts.set(
       'Object3DComponent',
@@ -54,7 +66,7 @@ export abstract class Object3DComponent implements Object3DParent {
 
     this.name = `${
       this.constructor.name
-    }Component ${Object3DComponent.InstanceCounts.get(this.constructor.name)}`;
+    } ${Object3DComponent.InstanceCounts.get(this.constructor.name)}`;
     //#endregion
 
     effect(() => {
@@ -73,9 +85,22 @@ export abstract class Object3DComponent implements Object3DParent {
     });
 
     effect(() => {
-      if (this.parent) {
-        this.parent.object3D().add(this.object3D());
-        console.warn(`added ${this.name} to parent ${this.parent.name}`);
+      const parentComponent = this.parentService.component();
+      const object3D = this.object3D();
+
+      if (parentComponent) {
+        this.engineService.consoleLogGroup(
+          `Added ${this.name} to parent ${parentComponent.name}`,
+          'debug'
+        );
+        const parentObject3D = parentComponent.object3D();
+        if (parentObject3D === object3D) {
+          console.error(
+            'You might need to add Object3DService to the provider list of the component in ' +
+              this.name
+          );
+        }
+        parentComponent.object3D().add(this.object3D());
       } else {
         console.error('No parent', this);
       }
@@ -87,9 +112,9 @@ export abstract class Object3DComponent implements Object3DParent {
   standalone: true,
   selector: 'mesh',
   template: `<ng-content></ng-content>`,
-  providers: [provideObject3DParent(MeshComponent)],
+  providers: [Object3DService],
 })
-export class MeshComponent extends Object3DComponent {
+export class MeshComponent extends Object3DComponent implements OnDestroy {
   readonly geometry = model<BufferGeometry>();
   readonly material = model<Material>();
 
@@ -98,8 +123,12 @@ export class MeshComponent extends Object3DComponent {
     return this.object3D;
   }
 
-  constructor(@SkipSelf() public override parent: Object3DParent) {
-    super(parent);
+  constructor(
+    public override readonly object3DService: Object3DService,
+    @SkipSelf()
+    public override readonly parentService: Object3DService
+  ) {
+    super(object3DService, parentService);
 
     effect(() => {
       const geometry = this.geometry();
@@ -117,17 +146,23 @@ export class MeshComponent extends Object3DComponent {
       }
     });
   }
+
+  ngOnDestroy(): void {}
 }
 
 @Component({
   standalone: true,
   selector: 'fiber-sphere',
   template: `<ng-content></ng-content>`,
-  providers: [provideObject3DParent(FiberSphereComponent)],
+  providers: [Object3DService],
 })
 export class FiberSphereComponent extends MeshComponent {
-  constructor(@SkipSelf() public override parent: Object3DParent) {
-    super(parent);
+  constructor(
+    public override readonly object3DService: Object3DService,
+    @SkipSelf()
+    public override readonly parentService: Object3DService
+  ) {
+    super(object3DService, parentService);
 
     this.geometry.set(new SphereGeometry(1, 20, 20));
     this.material.set(new MeshNormalMaterial());

@@ -5,6 +5,5 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   template: ` <p>svg-ui works!</p> `,
-  styles: ``,
 })
 export class SvgUiComponent {}

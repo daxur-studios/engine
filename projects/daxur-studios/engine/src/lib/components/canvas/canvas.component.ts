@@ -1,26 +1,16 @@
+import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
   Component,
   ElementRef,
   OnDestroy,
   OnInit,
-  ViewChild,
-  signal,
-  ChangeDetectorRef,
-  Output,
-  EventEmitter,
-  Input,
-  input,
   Renderer2,
+  ViewChild,
+  input,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
-import { Scene, WebGLRenderer } from 'three';
-
-import { BehaviorSubject } from 'rxjs';
-
-import { EngineController } from '../../services';
 import { IEngineOptions } from '../../models';
+import { EngineService } from '../engine/engine.service';
 
 @Component({
   selector: 'daxur-canvas',
@@ -33,7 +23,7 @@ import { IEngineOptions } from '../../models';
   },
 })
 export class CanvasComponent implements OnInit, OnDestroy {
-  readonly controller = input.required<EngineController>();
+  readonly options = input.required<IEngineOptions>();
   readonly canvas = input.required<HTMLCanvasElement>();
 
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
@@ -43,7 +33,10 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.onResize(width, height);
   });
 
-  constructor(private renderer: Renderer2) {}
+  constructor(
+    private renderer: Renderer2,
+    readonly engineService: EngineService
+  ) {}
 
   ngAfterViewInit() {
     const canvas = this.canvas();
@@ -60,25 +53,22 @@ export class CanvasComponent implements OnInit, OnDestroy {
   }
 
   onResize(width: number, height: number): void {
-    if (!this.controller) return;
-    const controller = this.controller()!;
+    this.engineService.width$.next(width);
+    this.engineService.height$.next(height);
 
-    controller.width$.next(width);
-    controller.height$.next(height);
-
-    controller.resolution$.next({
+    this.engineService.resolution$.next({
       width: width,
       height: height,
     });
 
-    controller.resize.emit({
+    this.engineService.resize.emit({
       width: width,
       height: height,
     });
   }
 
   getShowStatsStyle() {
-    const position = this.controller().options.showFPSPosition ?? 'top-left';
+    const position = this.options().showFPSPosition ?? 'top-left';
 
     return {
       top: position.includes('top') ? 0 : undefined,

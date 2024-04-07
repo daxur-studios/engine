@@ -1,21 +1,22 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { Input } from '@angular/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { EngineComponent } from '../engine/engine.component';
 
-import { ProjectService, LevelService, EngineController } from '../../services';
-import { ILevel, IProject } from '../../models';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Portal, PortalModule } from '@angular/cdk/portal';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
+import { ILevel, IProject } from '../../models';
+import { LevelService, ProjectService } from '../../services';
+import { EngineService } from '../engine/engine.service';
 
 @Component({
   selector: 'daxur-level-editor-toolbar',
@@ -37,10 +38,6 @@ import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
 export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   @Input({ required: true }) engine!: EngineComponent;
 
-  get controller(): EngineController {
-    return this.engine?.controller();
-  }
-
   unsubscribe: Subject<void> = new Subject<void>();
 
   toolbarForm = this.builder.group({
@@ -58,6 +55,7 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   leftPortal: Portal<any> | null = null;
 
   constructor(
+    readonly engineService: EngineService,
     private builder: FormBuilder,
     public projectService: ProjectService,
     public levelService: LevelService,
@@ -66,13 +64,13 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
     this.toolbarForm.controls.fpsLimit.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.controller.setFPSLimit(value ? Number(value) : 0);
+        this.engineService.setFPSLimit(value ? Number(value) : 0);
       });
 
     this.toolbarForm.controls.timeSpeed.valueChanges
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((value) => {
-        this.controller.setTimeSpeed(value ? Number(value) : 1);
+        this.engineService.setTimeSpeed(value ? Number(value) : 1);
       });
 
     //#region Project
@@ -99,7 +97,7 @@ export class LevelEditorToolbarComponent implements OnInit, OnDestroy {
   }
 
   onBeginPlay() {
-    this.controller.beginPlay();
+    this.engineService.beginPlay();
   }
 
   /** Add custom ui elements to the Level Editor Toolbar */

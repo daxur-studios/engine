@@ -1,79 +1,44 @@
 import {
   Component,
-  OnInit,
-  OnDestroy,
-  Input,
-  ViewChild,
-  effect,
-  computed,
-  signal,
-  Output,
   EventEmitter,
-  input,
-  AfterContentInit,
-  ContentChildren,
-  contentChildren,
-  QueryList,
-  ElementRef,
+  Inject,
   Injector,
-  EffectRef,
-  forwardRef,
-  Signal,
-  WritableSignal,
+  OnDestroy,
+  OnInit,
+  Optional,
+  Output,
+  Self,
+  SkipSelf,
+  effect,
+  inject,
+  input,
+  signal,
 } from '@angular/core';
+import { Object3D, Object3DEventMap } from 'three';
 import { CanvasComponent } from '../canvas/canvas.component';
-import {
-  ACESFilmicToneMapping,
-  Camera,
-  Clock,
-  Object3D,
-  Object3DEventMap,
-  PCFSoftShadowMap,
-  PerspectiveCamera,
-  Scene,
-  WebGLRenderer,
-  WebGLRendererParameters,
-} from 'three';
 
-import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
-import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-
-import { BehaviorSubject, Subject, takeUntil, ReplaySubject, skip } from 'rxjs';
-import { FPSController, IInputEvents } from '../../models';
-import { GameScene } from '../../core/game/game-scene';
-import { EngineController } from '../../services';
 import { IEngineOptions } from '../../models/engine.model';
+
 import { EngineService } from './engine.service';
-import { SceneComponent } from '../scene/scene.component';
-
-// Marker class, used as an interface
-export abstract class Object3DParent {
-  abstract name: string;
-  abstract object3D: WritableSignal<Object3D>;
-}
-
-// Helper method to provide the current component instance in the name of a `parentType`.
-// The `parentType` defaults to `Parent` when omitting the second parameter.
-export function provideObject3DParent(component: any, parentType?: any) {
-  return {
-    provide: parentType || Object3DParent,
-    useExisting: forwardRef(() => component),
-  };
-}
+import { Object3DParent, Object3DService } from './object-3d.service';
 
 @Component({
   selector: 'daxur-engine',
   templateUrl: './engine.html',
   styleUrls: ['./engine.scss'],
   standalone: true,
-  providers: [EngineService, provideObject3DParent(EngineComponent)],
-  imports: [CanvasComponent, SceneComponent],
+  providers: [Object3DService],
+  imports: [CanvasComponent],
 })
 export class EngineComponent implements Object3DParent, OnInit, OnDestroy {
+  readonly engineService: EngineService = inject(EngineService, {
+    skipSelf: true,
+  });
+
   static instance = 0;
   name = '';
 
-  readonly controller = input.required<EngineController>();
+  // readonly options = input.required<IEngineOptions>();
 
   /** This isn't used */
   readonly parent = input<any>(undefined);
@@ -83,42 +48,41 @@ export class EngineComponent implements Object3DParent, OnInit, OnDestroy {
   readonly object3D = signal<Object3D>(this.engineService.scene);
 
   get canvas() {
-    return this.controller().canvas;
+    return this.engineService.canvas;
   }
   get renderer() {
-    return this.controller().renderer;
+    return this.engineService.renderer;
   }
   get scene() {
-    return this.controller().scene;
+    return this.engineService.scene;
   }
   get camera() {
-    return this.controller().camera;
+    return this.engineService.camera;
   }
 
   constructor(
-    public readonly engineService: EngineService,
+    // public readonly engineService: EngineService,
+    public readonly object3DService: Object3DService,
     readonly injector: Injector
   ) {
     EngineComponent.instance++;
     this.name = `Engine ${EngineComponent.instance}`;
+
+    this.object3DService.setComponent(this);
   }
 
   ngOnInit(): void {
-    const controller = this.controller();
-
-    controller.scene.add(this.engineService.scene);
-
-    controller.onComponentInit();
+    this.engineService.onComponentInit();
 
     this.ready.emit(this);
   }
 
   ngOnDestroy(): void {
-    this.controller().onComponentDestroy();
+    this.engineService.onComponentDestroy();
   }
 
   getComponentObject3D(): Object3D<Object3DEventMap> {
-    return this.controller().scene;
+    return this.engineService.scene;
   }
 
   //#region Object3DComponent

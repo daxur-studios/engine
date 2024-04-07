@@ -2,17 +2,17 @@
   #wrapper
   class="canvas-size-observer flex-wrapper"
   tabindex="0"
-  (keyup)="controller().keyup$.next($event)"
-  (keydown)="controller().keydown$.next($event)"
-  (mousedown)="controller().mousedown$.next($event)"
-  (mouseup)="controller().mouseup$.next($event)"
-  (mousemove)="controller().mousemove$.next($event)"
-  (mousewheel)="controller().mousewheel$.next($event)"
+  (keyup)="engineService.keyup$.next($event)"
+  (keydown)="engineService.keydown$.next($event)"
+  (mousedown)="engineService.mousedown$.next($event)"
+  (mouseup)="engineService.mouseup$.next($event)"
+  (mousemove)="engineService.mousemove$.next($event)"
+  (mousewheel)="engineService.mousewheel$.next($event)"
   (contextmenu)="
-    controller().contextmenu$.next($event); $event.preventDefault()
+    engineService.contextmenu$.next($event); $event.preventDefault()
   "
 >
-  @if ( controller().options.showFPS) {
+  @if ( options().showFPS) {
   <div
     style="
       position: absolute;
@@ -23,7 +23,7 @@
     "
     [ngStyle]="getShowStatsStyle()"
   >
-    FPS: {{ controller().fpsController.displayCount() }}
+    FPS: {{ engineService.fpsController.displayCount() }}
   </div>
   }
 </div>

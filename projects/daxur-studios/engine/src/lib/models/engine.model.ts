@@ -3,7 +3,12 @@ import { Camera, Clock, WebGLRenderer, WebGLRendererParameters } from 'three';
 import { GameActor, GameScene } from '../core';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { EventEmitter, WritableSignal, signal } from '@angular/core';
+import {
+  EventEmitter,
+  InputSignal,
+  WritableSignal,
+  signal,
+} from '@angular/core';
 import { Cursor } from './cursor.model';
 import { FPSController } from './fps.controller';
 
@@ -50,7 +55,7 @@ export interface IEngineCamera {
 export interface IEngineCore extends IEngineCamera {
   readonly canvas: HTMLCanvasElement;
 
-  options: IEngineOptions | undefined;
+  readonly options: IEngineOptions;
   renderer: WebGLRenderer | undefined;
   composer: EffectComposer | undefined;
   renderPass: RenderPass | undefined;

@@ -8,15 +8,15 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { Object3DParent, provideObject3DParent } from '@daxur-studios/engine';
+import { Object3DParent, Object3DService } from '@daxur-studios/engine';
 
 @Component({
   selector: 'grid-helper',
   template: `<ng-content></ng-content> `,
-  styles: ``,
+
   standalone: true,
   imports: [],
-  providers: [provideObject3DParent(GridHelperComponent)],
+  providers: [Object3DService],
 })
 export class GridHelperComponent extends Object3DComponent {
   readonly size = input.required<number>();
@@ -32,8 +32,12 @@ export class GridHelperComponent extends Object3DComponent {
 
   private previousGrid: GridHelper | undefined = this.grid();
 
-  constructor(@SkipSelf() public override parent: Object3DParent) {
-    super(parent);
+  constructor(
+    public override readonly object3DService: Object3DService,
+    @SkipSelf()
+    public override readonly parentService: Object3DService
+  ) {
+    super(object3DService, parentService);
 
     effect(
       () => {

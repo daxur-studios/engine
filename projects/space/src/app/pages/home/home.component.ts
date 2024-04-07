@@ -1,64 +1,64 @@
-import { Component, OnDestroy, OnInit, effect, viewChild } from '@angular/core';
+import { Component, OnInit, SkipSelf, inject, viewChild } from '@angular/core';
 import {
+  ENGINE_OPTIONS,
   EngineComponent,
-  EngineController,
   EngineService,
-  GameMesh,
-  Utilities3D,
+  IEngineOptions,
   xyz,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
 import {
-  AmbientLight,
   BufferGeometry,
   Camera,
-  DirectionalLight,
-  DoubleSide,
   EllipseCurve,
   Float32BufferAttribute,
-  GridHelper,
   Line,
   LineBasicMaterial,
   MathUtils,
-  Mesh,
-  MeshBasicMaterial,
-  MeshPhongMaterial,
   MeshStandardMaterial,
-  Path,
   PerspectiveCamera,
   Points,
   PointsMaterial,
-  RingGeometry,
   SphereGeometry,
   Vector3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { CelestialBodyComponent } from './mesh/mesh.component';
+import {
+  BoxGeometryComponent,
+  SphereGeometryComponent,
+} from './mesh/geometry.component';
+import { GridHelperComponent } from './mesh/grid-helper.component';
 import { AmbientLightComponent, DirectionalLightComponent } from './mesh/light';
 import {
   MeshNormalMaterialComponent,
   MeshStandardMaterialComponent,
 } from './mesh/material.component';
+import { CelestialBodyComponent } from './mesh/mesh.component';
 import {
-  BoxGeometryComponent,
-  SphereGeometryComponent,
-} from './mesh/geometry.component';
-import { CarolComponent } from './mesh/carol';
-import {
-  Object3DComponent,
   FiberSphereComponent,
   MeshComponent,
 } from './mesh/object-3d.component';
+import { Test2Component, TestComponent } from './mesh/object-3d.service';
 import { RaycastDirective } from './mesh/raycast';
-import { GridHelperComponent } from './mesh/grid-helper.component';
+import { SpaceClockComponent } from './mesh/space-clock.component';
 import { SphereComponent } from './mesh/sphere.component';
+
+const options: IEngineOptions = {
+  showFPS: true,
+  showFPSPosition: 'top-right',
+  webGLRendererParameters: {
+    antialias: true,
+    logarithmicDepthBuffer: true,
+  },
+};
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     FiberSphereComponent,
-    CarolComponent,
+    TestComponent,
+    Test2Component,
     EngineComponent,
     CelestialBodyComponent,
     GridHelperComponent,
@@ -71,18 +71,25 @@ import { SphereComponent } from './mesh/sphere.component';
     MeshNormalMaterialComponent,
     SphereGeometryComponent,
     RaycastDirective,
+    SpaceClockComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
+  providers: [
+    EngineService,
+    {
+      provide: ENGINE_OPTIONS,
+      useValue: options,
+    },
+  ],
 })
 export class HomeComponent implements OnInit {
-  readonly engineService = viewChild.required(EngineService);
-
-  readonly controller = new EngineController({
+  readonly engineService: EngineService = inject(EngineService, { host: true });
+  readonly options: IEngineOptions = {
     showFPS: true,
     showFPSPosition: 'top-right',
     webGLRendererParameters: { antialias: true, logarithmicDepthBuffer: true },
-  });
+  };
 
   readonly engine = viewChild.required(EngineComponent);
 
@@ -201,55 +208,15 @@ export class HomeComponent implements OnInit {
 
   readonly items = Array.from({ length: 100 }, (_, i) => i);
 
-  readonly tenXSpheres = [
-    {
-      color: 'red',
-      scale: 1,
-    },
-    {
-      color: 'orange',
-      scale: 10,
-    },
-    {
-      color: 'yellow',
-      scale: 100,
-    },
-    {
-      color: 'green',
-      scale: 1000,
-    },
-    {
-      color: 'blue',
-      scale: 10000,
-    },
-    {
-      color: 'indigo',
-      scale: 100000,
-    },
-    {
-      color: 'violet',
-      scale: 1000000,
-    },
-    {
-      color: 'white',
-      scale: 10000000,
-    },
-    {
-      color: 'black',
-      scale: 100000000,
-    },
-    {
-      color: 'gray',
-      scale: 1000000000,
-    },
-  ];
+  tick$ = this.engineService.tick$;
+  elapsedTime$ = this.engineService.elapsedTime$;
 
   constructor() {
     this.addStarField();
 
     this.addPlanetOrbitWireFrames();
 
-    this.controller?.camera.position.set(0, 2, 5);
+    this.engineService?.camera.position.set(0, 2, 5);
   }
 
   controls?: TestOrbitControls;
@@ -263,8 +230,8 @@ export class HomeComponent implements OnInit {
 
     console.debug(
       'does engine service exist?',
-      this.engineService(),
-      this.engineService().instance
+      this.engineService,
+      this.engineService.instance
     );
     setTimeout(() => {
       const engine = this.engine();
@@ -300,9 +267,8 @@ export class HomeComponent implements OnInit {
         // camera.updateProjectionMatrix();
       });
 
-      engine
-        ?.controller()
-        .tick$.pipe(takeUntil(this.controller.onDestroy$))
+      engine?.engineService.tick$
+        .pipe(takeUntil(this.engineService.onDestroy$))
         .subscribe((delta) => {
           this.controls?.update();
         });
@@ -344,7 +310,7 @@ export class HomeComponent implements OnInit {
       new Float32BufferAttribute(positions, 3)
     );
     const stars = new Points(starsGeometry, starsMaterial);
-    this.controller.scene.add(stars);
+    this.engineService.scene.add(stars);
   }
 
   addPlanetOrbitWireFrames(): void {
@@ -385,8 +351,18 @@ export class HomeComponent implements OnInit {
       // Then, rotate it back to make it horizontal. This needs to be adjusted after applying the tilt.
       curveObject.rotation.x += Math.PI / 2;
 
-      this.controller.scene.add(curveObject);
+      this.engineService.scene.add(curveObject);
     });
+  }
+
+  speedUp() {
+    this.engineService.timeSpeed *= 2;
+  }
+  speedDown() {
+    this.engineService.timeSpeed /= 2;
+  }
+  reset() {
+    this.engineService.timeSpeed = 1;
   }
 }
 
