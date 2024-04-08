@@ -13,8 +13,7 @@ export class Object3DService {
   public id: number;
   private parentService: Object3DService | null = null;
 
-  readonly component: WritableSignal<Object3DParent | undefined> =
-    signal(undefined);
+  readonly component = signal<Object3DParent | undefined>(undefined);
 
   constructor() {
     Object3DService.instance++;

@@ -26,7 +26,7 @@ import {
   MeshStandardMaterial,
   MeshStandardMaterialParameters,
 } from 'three';
-import { MeshComponent } from './object-3d.component';
+import { MeshComponent } from './mesh.component';
 
 @Component({
   selector: 'material',

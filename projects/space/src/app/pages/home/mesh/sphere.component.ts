@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Object3DParent, Object3DService } from '@daxur-studios/engine';
 import { Mesh, SphereGeometry } from 'three';
-import { MeshComponent } from './object-3d.component';
+import { MeshComponent } from './mesh.component';
 
 type SphereGeometryParameters =
   (typeof SphereGeometry)['prototype']['parameters'];

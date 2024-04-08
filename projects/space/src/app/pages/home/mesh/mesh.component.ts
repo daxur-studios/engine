@@ -1,34 +1,50 @@
-import { AfterContentInit, Component, SkipSelf, signal } from '@angular/core';
+import {
+  AfterContentInit,
+  Component,
+  OnDestroy,
+  SkipSelf,
+  effect,
+  model,
+  signal,
+} from '@angular/core';
 import { Object3DService } from '@daxur-studios/engine';
-import { Group } from 'three';
-import { MeshComponent, Object3DComponent } from './object-3d.component';
+import { BufferGeometry, Group, Material, Mesh } from 'three';
+import { Object3DComponent } from './object-3d.component';
 
 @Component({
-  selector: 'group',
-  template: `<ng-content></ng-content> `,
-
   standalone: true,
-  imports: [],
+  selector: 'mesh',
+  template: `<ng-content></ng-content>`,
   providers: [Object3DService],
 })
-export class GroupComponent extends Object3DComponent {
-  override readonly object3D = signal(new Group());
+export class MeshComponent extends Object3DComponent implements OnDestroy {
+  readonly geometry = model<BufferGeometry>();
+  readonly material = model<Material>();
+
+  override object3D = signal(new Mesh());
+  get mesh() {
+    return this.object3D;
+  }
 
   constructor() {
     super();
-  }
-}
 
-@Component({
-  selector: 'celestial-body',
-  template: ` <ng-content></ng-content> `,
+    effect(() => {
+      const geometry = this.geometry();
+      const mesh = this.mesh();
+      if (geometry) {
+        mesh.geometry = geometry;
+      }
+    });
 
-  standalone: true,
-  imports: [GroupComponent, MeshComponent],
-  providers: [Object3DService],
-})
-export class CelestialBodyComponent extends MeshComponent {
-  constructor() {
-    super();
+    effect(() => {
+      const material = this.material();
+      const mesh = this.mesh();
+      if (material) {
+        mesh.material = material;
+      }
+    });
   }
+
+  ngOnDestroy(): void {}
 }

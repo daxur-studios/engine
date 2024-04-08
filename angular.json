@@ -235,7 +235,12 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "projects/space/src/favicon.ico",
-              "projects/space/src/assets"
+              "projects/space/src/assets",
+              {
+                "glob": "**/*",
+                "input": "./projects/daxur-studios/engine/assets",
+                "output": "/assets/daxur-engine"
+              }
             ],
             "styles": ["projects/space/src/styles.scss"],
             "scripts": []

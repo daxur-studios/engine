@@ -1,5 +1,45 @@
 <daxur-engine>
-  <space-clock />
+  <ambient-light color="lightgray" [intensity]="0.1" />
+  <directional-light [position]="[1, 0, 1.5]" [intensity]="1.5" />
+
+  <space-clock [position]="[0, 0, -5]" />
+
+  <mesh
+    raycast
+    (rayClick)="imClicked($event)"
+    (rayClickOutside)="imClickedOutside($event)"
+    [position]="[-6, -6, -6]"
+    [rotation]="[1, 2, elapsedTime$.value * 1.001]"
+  >
+    <box-geometry [params]="[2, 2, 4, 2, 2, 2]" />
+    <mesh-standard-material [params]="{ color: 'springgreen' }" />
+  </mesh>
+
+  <!--Sun-->
+  <sphere
+    #sun
+    [position]="[0, 0, 0]"
+    [scale]="1"
+    [params]="{ radius: 696340000, widthSegments: 100, heightSegments: 100 }"
+  >
+    <mesh-standard-material
+      [params]="{ color: 'yellow', emissive: 'orange' }"
+    />
+    <!--Earth-->
+    <group>
+      <sphere
+        [position]="[0, 0, 0]"
+        [rotation]="[0, elapsedTime$.value * 0.001, 0]"
+        [scale]="1"
+        [params]="{ radius: 6371000, widthSegments: 120, heightSegments: 120 }"
+      >
+        <mesh-standard-material
+          [params]="{ map: earthMap(), bumpMap: earthBumpMap(), bumpScale: 2 }"
+        />
+      </sphere>
+    </group>
+  </sphere>
+
   <!--Proxima Centauri-->
   <sphere
     [position]="[-155542487082161340, -119046723742847540, -379159977055869700]"
@@ -7,14 +47,6 @@
   >
     <mesh-normal-material />
   </sphere>
-
-  <mesh
-    [position]="[-6, -6, -6]"
-    [rotation]="[1, 2, elapsedTime$.value * 1.001]"
-  >
-    <box-geometry [params]="[2, 2, 4, 2, 2, 2]" />
-    <mesh-standard-material [params]="{ color: 'springgreen' }" />
-  </mesh>
 
   <sphere
     #x
@@ -32,23 +64,8 @@
     <mesh-standard-material [params]="{ color: 'blue' }" />
   </sphere>
 
-  <mesh [position]="[10, 2, 3]" [rotation]="[0, elapsedTime$.value * 0.001, 0]">
-    <box-geometry [params]="[1, 2, 3]" />
-    <mesh-normal-material />
-    <mesh [position]="[1, 2, 3]">
-      <box-geometry [params]="[1, 2, 3]" />
-      <mesh-normal-material />
-    </mesh>
-  </mesh>
-
-  <fiber-sphere [position]="[4, 4, 4]">
-    <fiber-sphere [position]="[1, 1, 1]"></fiber-sphere>
-  </fiber-sphere>
-
-  <ambient-light color="lightgray" [intensity]="0.1" />
-  <directional-light [position]="[1, 0, 1]" />
-
   @for (item of items; track item;let index = $index) {
+
   <grid-helper
     [divisions]="5"
     [size]="
@@ -60,30 +77,9 @@
         (index * index * index * index * index * index * index * index * index),
       0
     ]"
-  ></grid-helper>
-  }
-
-  <!--Sun-->
-  <sphere
-    #sun
-    [position]="[0, 0, 0]"
-    [scale]="1"
-    [params]="{ radius: 696340000, widthSegments: 100, heightSegments: 100 }"
   >
-    <mesh-standard-material
-      [params]="{ color: 'yellow', emissive: 'orange' }"
-    />
-    <!--Earth-->
-    <sphere
-      [position]="[696340000 + 6371000 * 2, 0, 0]"
-      [scale]="1"
-      [params]="{ radius: 6371000, widthSegments: 100, heightSegments: 100 }"
-    >
-      <mesh-standard-material [params]="{ color: 'navy' }" />
-    </sphere>
-  </sphere>
-
-  @for (planet of planets; track planet.name) {
+  </grid-helper>
+  } @for (planet of planets; track planet.name) {
   <celestial-body
     [position]="planet.position"
     [geometry]="planet.geometry"

@@ -7,6 +7,8 @@ import {
   Renderer2,
   ViewChild,
   input,
+  output,
+  viewChild,
 } from '@angular/core';
 
 import { IEngineOptions } from '../../models';
@@ -25,6 +27,9 @@ import { EngineService } from '../engine/engine.service';
 export class CanvasComponent implements OnInit, OnDestroy {
   readonly options = input.required<IEngineOptions>();
   readonly canvas = input.required<HTMLCanvasElement>();
+
+  readonly css2dRenderer =
+    viewChild.required<ElementRef<HTMLElement>>('css2dRenderer');
 
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
 
@@ -46,6 +51,8 @@ export class CanvasComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.resizeObserver.observe(this.wrapper!.nativeElement);
+
+    this.engineService.initCss2dRenderer(this.css2dRenderer()!.nativeElement!);
   }
 
   ngOnDestroy(): void {

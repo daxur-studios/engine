@@ -1,9 +1,17 @@
-import { Component, OnInit, SkipSelf, inject, viewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  SkipSelf,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 import {
   ENGINE_OPTIONS,
   EngineComponent,
   EngineService,
   IEngineOptions,
+  LoaderService,
   xyz,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
@@ -20,6 +28,7 @@ import {
   Points,
   PointsMaterial,
   SphereGeometry,
+  Texture,
   Vector3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -33,15 +42,14 @@ import {
   MeshNormalMaterialComponent,
   MeshStandardMaterialComponent,
 } from './mesh/material.component';
-import { CelestialBodyComponent } from './mesh/mesh.component';
-import {
-  FiberSphereComponent,
-  MeshComponent,
-} from './mesh/object-3d.component';
-import { Test2Component, TestComponent } from './mesh/object-3d.service';
-import { RaycastDirective } from './mesh/raycast';
+import { MeshComponent } from './mesh/mesh.component';
+
+import { IRaycastEvent, RaycastDirective } from './mesh/raycast';
 import { SpaceClockComponent } from './mesh/space-clock.component';
 import { SphereComponent } from './mesh/sphere.component';
+import { CelestialBodyComponent } from './celestial-body.component';
+import { GroupComponent } from './mesh/group.component';
+import { Css2dComponent } from './mesh/css-2d.component';
 
 const options: IEngineOptions = {
   showFPS: true,
@@ -56,9 +64,6 @@ const options: IEngineOptions = {
   selector: 'app-home',
   standalone: true,
   imports: [
-    FiberSphereComponent,
-    TestComponent,
-    Test2Component,
     EngineComponent,
     CelestialBodyComponent,
     GridHelperComponent,
@@ -70,8 +75,10 @@ const options: IEngineOptions = {
     BoxGeometryComponent,
     MeshNormalMaterialComponent,
     SphereGeometryComponent,
+    GroupComponent,
     RaycastDirective,
     SpaceClockComponent,
+    Css2dComponent,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
@@ -84,12 +91,20 @@ const options: IEngineOptions = {
   ],
 })
 export class HomeComponent implements OnInit {
+  //#region Services
   readonly engineService: EngineService = inject(EngineService, { host: true });
   readonly options: IEngineOptions = {
     showFPS: true,
     showFPSPosition: 'top-right',
     webGLRendererParameters: { antialias: true, logarithmicDepthBuffer: true },
   };
+  readonly loaderService = inject(LoaderService);
+  //#endregion
+
+  //#region textures
+  readonly earthMap = signal<Texture | undefined>(undefined);
+  readonly earthBumpMap = signal<Texture | undefined>(undefined);
+  //#endregion
 
   readonly engine = viewChild.required(EngineComponent);
 
@@ -217,22 +232,43 @@ export class HomeComponent implements OnInit {
     this.addPlanetOrbitWireFrames();
 
     this.engineService?.camera.position.set(0, 2, 5);
+
+    //#region Load Textures
+
+    const textures = [
+      'assets/textures/earth-color.jpg',
+      'assets/textures/earth-bump.png',
+    ];
+
+    const promises = textures.map((texture) =>
+      this.loaderService.textureLoader.loadAsync(texture)
+    );
+
+    Promise.all(promises).then(([earthMap, earthBumpMap]) => {
+      this.earthMap.set(earthMap);
+      this.earthBumpMap.set(earthBumpMap);
+    });
+
+    //#endregion
+  }
+
+  imClicked(event: IRaycastEvent) {
+    console.log('I was clicked', event);
+    event.object.scale.set(2, 2, 2);
+  }
+  imClickedOutside(event: IRaycastEvent) {
+    event.object.scale.set(1, 1, 1);
   }
 
   controls?: TestOrbitControls;
   x = viewChild.required('x', { read: SphereComponent });
   ngOnInit(): void {
-    let count = 0;
-    document.body.addEventListener('click', () => {
-      count++;
-      this.x().scale.set(count);
-    });
+    // let count = 0;
+    // document.body.addEventListener('click', () => {
+    //   count++;
+    //   this.x().scale.set(count);
+    // });
 
-    console.debug(
-      'does engine service exist?',
-      this.engineService,
-      this.engineService.instance
-    );
     setTimeout(() => {
       const engine = this.engine();
 

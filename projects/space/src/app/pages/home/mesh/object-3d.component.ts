@@ -26,6 +26,7 @@ import {
   Object3D,
   SphereGeometry,
 } from 'three';
+import { MeshComponent } from './mesh.component';
 
 @Component({
   standalone: true,
@@ -103,58 +104,5 @@ export abstract class Object3DComponent implements Object3DParent {
         console.error('No parent', this);
       }
     });
-  }
-}
-
-@Component({
-  standalone: true,
-  selector: 'mesh',
-  template: `<ng-content></ng-content>`,
-  providers: [Object3DService],
-})
-export class MeshComponent extends Object3DComponent implements OnDestroy {
-  readonly geometry = model<BufferGeometry>();
-  readonly material = model<Material>();
-
-  override object3D = signal(new Mesh());
-  get mesh() {
-    return this.object3D;
-  }
-
-  constructor() {
-    super();
-
-    effect(() => {
-      const geometry = this.geometry();
-      const mesh = this.mesh();
-      if (geometry) {
-        mesh.geometry = geometry;
-      }
-    });
-
-    effect(() => {
-      const material = this.material();
-      const mesh = this.mesh();
-      if (material) {
-        mesh.material = material;
-      }
-    });
-  }
-
-  ngOnDestroy(): void {}
-}
-
-@Component({
-  standalone: true,
-  selector: 'fiber-sphere',
-  template: `<ng-content></ng-content>`,
-  providers: [Object3DService],
-})
-export class FiberSphereComponent extends MeshComponent {
-  constructor() {
-    super();
-
-    this.geometry.set(new SphereGeometry(1, 20, 20));
-    this.material.set(new MeshNormalMaterial());
   }
 }

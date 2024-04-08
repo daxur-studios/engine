@@ -1,14 +1,7 @@
+import { Component, effect, input, signal } from '@angular/core';
+import { Object3DService } from '@daxur-studios/engine';
 import { GridHelper } from 'three';
 import { Object3DComponent } from './object-3d.component';
-import {
-  Component,
-  Optional,
-  SkipSelf,
-  effect,
-  input,
-  signal,
-} from '@angular/core';
-import { Object3DParent, Object3DService } from '@daxur-studios/engine';
 
 @Component({
   selector: 'grid-helper',

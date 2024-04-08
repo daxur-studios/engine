@@ -24,6 +24,8 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { GameActor, GameScene } from '../../core';
 import { Cursor, FPSController, IEngine, IEngineOptions } from '../../models';
 
+import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js';
+
 export const ENGINE_OPTIONS = new InjectionToken<IEngineOptions>(
   'ENGINE_OPTIONS'
 );
@@ -55,6 +57,8 @@ export class EngineService implements IEngine {
   readonly scene = new GameScene();
 
   renderer: WebGLRenderer | undefined;
+  CSS2DRenderer: CSS2DRenderer | undefined;
+
   public composer: EffectComposer | undefined;
   public renderPass: RenderPass | undefined;
 
@@ -110,8 +114,6 @@ export class EngineService implements IEngine {
     EngineService.instance++;
     this.instance = EngineService.instance;
 
-    console.trace('FUUUUUUUUUUUUUU!!!!', this);
-
     console.groupCollapsed('EngineService');
 
     console.debug('EngineService created, instance: ', this.instance);
@@ -119,6 +121,7 @@ export class EngineService implements IEngine {
     this.cursor = new Cursor(this);
 
     const renderer = this.initRenderer(this.options);
+
     this.createComposer(renderer);
   }
 
@@ -184,6 +187,18 @@ export class EngineService implements IEngine {
     this.renderer = this.createRenderer(webGLParams);
     return this.renderer;
   }
+  /** Initiated in the canvas component */
+  public initCss2dRenderer(element: HTMLElement) {
+    this.CSS2DRenderer = new CSS2DRenderer({ element: element });
+    this.CSS2DRenderer.setSize(this.width, this.height);
+    this.CSS2DRenderer.domElement.style.position = 'absolute';
+    this.CSS2DRenderer.domElement.style.pointerEvents = 'none';
+    this.CSS2DRenderer.domElement.style.top = '0';
+    this.CSS2DRenderer.domElement.style.width = '100%';
+    this.CSS2DRenderer.domElement.style.height = '100%';
+
+    //  document.body.appendChild(this.CSS2DRenderer.domElement);
+  }
   public createRenderer(
     webGLRendererParameters?: WebGLRendererParameters
   ): WebGLRenderer {
@@ -228,6 +243,8 @@ export class EngineService implements IEngine {
 
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.composer?.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    this.CSS2DRenderer?.setSize(this.width, this.height);
 
     this.render(this.fpsController.lastRenderTime);
   }
@@ -283,6 +300,9 @@ export class EngineService implements IEngine {
       } else {
         this.renderer.render(this.scene, this.camera);
       }
+
+      if (this.CSS2DRenderer)
+        this.CSS2DRenderer.render(this.scene, this.camera);
 
       this.fpsController.lastRenderTime = time;
     }

@@ -1,24 +1,17 @@
 import {
   Component,
-  InjectionToken,
   InputSignal,
   OnDestroy,
-  Optional,
-  SkipSelf,
   WritableSignal,
   effect,
   inject,
   input,
   signal,
 } from '@angular/core';
-import {
-  BoxGeometry,
-  BufferGeometry,
-  NormalBufferAttributes,
-  SphereGeometry,
-} from 'three';
-import { MeshComponent } from './object-3d.component';
-import { Object3DParent, Object3DService } from '@daxur-studios/engine';
+import { BoxGeometry, BufferGeometry, SphereGeometry } from 'three';
+
+import { Object3DService } from '@daxur-studios/engine';
+import { MeshComponent } from './mesh.component';
 
 @Component({
   selector: 'buffer-geometry',
