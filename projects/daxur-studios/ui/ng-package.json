@@ -1,6 +1,6 @@
 {
   "$schema": "../../../node_modules/ng-packagr/ng-package.schema.json",
-  "dest": "../../../dist/daxur-studios/graph",
+  "dest": "../../../dist/daxur-studios/ui",
   "lib": {
     "entryFile": "src/public-api.ts"
   }

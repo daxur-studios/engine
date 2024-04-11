@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SvgUiEditorComponent } from '@daxur-studios/svg-ui';
+import { SvgUiEditorComponent } from '@daxur-studios/ui';
 
 @Component({
   selector: 'app-svg-ui-demo-page',

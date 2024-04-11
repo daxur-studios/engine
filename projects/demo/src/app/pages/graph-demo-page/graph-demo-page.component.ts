@@ -1,6 +1,5 @@
 import { Component, WritableSignal, signal } from '@angular/core';
-import { GraphController } from 'projects/daxur-studios/graph/src/lib/models';
-import { GraphComponent } from 'projects/daxur-studios/graph/src/public-api';
+import { GraphComponent, GraphController } from '@daxur-studios/ui';
 
 @Component({
   selector: 'app-graph-demo-page',

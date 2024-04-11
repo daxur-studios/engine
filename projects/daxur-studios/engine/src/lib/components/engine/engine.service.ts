@@ -32,6 +32,10 @@ export const ENGINE_OPTIONS = new InjectionToken<IEngineOptions>(
 
 @Injectable()
 export class EngineService implements IEngine {
+  static provideOptions(options: IEngineOptions) {
+    return { provide: ENGINE_OPTIONS, useValue: options };
+  }
+
   static instance = 0;
   public instance: number;
   //#region Core

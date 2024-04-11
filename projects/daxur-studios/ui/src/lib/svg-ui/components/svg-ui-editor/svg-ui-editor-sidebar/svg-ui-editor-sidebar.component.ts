@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { SvgEditorService } from '../svg-editor.service';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GeneratedSVG } from '../../../models';
 import { GeneratedSvgForm } from '../svg-editor.form.model';
+import { SvgEditorService } from '../svg-editor.service';
 import { SvgEditorInputComponent } from './svg-editor-input/svg-editor-input.component';
 
-import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'lib-svg-ui-editor-sidebar',

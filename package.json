@@ -10,14 +10,12 @@
     "build:ng-add": "cd projects/daxur-studios/engine/schematics/ng-add && npm run build && cd ../..",
     "aiv1": "tsc ./scripts/merge-files-for-ai.ts && node ./scripts/merge-files-for-ai.js",
     "ai": "tsc ./scripts/ai.ts && node ./scripts/ai.js",
-    "json:graph": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/graph",
     "json:engine": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/engine",
-    "json:svg-ui": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/svg-ui",
+    "json:ui": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/daxur-studios/ui",
     "json:demo": "tsc ./scripts/json-ai.ts && node ./scripts/json-ai.js projects/demo",
-    "json": "npm run json:graph && npm run json:engine && npm run json:svg-ui && npm run json:demo",
+    "json": "npm run json:engine && npm run json:ui && npm run json:demo",
     "start": "ng build @daxur-studios/engine --configuration development && (cd dist/daxur-studios/engine && npm link) && ng build @daxur-studios/engine --configuration development --watch",
-    "start:graph": "ng build @daxur-studios/graph --configuration development && (cd dist/daxur-studios/graph && npm link) && ng build @daxur-studios/graph --configuration development --watch",
-    "start:svg-ui": "ng build @daxur-studios/svg-ui --configuration development && (cd dist/daxur-studios/svg-ui && npm link) && ng build @daxur-studios/svg-ui --configuration development --watch"
+    "start:ui": "ng build @daxur-studios/ui --configuration development && (cd dist/daxur-studios/ui && npm link) && ng build @daxur-studios/ui --configuration development --watch"
   },
   "private": true,
   "dependencies": {

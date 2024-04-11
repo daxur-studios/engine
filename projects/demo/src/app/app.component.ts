@@ -49,10 +49,6 @@ export class AppComponent {
           path: 'engine-demo/empty',
         },
         {
-          name: 'Virtual Grid',
-          path: 'engine-demo/virtual-grid',
-        },
-        {
           name: 'Level Editor',
           path: 'engine-demo/level-editor-demo',
         },

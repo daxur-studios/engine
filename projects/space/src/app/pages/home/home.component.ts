@@ -51,15 +51,6 @@ import { CelestialBodyComponent } from './celestial-body.component';
 import { GroupComponent } from './mesh/group.component';
 import { Css2dComponent } from './mesh/css-2d.component';
 
-const options: IEngineOptions = {
-  showFPS: true,
-  showFPSPosition: 'top-right',
-  webGLRendererParameters: {
-    antialias: true,
-    logarithmicDepthBuffer: true,
-  },
-};
-
 @Component({
   selector: 'app-home',
   standalone: true,
@@ -84,10 +75,14 @@ const options: IEngineOptions = {
   styleUrl: './home.component.scss',
   providers: [
     EngineService,
-    {
-      provide: ENGINE_OPTIONS,
-      useValue: options,
-    },
+    EngineService.provideOptions({
+      showFPS: true,
+      showFPSPosition: 'top-right',
+      webGLRendererParameters: {
+        antialias: true,
+        logarithmicDepthBuffer: true,
+      },
+    }),
   ],
 })
 export class HomeComponent implements OnInit {

@@ -1,8 +1,8 @@
-import { Injectable, WritableSignal, signal } from '@angular/core';
-import { FormArray, FormControl, FormGroup } from '@angular/forms';
-import { GeneratedSvgForm } from './svg-editor.form.model';
+import { Injectable, signal } from '@angular/core';
+import { FormArray } from '@angular/forms';
+import { BehaviorSubject } from 'rxjs';
 import { GeneratedSVG } from '../../models';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { GeneratedSvgForm } from './svg-editor.form.model';
 
 @Injectable({
   providedIn: 'root',

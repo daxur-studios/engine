@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   DefaultPawnComponent,
-  EngineController,
+  EngineService,
   LevelEditorComponent,
   LevelEditorService,
   SkyDomeComponent,
@@ -28,7 +28,7 @@ import { takeUntil } from 'rxjs';
   styleUrl: './level-editor-demo.component.scss',
 })
 export class LevelEditorDemoComponent implements OnInit {
-  public readonly controller = new EngineController({ showFPS: true });
+  readonly engineService = inject(EngineService);
 
   constructor(readonly levelEditorService: LevelEditorService) {}
 

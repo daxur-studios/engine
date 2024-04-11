@@ -1,5 +1,5 @@
 <div style="flex-direction: row" class="flex-page">
-  <lib-html-map [grid]="false" style="flex: 1 1 70%">
+  <lib-html-map [options]="{ showGrid: false }" style="flex: 1 1 70%">
     <lib-generated-svg [data]="inputs">
       @for (svgPathGroup of svgInputFormArray.controls; track $index) {
       <!---->

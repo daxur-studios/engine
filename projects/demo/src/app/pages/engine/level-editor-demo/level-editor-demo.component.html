@@ -1,8 +1,8 @@
-<daxur-level-editor [controller]="controller">
-  <animated-cube [controller]="controller" />
-  <default-pawn [controller]="controller" />
+<daxur-level-editor [options]="{}">
+  <animated-cube />
+  <default-pawn />
 
   @for (item of [1,2,3,4,5,6,7,8,9]; track $index) {
-  <random-moving-ball [controller]="controller" />
+  <random-moving-ball />
   }
 </daxur-level-editor>

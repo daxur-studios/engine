@@ -1,17 +1,13 @@
+import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
-import {
-  GraphComponent,
-  GraphController,
-  HtmlMapComponent,
-} from '@daxur-studios/graph';
-import { SvgUiEditorSidebarComponent } from './svg-ui-editor-sidebar/svg-ui-editor-sidebar.component';
-import { SvgEditorService } from './svg-editor.service';
+import { Component } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { HtmlMapComponent } from '../../../graph';
+import { GeneratedSVG } from '../../models';
 import { GeneratedSvgComponent } from '../generated-svg/generated-svg.component';
 import { GeneratedSvgForm } from './svg-editor.form.model';
-import { CdkDragEnd, DragDropModule } from '@angular/cdk/drag-drop';
-import { GeneratedSVG } from '../../models';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { SvgEditorService } from './svg-editor.service';
+import { SvgUiEditorSidebarComponent } from './svg-ui-editor-sidebar/svg-ui-editor-sidebar.component';
 
 @Component({
   selector: 'lib-svg-ui-editor',

@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, inject } from '@angular/core';
 import {
   DefaultPawn,
+  ENGINE_OPTIONS,
   EngineComponent,
-  EngineController,
+  EngineService,
   GameMesh,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
@@ -22,8 +23,7 @@ import {
   template: '',
 })
 export class AnimatedCubeComponent implements OnInit {
-  @Input({ required: true }) controller!: EngineController;
-
+  readonly engineService = inject(EngineService);
   constructor() {}
 
   ngOnInit(): void {
@@ -48,8 +48,7 @@ export class AnimatedCubeComponent implements OnInit {
   template: '',
 })
 export class RandomMovingBallComponent implements OnInit {
-  @Input({ required: true }) controller!: EngineController;
-
+  readonly engineService = inject(EngineService);
   targetLocation: Vector3 = new Vector3(0, 0, 0);
 
   constructor() {}
@@ -96,12 +95,12 @@ export class RandomMovingBallComponent implements OnInit {
   imports: [EngineComponent, AnimatedCubeComponent, RandomMovingBallComponent],
   templateUrl: './engine-demo-page.component.html',
   styleUrl: './engine-demo-page.component.scss',
+  providers: [EngineService, EngineService.provideOptions({ showFPS: true })],
 })
 export class EngineDemoPageComponent {
-  readonly controller = new EngineController({ showFPS: true });
-
+  readonly engineService = inject(EngineService);
   ngOnInit() {
-    const controller = this.controller;
+    const controller = this.engineService;
     if (!controller) return;
 
     const axes = new AxesHelper(5);

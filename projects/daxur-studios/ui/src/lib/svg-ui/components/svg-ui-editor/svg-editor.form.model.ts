@@ -2,7 +2,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { GeneratedSVG } from '../../models';
 
 export module GeneratedSvgForm {
-  interface GeneratedSvgFormControls {
+  export interface GeneratedSvgFormControls {
     uniqueTags: FormControl<GeneratedSVG.ITag[] | null>;
     elements: FormArray<SvgInputGroup>;
   }

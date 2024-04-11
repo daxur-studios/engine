@@ -6,7 +6,7 @@ import {
   Point,
 } from '@angular/cdk/drag-drop';
 import { Component, ViewChild } from '@angular/core';
-import { HtmlMapComponent } from '@daxur-studios/graph';
+import { HtmlMapComponent } from '@daxur-studios/ui';
 
 @Component({
   selector: 'app-basic-html-map-demo',

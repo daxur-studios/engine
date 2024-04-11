@@ -21,6 +21,7 @@ import {
   Input,
   input,
   model,
+  viewChild,
 } from '@angular/core';
 
 type PanBy = 'leftMouse' | 'rightMouse' | 'middleMouse';
@@ -134,6 +135,8 @@ export class HtmlMapComponent implements OnInit, OnDestroy {
 
   //#region Resize
   @ViewChild('wrapper', { static: true }) wrapper?: ElementRef<HTMLElement>;
+  readonly wrapperElement =
+    viewChild.required<ElementRef<HTMLElement>>('wrapper');
 
   private resizeObserver: ResizeObserver = new ResizeObserver((entries) => {
     const { width, height } = entries[0].contentRect;

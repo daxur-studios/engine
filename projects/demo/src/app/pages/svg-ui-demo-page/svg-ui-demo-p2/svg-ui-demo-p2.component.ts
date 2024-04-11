@@ -16,7 +16,7 @@ import {
   GeneratedSvgComponent,
   GeneratedSvgForm,
   ResizeDirective,
-} from '@daxur-studios/svg-ui';
+} from '@daxur-studios/ui';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 const TEST: GeneratedSvgForm.GeneratedSvgFormGroup['value'] = {

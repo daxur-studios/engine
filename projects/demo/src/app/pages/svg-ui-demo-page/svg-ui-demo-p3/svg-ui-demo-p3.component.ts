@@ -14,7 +14,7 @@ import {
   GeneratedSvgComponent,
   GeneratedSvgForm,
   ResizeDirective,
-} from '@daxur-studios/svg-ui';
+} from '@daxur-studios/ui';
 import { Subject, takeUntil } from 'rxjs';
 import * as data from './data.json';
 import { MatIconModule } from '@angular/material/icon';

@@ -6,10 +6,7 @@
       "@daxur-studios/engine": [
         "./projects/daxur-studios/engine/src/public-api"
       ],
-      "@daxur-studios/graph": ["./projects/daxur-studios/graph/src/public-api"],
-      "@daxur-studios/svg-ui": [
-        "./projects/daxur-studios/svg-ui/src/public-api"
-      ]
+      "@daxur-studios/ui": ["./projects/daxur-studios/ui/src/public-api"]
     },
     "resolveJsonModule": true,
     "baseUrl": "./",

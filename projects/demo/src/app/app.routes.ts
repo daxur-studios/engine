@@ -8,13 +8,7 @@ export const routes: Routes = [
         (m) => m.EngineDemoPageComponent
       ),
   },
-  {
-    path: 'engine-demo/virtual-grid',
-    loadComponent: () =>
-      import(
-        './pages/engine/engine-virtual-grid-demo/engine-virtual-grid-demo.component'
-      ).then((m) => m.EngineVirtualGridDemoComponent),
-  },
+
   {
     path: 'engine-demo/level-editor-demo',
     loadComponent: () =>
