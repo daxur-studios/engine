@@ -11,3 +11,6 @@ body {
   flex: 1 1;
   overflow: auto;
 }
+.pointer-events-auto {
+  pointer-events: auto;
+}

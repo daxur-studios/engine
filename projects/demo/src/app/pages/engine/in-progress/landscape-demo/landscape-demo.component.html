@@ -1,0 +1,31 @@
+<daxur-engine [userInterface]="{ showSceneTree: true }">
+  <orbit-controls />
+
+  <directional-light
+    [position]="[50, 40, 30]"
+    [color]="'#ffffff'"
+    [intensity]="10"
+  />
+  <ambient-light [color]="'#ffffff'" [intensity]="0.1" />
+  <point-light [position]="[20, 20, 20]" [color]="'#ffffff'" [intensity]="4" />
+
+  <grid-helper
+    [color1]="'blue'"
+    [color2]="'red'"
+    [divisions]="10"
+    [size]="10"
+  />
+
+  <sky-dome> </sky-dome>
+  <landscape
+    [params]="{
+      wireFrame: false,
+      width: 100,
+      height: 100,
+      segments: 100
+    }"
+    ><cloud [position]="[4, 4, 4]"
+      ><cloud [position]="[1, 2, 3]"></cloud
+    ></cloud>
+  </landscape>
+</daxur-engine>

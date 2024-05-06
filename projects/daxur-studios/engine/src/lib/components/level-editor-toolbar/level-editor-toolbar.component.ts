@@ -16,7 +16,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FPS_LIMIT_OPTIONS } from '../../core/constants/fps-limit-options';
 import { ILevel, IProject } from '../../models';
 import { LevelService, ProjectService } from '../../services';
-import { EngineService } from '../engine/engine.service';
+import { EngineService } from '../../services/engine.service';
 
 @Component({
   selector: 'daxur-level-editor-toolbar',

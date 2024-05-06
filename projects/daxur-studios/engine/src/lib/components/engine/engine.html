@@ -1,5 +1,5 @@
-<daxur-canvas
-  [canvas]="canvas"
-  [options]="engineService.options"
-></daxur-canvas>
-<ng-content></ng-content>
+<daxur-canvas [canvas]="canvas" [options]="engineService.options">
+  <ng-content></ng-content>
+</daxur-canvas>
+
+<daxur-engine-ui [userInterface]="userInterface()" />

@@ -1,6 +1,8 @@
 export * from './engine/engine.component';
-export * from './engine/engine.service';
+export * from './engine-stats/engine-stats.component';
 export * from './engine/object-3d.service';
+export * from './engine-ui/engine-ui.component';
+export * from './object-3d-components';
 
 export * from './canvas/canvas.component';
 export * from './level-editor/level-editor.component';

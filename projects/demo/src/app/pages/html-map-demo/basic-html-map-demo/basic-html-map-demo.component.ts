@@ -39,7 +39,7 @@ export class BasicHtmlMapDemoComponent {
     pickupPositionInElement: Point
   ) => {
     const armLength = this.cameraSpringArmLength();
-    const scale = this.htmlMap.calculateScale(armLength, this.perspective);
+    const scale = this.htmlMap.htmlMapService.calculateScale(armLength, this.perspective);
 
     const newPoint = { ...userPointerPosition };
 

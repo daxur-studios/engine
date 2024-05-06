@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EngineComponent, EngineService } from '..';
+import { EngineComponent } from '..';
 import { IEngineOptions } from '../../models/engine.model';
 import {
   BoxGeometry,
@@ -15,7 +15,7 @@ import {
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
-import { LoaderService } from '../../services';
+import { EngineService, LoaderService } from '../../services';
 
 @Component({
   selector: 'daxur-mesh-viewer',

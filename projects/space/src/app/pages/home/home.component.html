@@ -1,4 +1,11 @@
-<daxur-engine>
+<daxur-engine
+  [userInterface]="{
+    showSceneTree: false,
+    top: top,
+    main: main
+  }"
+  [keyBindings]="keyBindings"
+>
   <ambient-light color="lightgray" [intensity]="0.1" />
   <directional-light [position]="[1, 0, 1.5]" [intensity]="1.5" />
 
@@ -80,31 +87,45 @@
   >
   </grid-helper>
   } @for (planet of planets; track planet.name) {
-  <celestial-body
-    [position]="planet.position"
-    [geometry]="planet.geometry"
-    [material]="planet.material"
-  ></celestial-body>
+  <celestial-body [position]="planet.position"></celestial-body>
   }
 </daxur-engine>
-<div
-  style="position: absolute; top: 0; height: 45px; left: 0; width: max-content"
-  class="mat-app-background"
->
-  <button (click)="speedUp()">Speed Up</button>
-  <button (click)="speedDown()">Speed Down</button>
-  <button (click)="reset()">Reset</button>
 
-  @for (planet of planets; track planet.name) {
+<ng-template #top>
+  <!--UI-->
   <div
-    style="
-      display: inline-block;
-      margin: 5px;
-      padding: 5px;
-      background: rgba(0, 0, 0, 0.15);
-    "
+    style="height: 45px; width: max-content"
+    class="pointer-events-auto mat-app-background"
   >
-    {{ planet.name }}
+    <button (click)="speedUp()">Speed Up</button>
+    <button (click)="speedDown()">Speed Down</button>
+    <button (click)="reset()">Reset</button>
+
+    @for (planet of planets; track planet.name) {
+    <div
+      style="
+        display: inline-block;
+        margin: 5px;
+        padding: 5px;
+        background: rgba(0, 0, 0, 0.15);
+      "
+    >
+      {{ planet.name }}
+    </div>
+    }
+  </div>
+</ng-template>
+
+<ng-template #main>
+  @if (showMenu()) {
+  <div class="pointer-events-auto mat-app-background" style="padding: 16px">
+    MENU
+
+    <div>
+      <a routerLink="space-program"> Space Program </a>
+    </div>
+    <div>Gravity Arena</div>
+    <div>Explore</div>
   </div>
   }
-</div>
+</ng-template>

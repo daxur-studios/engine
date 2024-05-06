@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { Object3DService } from '@daxur-studios/engine';
-import { GroupComponent } from './mesh/group.component';
-import { MeshComponent } from './mesh/mesh.component';
+
+import {
+  GroupComponent,
+  MeshComponent,
+  provideObject3DComponent,
+} from '@daxur-studios/engine';
 
 @Component({
   selector: 'celestial-body',
@@ -9,7 +12,7 @@ import { MeshComponent } from './mesh/mesh.component';
 
   standalone: true,
   imports: [GroupComponent, MeshComponent],
-  providers: [Object3DService],
+  providers: [provideObject3DComponent(CelestialBodyComponent)],
 })
 export class CelestialBodyComponent extends MeshComponent {
   constructor() {

@@ -13,19 +13,6 @@
   "
 >
   <div class="css-2d-renderer" #css2dRenderer></div>
+
   <!--Canvas is added here programmatically-->
-  @if ( options().showFPS) {
-  <div
-    style="
-      position: absolute;
-      color: springgreen;
-      user-select: none;
-      background: rgba(0, 0, 0, 0.15);
-      z-index: 999;
-    "
-    [ngStyle]="getShowStatsStyle()"
-  >
-    FPS: {{ engineService.fpsController.displayCount() }}
-  </div>
-  }
 </div>

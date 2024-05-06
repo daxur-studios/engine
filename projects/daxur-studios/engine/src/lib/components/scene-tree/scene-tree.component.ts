@@ -8,40 +8,45 @@ import { FieldPanelComponent } from '../field-panel/field-panel.component';
 import { Object3D } from 'three';
 import { EulerField, Field, Vector3Field } from '../../core';
 import { TransformControls } from 'three/examples/jsm/controls/TransformControls';
-import { EngineService } from '../engine/engine.service';
+import { EngineService } from '../../services/engine.service';
+import { Object3DComponent } from '../object-3d-components';
 
 @Component({
   selector: 'daxur-scene-tree',
   standalone: true,
   imports: [CommonModule, FieldPanelComponent, MatButtonModule, MatIconModule],
   templateUrl: './scene-tree.component.html',
-  styleUrls: ['./scene-tree.component.css'],
+  styleUrls: ['./scene-tree.component.scss'],
 })
 export class SceneTreeComponent implements OnInit, OnDestroy {
-  @Input({ required: true }) scene?: GameScene;
-
   onDestroy$ = new Subject<void>();
 
-  selectedObject3D?: Object3D;
+  selectedObject3D?: Object3DComponent;
   transformControls: TransformControls | undefined;
+
+  get scene() {
+    return this.engineService.scene;
+  }
+
+  readonly children = this.engineService.getEngineComponent()!.children;
 
   constructor(readonly engineService: EngineService) {}
 
   ngOnInit(): void {
-    this.scene!.addEvent$.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (items) => {}
-    );
+    this.scene.addEvent$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((items) => {});
 
-    this.scene!.removeEvent$.pipe(takeUntil(this.onDestroy$)).subscribe(
-      (items) => {}
-    );
+    this.scene.removeEvent$
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((items) => {});
   }
   ngOnDestroy(): void {
     this.onDestroy$.next();
     this.onDestroy$.complete();
   }
 
-  selectObject3D(object3D: Object3D | undefined) {
+  selectObject3D(object3D: Object3DComponent | undefined) {
     if (object3D instanceof TransformControls) {
       return;
     }
@@ -53,7 +58,7 @@ export class SceneTreeComponent implements OnInit, OnDestroy {
         this.engineService.renderer!.domElement
       );
       this.transformControls.name = 'TransformControls';
-      this.transformControls.attach(this.selectedObject3D);
+      this.transformControls.attach(this.selectedObject3D.object3D());
       this.scene!.add(this.transformControls);
     } else {
       this.transformControls?.detach();

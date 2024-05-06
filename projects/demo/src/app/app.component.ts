@@ -38,12 +38,17 @@ export class AppComponent {
     menu?: {
       name: string;
       path: string;
+      children?: { name: string; path: string }[];
     }[];
   }[] = [
     {
       name: 'Engine Demos',
 
       menu: [
+        {
+          name: 'Landscape Demo',
+          path: 'engine-demo/landscape-demo',
+        },
         {
           name: 'Empty Scene',
           path: 'engine-demo/empty',
@@ -55,9 +60,13 @@ export class AppComponent {
       ],
     },
     {
-      name: 'Graph Demos',
+      name: 'UI Demos',
 
       menu: [
+        {
+          name: 'Nodes Demo',
+          path: 'ui/node-demo',
+        },
         {
           name: 'Basic Graph',
           path: 'graph-demo/graph',

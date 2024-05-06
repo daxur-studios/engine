@@ -26,8 +26,6 @@ import { LevelEditorService } from '../../services/level-editor.service';
   imports: [EngineComponent, LevelEditorToolbarComponent, SceneTreeComponent],
 })
 export class LevelEditorComponent implements OnInit {
-  readonly options = input.required<IEngineOptions>();
-
   @ViewChild(EngineComponent, { static: true }) engine?: EngineComponent;
   @ViewChild(LevelEditorToolbarComponent, { static: true })
   toolbar?: LevelEditorToolbarComponent;

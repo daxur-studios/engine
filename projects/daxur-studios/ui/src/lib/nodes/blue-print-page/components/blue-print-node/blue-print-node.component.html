@@ -1,0 +1,57 @@
+<app-line
+  style="position: absolute"
+  [group]="group()"
+  [outputOrigin]="outputOrigin._elementRef.nativeElement"
+  [inputOrigin]="inputOrigin._elementRef.nativeElement"
+></app-line>
+
+<div
+  class="mat-app-background"
+  style="border-radius: 3px; padding: 0.5rem; position: absolute; display: flex"
+  cdkDrag
+  [cdkDragFreeDragPosition]="group().value.position || { x: 0, y: 0 }"
+  (cdkDragEnded)="
+    group().controls.position.setValue($event.source.getFreeDragPosition())
+  "
+>
+  <div
+    cdkDragHandle
+    style="
+      width: 100%;
+      cursor: pointer;
+      background-color: rgba(66, 66, 66, 0.25);
+    "
+  >
+    <mat-icon> drag_indicator </mat-icon>
+  </div>
+
+  <div>
+    <div>
+      INPUTs @for (connectorGroup of inputConnectors; track $index) {
+      <app-connector id="input" [connectorGroup]="connectorGroup">
+        <span class="material-symbols-outlined"> circle </span>
+      </app-connector>
+      }
+      <button mat-icon-button (click)="inputClicked()" #inputOrigin>
+        <span class="material-symbols-outlined"> circle </span>
+      </button>
+    </div>
+  </div>
+
+  <div>
+    <input type="text" [formControl]="group().controls.name" />
+    <input type="text" [formControl]="group().controls.description" />
+    <textarea [formControl]="group().controls.content"></textarea>
+  </div>
+
+  <div>
+    OUTPUTs @for (connectorGroup of outputConnectors; track $index) {
+    <app-connector id="outout" [connectorGroup]="connectorGroup">
+      <mat-icon cdkDrag> circle </mat-icon>
+    </app-connector>
+    }
+    <button mat-icon-button (click)="outputClicked()" #outputOrigin>
+      <mat-icon cdkDrag> circle </mat-icon>
+    </button>
+  </div>
+</div>

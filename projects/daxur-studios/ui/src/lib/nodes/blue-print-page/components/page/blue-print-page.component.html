@@ -1,0 +1,20 @@
+<div class="flex-page" style="flex: 1 1 700px">
+  <div>
+    <button (click)="import()">import</button>
+    <button (click)="export()">export</button>
+    <button (click)="addNode()">add</button>
+  </div>
+
+  <lib-html-map [options]="{ showGrid: false }">
+    @for (connector of connectors.controls; track $index) {
+    <!-- <app-line [connector]="connector" /> -->
+    } nodez @for (group of fomGroup.controls.nodes.controls; track $index) {
+
+    <app-blue-print-node [group]="group"></app-blue-print-node>
+
+    }
+
+    <div cdkDrag><mat-icon cdkDragHandle> drag_indicator </mat-icon>OUTPUT</div>
+  </lib-html-map>
+</div>
+<app-blue-print-output style="flex: 0.5 1 300px" />

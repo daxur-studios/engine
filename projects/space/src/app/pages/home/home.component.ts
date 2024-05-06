@@ -7,11 +7,25 @@ import {
   viewChild,
 } from '@angular/core';
 import {
+  AmbientLightComponent,
+  BoxGeometryComponent,
+  Css2dComponent,
+  DirectionalLightComponent,
   ENGINE_OPTIONS,
   EngineComponent,
   EngineService,
+  GridHelperComponent,
+  GroupComponent,
   IEngineOptions,
+  IKeyBindingOptions,
+  IRaycastEvent,
   LoaderService,
+  MeshComponent,
+  MeshNormalMaterialComponent,
+  MeshStandardMaterialComponent,
+  RaycastDirective,
+  SphereComponent,
+  SphereGeometryComponent,
   xyz,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
@@ -32,30 +46,15 @@ import {
   Vector3,
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import {
-  BoxGeometryComponent,
-  SphereGeometryComponent,
-} from './mesh/geometry.component';
-import { GridHelperComponent } from './mesh/grid-helper.component';
-import { AmbientLightComponent, DirectionalLightComponent } from './mesh/light';
-import {
-  MeshNormalMaterialComponent,
-  MeshStandardMaterialComponent,
-} from './mesh/material.component';
-import { MeshComponent } from './mesh/mesh.component';
-
-import { IRaycastEvent, RaycastDirective } from './mesh/raycast';
-import { SpaceClockComponent } from './mesh/space-clock.component';
-import { SphereComponent } from './mesh/sphere.component';
 import { CelestialBodyComponent } from './celestial-body.component';
-import { GroupComponent } from './mesh/group.component';
-import { Css2dComponent } from './mesh/css-2d.component';
+import { SpaceClockComponent } from './space-clock.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [
     EngineComponent,
+
     CelestialBodyComponent,
     GridHelperComponent,
     SphereComponent,
@@ -69,6 +68,7 @@ import { Css2dComponent } from './mesh/css-2d.component';
     GroupComponent,
     RaycastDirective,
     SpaceClockComponent,
+
     Css2dComponent,
   ],
   templateUrl: './home.component.html',
@@ -77,7 +77,7 @@ import { Css2dComponent } from './mesh/css-2d.component';
     EngineService,
     EngineService.provideOptions({
       showFPS: true,
-      showFPSPosition: 'top-right',
+
       webGLRendererParameters: {
         antialias: true,
         logarithmicDepthBuffer: true,
@@ -88,11 +88,7 @@ import { Css2dComponent } from './mesh/css-2d.component';
 export class HomeComponent implements OnInit {
   //#region Services
   readonly engineService: EngineService = inject(EngineService, { host: true });
-  readonly options: IEngineOptions = {
-    showFPS: true,
-    showFPSPosition: 'top-right',
-    webGLRendererParameters: { antialias: true, logarithmicDepthBuffer: true },
-  };
+
   readonly loaderService = inject(LoaderService);
   //#endregion
 
@@ -255,7 +251,7 @@ export class HomeComponent implements OnInit {
     event.object.scale.set(1, 1, 1);
   }
 
-  controls?: TestOrbitControls;
+  controls?: OrbitControls;
   x = viewChild.required('x', { read: SphereComponent });
   ngOnInit(): void {
     // let count = 0;
@@ -267,7 +263,7 @@ export class HomeComponent implements OnInit {
     setTimeout(() => {
       const engine = this.engine();
 
-      const orbit = new TestOrbitControls(
+      const orbit = new OrbitControls(
         engine!.camera,
         engine!.renderer!.domElement
       );
@@ -395,11 +391,18 @@ export class HomeComponent implements OnInit {
   reset() {
     this.engineService.timeSpeed = 1;
   }
-}
 
-class TestOrbitControls extends OrbitControls {
-  constructor(camera: Camera, domElement?: HTMLElement) {
-    super(camera, domElement);
+  readonly keyBindings: IKeyBindingOptions[] = [
+    {
+      keys: ['Escape', 'm', 'p'],
+      keydown: (e) => this.toggleMenu(e),
+    },
+  ];
+
+  readonly showMenu = signal(false);
+  toggleMenu(event: any) {
+    console.warn('toggleMenu', event);
+    this.showMenu.set(!this.showMenu());
   }
 }
 

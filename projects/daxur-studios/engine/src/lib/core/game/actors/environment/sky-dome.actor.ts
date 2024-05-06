@@ -12,7 +12,7 @@ import { GameMesh } from '../..';
 import { Field } from '../../../utilities';
 import { GameActor } from '../game-actor';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { EngineService } from '../../../../components';
+import { EngineService } from '../../../../services';
 
 export class SkyDome extends GameActor {
   static override emoji = '☀️';
@@ -342,7 +342,7 @@ const SkyShader = {
   standalone: true,
   imports: [],
 })
-export class SkyDomeComponent implements OnInit, OnDestroy {
+export class XSkyDomeComponent implements OnInit, OnDestroy {
   actor = new SkyDome();
 
   constructor(readonly engineService: EngineService) {}

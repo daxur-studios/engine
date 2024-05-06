@@ -5,6 +5,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import {
   EventEmitter,
+  InjectionToken,
   InputSignal,
   WritableSignal,
   signal,
@@ -12,9 +13,18 @@ import {
 import { Cursor } from './cursor.model';
 import { FPSController } from './fps.controller';
 
+//#region Provide Engine Options
+export const ENGINE_OPTIONS = new InjectionToken<IEngineOptions>(
+  'ENGINE_OPTIONS'
+);
+export function provideEngineOptions(options: IEngineOptions) {
+  return { provide: ENGINE_OPTIONS, useValue: options };
+}
+//#endregion
+
 export interface IEngineOptions {
   showFPS?: boolean;
-  showFPSPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
   transparent?: boolean;
   webGLRendererParameters?: WebGLRendererParameters;
 }

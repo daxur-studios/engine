@@ -12,7 +12,7 @@ import { PlayerController } from './features';
 
 import { GameMesh, GameActor } from '..';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { EngineService } from '../../../components';
+import { EngineService } from '../../../services';
 
 export class DefaultPawn extends GameActor {
   static override emoji = '🎥';

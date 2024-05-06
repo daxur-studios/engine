@@ -4,3 +4,6 @@ export * from './local-database';
 export * from './input.model';
 export * from './fps.controller';
 export * from './cursor.model';
+export * from './theme.controller';
+export * from './user-interface.model';
+export * from './key-binding-options';
