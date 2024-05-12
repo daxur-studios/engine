@@ -32,7 +32,7 @@ export class MeshComponent extends Object3DComponent implements OnDestroy {
   // readonly geometry = model<BufferGeometry>();
   // readonly material = model<Material>();
 
-  override emoji = '🧊';
+  override emoji = '🧇';
   override object3D = signal(new Mesh());
   get mesh() {
     return this.object3D;

@@ -28,6 +28,7 @@ export class Css2dComponent
   extends Object3DComponent
   implements OnDestroy, OnInit, AfterContentInit
 {
+  override emoji = '📄';
   override readonly object3D = signal<CSS2DObject>(undefined!);
   get css2d() {
     return this.object3D;

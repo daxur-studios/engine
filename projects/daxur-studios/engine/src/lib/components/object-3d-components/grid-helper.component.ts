@@ -15,6 +15,8 @@ import {
   providers: [provideObject3DComponent(GridHelperComponent)],
 })
 export class GridHelperComponent extends Object3DComponent {
+  public override emoji = '📐';
+
   readonly size = input.required<number>();
   readonly divisions = input.required<number>();
 

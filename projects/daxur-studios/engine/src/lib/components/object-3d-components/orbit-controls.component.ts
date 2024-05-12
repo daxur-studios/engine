@@ -21,6 +21,7 @@ export class OrbitControlsComponent extends Object3DComponent {
   override readonly object3D = signal(new Group());
 
   readonly orbitControls = signal<OrbitControls | undefined>(undefined);
+  override emoji = '🎥';
 
   constructor() {
     super();

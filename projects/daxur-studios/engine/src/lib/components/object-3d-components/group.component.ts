@@ -15,6 +15,8 @@ import {
   providers: [provideObject3DComponent(GroupComponent)],
 })
 export class GroupComponent extends Object3DComponent {
+  public override emoji = '👥';
+
   override readonly object3D = signal(new Group());
   get group() {
     return this.object3D;

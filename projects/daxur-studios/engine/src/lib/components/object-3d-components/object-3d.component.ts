@@ -62,7 +62,7 @@ export abstract class Object3DComponent implements OnDestroy {
   readonly rotation = model<xyz>([0, 0, 0]);
 
   name = '';
-  public emoji = '🔹';
+  public emoji = '';
 
   readonly engineService = inject(EngineService);
   readonly parent = inject(Object3DComponent, {
@@ -74,19 +74,22 @@ export abstract class Object3DComponent implements OnDestroy {
 
   readonly destroy$ = new Subject<void>();
   constructor() {
+    const shortName = this.constructor.name
+      .replace('Component', '')
+      .replaceAll('_', '');
     //#region Static Instance Counts
     Object3DComponent.InstanceCounts.set(
       'Object3DComponent',
       (Object3DComponent.InstanceCounts.get('Object3DComponent') || 0) + 1
     );
     Object3DComponent.InstanceCounts.set(
-      this.constructor.name,
-      (Object3DComponent.InstanceCounts.get(this.constructor.name) || 0) + 1
+      shortName,
+      (Object3DComponent.InstanceCounts.get(shortName) || 0) + 1
     );
 
-    this.name = `${
-      this.constructor.name
-    } ${Object3DComponent.InstanceCounts.get(this.constructor.name)}`;
+    this.name = `${shortName} ${Object3DComponent.InstanceCounts.get(
+      shortName
+    )}`;
     //#endregion
 
     effect(() => {
