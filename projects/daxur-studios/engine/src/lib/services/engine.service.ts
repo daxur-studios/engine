@@ -345,7 +345,7 @@ export class EngineService implements IEngine {
     this.render(this.fpsController.lastRenderTime, true);
   }
 
-  private orbitControls: OrbitControls | undefined;
+  public orbitControls: OrbitControls | undefined;
   public useOrbitControls = false;
 
   public switchToOrbitControls() {

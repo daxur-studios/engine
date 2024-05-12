@@ -24,6 +24,10 @@ export class SceneTreeComponent implements OnInit, OnDestroy {
   selectedObject3D?: Object3DComponent;
   transformControls: TransformControls | undefined;
 
+  get orbitControls() {
+    return this.engineService.orbitControls;
+  }
+
   get scene() {
     return this.engineService.scene;
   }
@@ -52,6 +56,7 @@ export class SceneTreeComponent implements OnInit, OnDestroy {
     }
 
     this.selectedObject3D = object3D;
+
     if (this.selectedObject3D) {
       this.transformControls ||= new TransformControls(
         this.engineService.camera,
@@ -59,6 +64,13 @@ export class SceneTreeComponent implements OnInit, OnDestroy {
       );
       this.transformControls.name = 'TransformControls';
       this.transformControls.attach(this.selectedObject3D.object3D());
+
+      this.transformControls.addEventListener('dragging-changed', (event) => {
+        if (this.orbitControls) {
+          this.orbitControls.enabled = !event.value;
+        }
+      });
+
       this.scene!.add(this.transformControls);
     } else {
       this.transformControls?.detach();

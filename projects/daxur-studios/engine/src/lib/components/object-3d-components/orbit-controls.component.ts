@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, effect, inject, signal } from '@angular/core';
 import { Group, PerspectiveCamera } from 'three';
 import {
   Object3DComponent,
@@ -24,6 +24,10 @@ export class OrbitControlsComponent extends Object3DComponent {
 
   constructor() {
     super();
+
+    effect(() => {
+      this.engineService.orbitControls = this.orbitControls();
+    });
 
     setTimeout(() => {
       const engine = this.engineService;

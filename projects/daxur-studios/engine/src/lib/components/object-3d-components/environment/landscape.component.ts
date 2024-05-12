@@ -42,8 +42,7 @@ interface ILandscapeParams {
     ShaderMaterialComponent,
   ],
   providers: [provideObject3DComponent(LandscapeComponent)],
-  template: ` s
-    <mesh-standard-material
+  template: ` <mesh-standard-material
       [params]="{
         color: '#00ff00',
         side: 2,

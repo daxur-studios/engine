@@ -23,6 +23,7 @@ import {
 
 import { MeshComponent } from './mesh.component';
 import { Object3DComponent } from './object-3d.component';
+import { EngineService } from '../../services';
 
 export function provideMaterialComponent<T extends typeof MaterialComponent>(
   component: T
@@ -42,6 +43,7 @@ export abstract class MaterialComponent implements OnDestroy {
   abstract params: InputSignal<MaterialParameters>;
   abstract material: WritableSignal<Material>;
 
+  readonly engineService = inject(EngineService);
   readonly parent = inject(Object3DComponent, {
     skipSelf: true,
   });

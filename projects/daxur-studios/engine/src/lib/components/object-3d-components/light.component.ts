@@ -22,6 +22,8 @@ import {
   providers: [provideObject3DComponent(AmbientLightComponent)],
 })
 export class AmbientLightComponent extends Object3DComponent {
+  public override emoji = '💡';
+
   readonly color = input<string>('#ffffff');
   readonly intensity = input<number>(1);
 
@@ -52,6 +54,8 @@ export class AmbientLightComponent extends Object3DComponent {
   providers: [provideObject3DComponent(DirectionalLightComponent)],
 })
 export class DirectionalLightComponent extends Object3DComponent {
+  public override emoji = '💡';
+
   readonly color = input<string>('#ffffff');
   readonly intensity = input<number>(1);
 
@@ -86,6 +90,8 @@ export class DirectionalLightComponent extends Object3DComponent {
   providers: [provideObject3DComponent(PointLightComponent)],
 })
 export class PointLightComponent extends Object3DComponent {
+  public override emoji = '💡';
+
   readonly color = input<string>('#ffffff');
   readonly intensity = input<number>(1);
   readonly distance = input<number>(0);

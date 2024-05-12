@@ -11,6 +11,7 @@ import {
   DirectionalLightComponent,
   AmbientLightComponent,
   PointLightComponent,
+  CloudDomeComponent,
 } from '@daxur-studios/engine';
 
 @Component({
@@ -26,6 +27,7 @@ import {
     AmbientLightComponent,
     DirectionalLightComponent,
     PointLightComponent,
+    CloudDomeComponent,
   ],
   providers: [EngineService, provideEngineOptions({ showFPS: true })],
   templateUrl: './landscape-demo.component.html',

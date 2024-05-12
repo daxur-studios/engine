@@ -25,7 +25,6 @@ import {
 } from 'three';
 
 import {
-  Object3DParent,
   xyz,
   BoxGeometryComponent,
   Css2dComponent,
@@ -106,7 +105,8 @@ export class LineComponent extends Object3DComponent implements OnDestroy {
     line.computeLineDistances();
   }
 
-  ngOnDestroy(): void {
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
     this.geometry.dispose();
   }
 }

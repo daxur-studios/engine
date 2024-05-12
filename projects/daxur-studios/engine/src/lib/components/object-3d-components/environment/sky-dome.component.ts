@@ -15,20 +15,22 @@ import { SphereGeometryComponent } from '../geometry.component';
   imports: [ShaderMaterialComponent, SphereGeometryComponent],
   providers: [provideObject3DComponent(SkyDomeComponent)],
   template: `<shader-material [params]="params" />
-    <sphere-geometry [params]="{ radius: radius() }" />
+    <sphere-geometry
+      [params]="{ radius: radius(), heightSegments: 3, widthSegments: 6 }"
+    />
     <ng-content></ng-content>`,
 })
 export class SkyDomeComponent extends MeshComponent {
-  override emoji = '🌥️';
+  override emoji = '🎴';
 
-  readonly radius = input<number>(100);
+  readonly radius = input<number>(1000);
 
   readonly params = {
     uniforms: {
       topColor: { value: new Color(0x0077ff) },
       bottomColor: { value: new Color(0xffffff) },
-      offset: { value: 89 },
-      exponent: { value: 0.6 },
+      offset: { value: 500 },
+      exponent: { value: 0.9 },
     },
     vertexShader: `
       varying vec3 vWorldPosition;

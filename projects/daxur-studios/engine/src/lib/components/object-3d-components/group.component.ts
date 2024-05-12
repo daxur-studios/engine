@@ -16,6 +16,9 @@ import {
 })
 export class GroupComponent extends Object3DComponent {
   override readonly object3D = signal(new Group());
+  get group() {
+    return this.object3D;
+  }
 
   constructor() {
     super();
