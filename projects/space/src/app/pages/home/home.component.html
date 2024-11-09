@@ -44,6 +44,17 @@
           [params]="{ map: earthMap(), bumpMap: earthBumpMap(), bumpScale: 2 }"
         />
       </sphere>
+      <!--Clouds-->
+      <sphere
+        [position]="[0, 0, 0]"
+        [scale]="1.01"
+        [rotation]="[0, elapsedTime$.value * 0.002, 0]"
+        [params]="{ radius: 6371000, widthSegments: 120, heightSegments: 120 }"
+      >
+        <mesh-standard-material
+          [params]="{ map: earthCloudMap(), transparent: true }"
+        />
+      </sphere>
     </group>
   </sphere>
 

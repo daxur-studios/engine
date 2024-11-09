@@ -1,13 +1,15 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, effect, input, model } from '@angular/core';
 import { provideObject3DComponent } from '../object-3d.component';
 import { CloudComponent } from './cloud.component';
 import { GroupComponent } from '../group.component';
 import { xyz } from '../../../core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Editable } from './x';
 
 @Component({
   selector: 'cloud-dome',
   standalone: true,
-  imports: [CloudComponent],
+  imports: [CloudComponent, ReactiveFormsModule],
   providers: [provideObject3DComponent(CloudDomeComponent)],
   template: `<ng-content></ng-content>
     @for (cloud of clouds(); track $index) {
@@ -17,7 +19,10 @@ import { xyz } from '../../../core';
 export class CloudDomeComponent extends GroupComponent {
   override emoji = '🌥️';
 
-  readonly numberOfClouds = input.required<number>();
+  controls: { [key: string]: FormControl } = {};
+
+  @Editable({ min: 0, max: 20 })
+  readonly numberOfClouds = model.required<number>();
 
   readonly clouds = computed(() => {
     return Array.from({ length: this.numberOfClouds() }).map(() =>

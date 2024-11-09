@@ -95,6 +95,9 @@ export class HomeComponent implements OnInit {
   //#region textures
   readonly earthMap = signal<Texture | undefined>(undefined);
   readonly earthBumpMap = signal<Texture | undefined>(undefined);
+
+  readonly earthCloudMap = signal<Texture | undefined>(undefined);
+
   //#endregion
 
   readonly engine = viewChild.required(EngineComponent);
@@ -229,15 +232,17 @@ export class HomeComponent implements OnInit {
     const textures = [
       'assets/textures/earth-color.jpg',
       'assets/textures/earth-bump.png',
+      'assets/textures/earth-cloud.png',
     ];
 
     const promises = textures.map((texture) =>
       this.loaderService.textureLoader.loadAsync(texture)
     );
 
-    Promise.all(promises).then(([earthMap, earthBumpMap]) => {
+    Promise.all(promises).then(([earthMap, earthBumpMap, earthCloudMap]) => {
       this.earthMap.set(earthMap);
       this.earthBumpMap.set(earthBumpMap);
+      this.earthCloudMap.set(earthCloudMap);
     });
 
     //#endregion
