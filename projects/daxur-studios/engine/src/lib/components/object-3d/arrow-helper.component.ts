@@ -28,7 +28,7 @@ export class ArrowHelperComponent extends Object3DComponent {
   //  readonly params = input<ArrowHelperParameters>();
 
   readonly length = input.required<number>();
-  readonly direction = input.required<xyz>();
+  readonly direction = input.required<Vector3Tuple>();
   readonly color = input<ColorRepresentation>('red');
 
   readonly arrow = signal<ArrowHelper>(new ArrowHelper());
