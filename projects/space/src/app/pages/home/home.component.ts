@@ -12,7 +12,7 @@ import {
   Css2dComponent,
   DirectionalLightComponent,
   ENGINE_OPTIONS,
-  EngineComponent,
+  SceneComponent,
   EngineService,
   GridHelperComponent,
   GroupComponent,
@@ -26,7 +26,6 @@ import {
   RaycastDirective,
   SphereComponent,
   SphereGeometryComponent,
-  xyz,
 } from '@daxur-studios/engine';
 import { takeUntil } from 'rxjs';
 import {
@@ -53,7 +52,7 @@ import { SpaceClockComponent } from './space-clock.component';
   selector: 'app-home',
   standalone: true,
   imports: [
-    EngineComponent,
+    SceneComponent,
 
     CelestialBodyComponent,
     GridHelperComponent,
@@ -75,7 +74,7 @@ import { SpaceClockComponent } from './space-clock.component';
   styleUrl: './home.component.scss',
   providers: [
     EngineService,
-    EngineService.provideOptions({
+    EngineService.provideEngineOptions({
       showFPS: true,
 
       webGLRendererParameters: {

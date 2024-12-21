@@ -2,14 +2,6 @@ import { Routes } from '@angular/router';
 
 export const routes: Routes = [
   {
-    path: 'engine-demo/landscape-demo',
-    loadComponent: () =>
-      import(
-        './pages/engine/in-progress/landscape-demo/landscape-demo.component'
-      ).then((m) => m.LandscapeDemoComponent),
-  },
-
-  {
     path: 'ui/node-demo',
     loadComponent: () =>
       import('./pages/ui/node-demo/node-demo.component').then(
@@ -24,13 +16,6 @@ export const routes: Routes = [
       ).then((m) => m.EngineDemoPageComponent),
   },
 
-  {
-    path: 'engine-demo/level-editor-demo',
-    loadComponent: () =>
-      import(
-        './pages/engine/in-progress/level-editor-demo/level-editor-demo.component'
-      ).then((m) => m.LevelEditorDemoComponent),
-  },
   {
     path: 'graph-demo/graph',
     loadComponent: () =>

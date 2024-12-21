@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ThemeController } from '@daxur-studios/engine';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +9,5 @@ import { ThemeController } from '@daxur-studios/engine';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-  readonly themeController = new ThemeController();
-
-  ngOnInit() {
-    this.themeController.setDarkTheme();
-  }
+  ngOnInit() {}
 }

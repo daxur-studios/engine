@@ -1,4 +1,4 @@
-<daxur-engine
+<scene
   [userInterface]="{
     showSceneTree: false,
     top: top,
@@ -100,7 +100,7 @@
   } @for (planet of planets; track planet.name) {
   <celestial-body [position]="planet.position"></celestial-body>
   }
-</daxur-engine>
+</scene>
 
 <ng-template #top>
   <!--UI-->
