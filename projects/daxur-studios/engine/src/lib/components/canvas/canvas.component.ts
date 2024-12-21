@@ -25,7 +25,6 @@ import { EngineService } from '../../services/engine.service';
   },
 })
 export class CanvasComponent implements OnInit, OnDestroy {
-  readonly options = input.required<IEngineOptions>();
   readonly canvas = input.required<HTMLCanvasElement>();
 
   readonly css2dRenderer =
